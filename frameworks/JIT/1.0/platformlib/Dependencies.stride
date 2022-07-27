@@ -1,0 +1,7 @@
+toolRequirement CMakeRequirement {
+    toolInstance: llvm-dev
+    minVersion: 15
+    maxVersion: none
+    exactVersion: none
+}
+

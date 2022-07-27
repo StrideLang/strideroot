@@ -1,0 +1,26 @@
+
+platformModule _Floor {
+    inputs: ["real"]
+	outputs: ["real"] # FIXME shoudl be "int"
+    linkTo: ["m"]
+    processing: "floor"
+    inherits: ['signal']
+}
+
+# Power function
+platformModule _Pow {
+    inputs: ["real", "real"]
+	outputs: ["real"]
+    linkTo: ["m"]
+    processing: "pow"
+    inherits: ['signal']
+}
+
+# Power to e
+platformModule _Exp {
+    inputs: ["real"]
+	outputs: ["real"]
+    linkTo: ["m"]
+    processing: "exp"
+    inherits: ['signal']
+}

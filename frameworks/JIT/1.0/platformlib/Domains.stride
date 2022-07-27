@@ -1,0 +1,21 @@
+resource _RootContext {
+	dependsOn: none
+	exclusive: none
+	meta: 'Root computation and memory context'
+}
+
+domainResource _DomainFunction {
+	exclusive: on # Takes over _RootContext resource
+	meta: 'Main function in _RootContext'
+}
+
+
+_domainDefinition RootDomain {
+	framework: _CppFramework
+	requiresResources: [_RootContext]
+	providesResources: [_DomainFunction]
+	rate: -1 # -1 is 'one-shot/final' domain
+    substitutions: [ ]
+    domainIncludes: []
+	domainFunctionCode: ''
+}

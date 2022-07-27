@@ -1,0 +1,13 @@
+_frameworkDescription _JitFramework {
+    frameworkName: "JIT"
+    defaultDataType: _RealType
+}
+
+alias PlatformDomain {
+    block: RootDomain
+}
+
+alias PlatformRate {
+    block: -1
+}
+
