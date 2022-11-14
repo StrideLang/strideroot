@@ -253,7 +253,7 @@ type _Signal {
 		typeProperty Type {
 			name: "type"
 			types: [""]
-			default: none # Types::RealType
+			default: _RealType
 			required: off
 		}
 	]

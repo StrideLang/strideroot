@@ -1,26 +1,26 @@
 
-platformModule _Floor {
-    inputs: ["real"]
-	outputs: ["real"] # FIXME shoudl be "int"
-    linkTo: ["m"]
-    processing: "floor"
-    inherits: ['signal']
-}
+# platformModule _Floor {
+#     inputs: [_RealType]
+# 	outputs: [_RealType] # FIXME shoudl be "int"
+#     linkTo: ["m"]
+#     processing: "floor"
+#     inherits: ['signal']
+# }
 
-# Power function
-platformModule _Pow {
-    inputs: ["real", "real"]
-	outputs: ["real"]
-    linkTo: ["m"]
-    processing: "pow"
-    inherits: ['signal']
-}
+# # Power function
+# platformModule _Pow {
+#     inputs: [_RealType, _RealType]
+# 	outputs: [_RealType]
+#     linkTo: ["m"]
+#     processing: "pow"
+#     inherits: ['signal']
+# }
 
-# Power to e
-platformModule _Exp {
-    inputs: ["real"]
-	outputs: ["real"]
-    linkTo: ["m"]
-    processing: "exp"
-    inherits: ['signal']
-}
+# # Power to e
+# platformModule _Exp {
+#     inputs: [_RealType]
+# 	outputs: [_RealType]
+#     linkTo: ["m"]
+#     processing: "exp"
+#     inherits: ['signal']
+# }

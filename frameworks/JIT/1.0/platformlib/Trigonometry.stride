@@ -1,6 +1,3 @@
-
-
-# Sine function test
 platformModule __Sin {
     inputs: [_RealType]
 	outputs: [_RealType]
@@ -11,26 +8,46 @@ platformModule __Sin {
     inherits: [_Signal]
 }
 
+# platformModule Sin {
+#     inputs: [_RealType]
+# 	outputs: [_RealType]
+#     linkTo: ["m"]
+# #    linkTo: []
+# #    declarations: ['']
+# #    initializations: ["// %%token%% = 0;"]
+#     processing: "sin"
+#     inherits: [_Signal]
+# }
 
 platformModule __Cos {
     inputs: [_RealType]
 	outputs: [_RealType]
     linkTo: ["m"]
-#    linkTo: []
 #    declarations: ['']
 #    initializations: ["// %%token%% = 0;"]
-    processing: "std::cos(%%intokens:0%%)"
+    processing: "cos"
     inherits: [_Signal]
 }
 
-platformModule __Tan {
-    inputs: [_RealType]
-	outputs: [_RealType]
-    linkTo: ["m"]
-#    linkTo: []
-#    declarations: ['']
-#    initializations: ["// %%token%% = 0;"]
-    processing: "tan"
-    inherits: [_Signal]
-}
+# platformModule Cos {
+#     inputs: [_RealType]
+# 	outputs: [_RealType]
+#     linkTo: ["m"]
+# #    linkTo: []
+# #    declarations: ['']
+# #    initializations: ["// %%token%% = 0;"]
+#     processing: "cos"
+#     inherits: [_Signal]
+# }
+
+# platformModule __Tan {
+#     inputs: [_RealType]
+# 	outputs: [_RealType]
+#     linkTo: ["m"]
+# #    linkTo: []
+# #    declarations: ['']
+# #    initializations: ["// %%token%% = 0;"]
+#     processing: "tan"
+#     inherits: [_Signal]
+# }
 

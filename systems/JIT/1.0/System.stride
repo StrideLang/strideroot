@@ -1,0 +1,15 @@
+# ---- PC Desktop full app
+platform _JITPlatform {
+	framework: "JIT"
+	frameworkVersion: "1.0"
+	hardware: "Local"
+	hardwareVersion: "1.0"
+	required: on #TODO validation of "required" is not yet implemented
+    rootNamespace: ""
+}
+
+system JIT {
+    platforms: [_JITPlatform]
+    connections: []
+	meta: "JIT"
+}

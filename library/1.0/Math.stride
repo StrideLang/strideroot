@@ -59,7 +59,7 @@ module Sin {
 			meta: "Input angle in radians"
 		}
 	]
-	blocks: [
+	blocks: [	
 	]
 	streams: [
 		Input >> __Sin() >> Output;

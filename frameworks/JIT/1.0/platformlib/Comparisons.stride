@@ -1,81 +1,127 @@
-platformModule __Select {
-    inputs: ["bool", "any", "any"]
-	outputs: ["any"]
-#    include: []
-#    linkTo: []
-#    declarations: []
-    initializations: ["// %%token%% = 0;"]
-    processing: "%%intokens:0%% ? %%intokens:1%% : %%intokens:2%%"
-    inherits: [_Signal]
-}
+# platformModule __Select {
+#     inputs: ["bool", "any", "any"]
+# 	outputs: ["any"]
+# #    include: []
+# #    linkTo: []
+# #    declarations: []
+#     initializations: ["// %%token%% = 0;"]
+#     processing: "%%intokens:0%% ? %%intokens:1%% : %%intokens:2%%"
+#     inherits: [_Signal]
+# }
 
-platformModule __ChooseType {
-    inputs: ["bool", "any", "any"]
-	outputs: ["any"]
-#    include: []
-#    linkTo: []
-#    declarations: []
-    initializations: ["// %%token%% = 0;"]
-    processing: "%%intokens:0%% ? %%intokens:1%% : %%intokens:2%%"
-    inherits: [_Signal]
-}
+# platformModule __ChooseType {
+#     inputs: ["bool", "any", "any"]
+# 	outputs: ["any"]
+# #    include: []
+# #    linkTo: []
+# #    declarations: []
+#     initializations: ["// %%token%% = 0;"]
+#     processing: "%%intokens:0%% ? %%intokens:1%% : %%intokens:2%%"
+#     inherits: [_Signal]
+# }
 
-platformModule __Greater {
-    inputs: ["real", "real"]
-	outputs: ["bool"]
+platformModule Greater@Double_Bool {
+    inputs: [_RealType, _RealType]
+	outputs: [_SwitchType]
 #    linkTo: []
 #    declarations: ['']
-    initializations: ["// CPP Greater Init"]
-    processing: "%%intokens:0%% > %%intokens:1%%"
+    # initializations: ["// CPP Greater Init"]
+    processing: "__stride_Greater_b_dd"
     inherits: [_Signal]
 }
 
-platformModule __GreaterOrEqual {
-    inputs: ["real", "real"]
-	outputs: ["bool"]
+platformModule Greater@Double_Double {
+    inputs: [_RealType, _RealType]
+	outputs: [_RealType]
 #    linkTo: []
 #    declarations: ['']
-#    initializations: ["// %%token%% = 0;"]
-    processing: "%%intokens:0%% >= %%intokens:1%%"
+    # initializations: ["// CPP Greater Init"]
+    processing: "__stride_Greater_d_dd"
     inherits: [_Signal]
 }
 
-platformModule __Equal {
-    inputs: ["real", "real"]
-	outputs: ["bool"]
-#    linkTo: []
-#    declarations: ['']
-#    initializations: ["// %%token%% = 0;"]
-    processing: "%%intokens:0%% == %%intokens:1%%"
-    inherits: [_Signal]
-}
+# platformModule Greater@Double_Bool {
+#     inputs: [_DoubleType, _DoubleType]
+# 	outputs: [_SwitchType]
+# #    linkTo: []
+# #    declarations: ['']
+#     # initializations: ["// CPP Greater Init"]
+#     # processing: "%%token%% = fcmp [fast-math flags]* ogt double %%intokens:1%% , %%intokens:2%%"
+#     processing: "%%token%% = fcmp ogt double %%intokens:1%% %%intokens:2%%;"
+#     inherits: [_Signal]
+# }
 
-platformModule __LessOrEqual {
-    inputs: ["real", "real"]
-	outputs: ["bool"]
-#    linkTo: []
-#    declarations: ['']
-#    initializations: ["// %%token%% = 0;"]
-    processing: "%%intokens:0%% <= %%intokens:1%%"
-    inherits: [_Signal]
-}
+# platformModule Greater@Double_Bool {
+#     inputs: [_Floatype, _Floatype]
+# 	outputs: [_SwitchType]
+# #    linkTo: []
+# #    declarations: ['']
+#     # initializations: ["// CPP Greater Init"]
+#     # processing: "%%token%% = fcmp [fast-math flags]* ogt double %%intokens:1%% , %%intokens:2%%"
+#     processing: "%%token%% = fcmp ogt float %%intokens:1%% %%intokens:2%%;"
+#     inherits: [_Signal]
+# }
 
-platformModule __Less {
-    inputs: ["real", "real"]
-	outputs: ["bool"]
-#    linkTo: []
-#    declarations: ['']
-#    initializations: ["// %%token%% = 0;"]
-    processing: "%%intokens:0%% < %%intokens:1%%"
-    inherits: [_Signal]
-}
+# platformModule Greater@Double_Double {
+#     inputs: [_DoubleType, _DoubleType]
+# 	outputs: [_RealType]
+# #    linkTo: []
+# #    declarations: ['']
+#     # initializations: ["// CPP Greater Init"]
+#     processing: "
+#     i1 %%tmp%% = fcmp ogt double %%intokens:1%% , %%intokens:2%%;
+#     %%token%% = %%tmp%%;
+#     "
+#     inherits: [_Signal]
+# }
 
-platformModule _NotEqual {
-    inputs: ["real", "real"]
-	outputs: ["bool"]
-#    linkTo: []
-#    declarations: ['']
-#    initializations: ["// %%token%% = 0;"]
-    processing: "%%intokens:0%% != %%intokens:1%%"
-    inherits: [_Signal]
-}
+
+# platformModule __GreaterOrEqual {
+#     inputs: ["real", "real"]
+# 	outputs: ["bool"]
+# #    linkTo: []
+# #    declarations: ['']
+# #    initializations: ["// %%token%% = 0;"]
+#     processing: "%%intokens:0%% >= %%intokens:1%%"
+#     inherits: [_Signal]
+# }
+
+# platformModule __Equal {
+#     inputs: ["real", "real"]
+# 	outputs: ["bool"]
+# #    linkTo: []
+# #    declarations: ['']
+# #    initializations: ["// %%token%% = 0;"]
+#     processing: "%%intokens:0%% == %%intokens:1%%"
+#     inherits: [_Signal]
+# }
+
+# platformModule __LessOrEqual {
+#     inputs: ["real", "real"]
+# 	outputs: ["bool"]
+# #    linkTo: []
+# #    declarations: ['']
+# #    initializations: ["// %%token%% = 0;"]
+#     processing: "%%intokens:0%% <= %%intokens:1%%"
+#     inherits: [_Signal]
+# }
+
+# platformModule __Less {
+#     inputs: ["real", "real"]
+# 	outputs: ["bool"]
+# #    linkTo: []
+# #    declarations: ['']
+# #    initializations: ["// %%token%% = 0;"]
+#     processing: "%%intokens:0%% < %%intokens:1%%"
+#     inherits: [_Signal]
+# }
+
+# platformModule _NotEqual {
+#     inputs: ["real", "real"]
+# 	outputs: ["bool"]
+# #    linkTo: []
+# #    declarations: ['']
+# #    initializations: ["// %%token%% = 0;"]
+#     processing: "%%intokens:0%% != %%intokens:1%%"
+#     inherits: [_Signal]
+# }
