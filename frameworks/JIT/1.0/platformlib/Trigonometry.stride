@@ -1,6 +1,6 @@
 platformModule __Sin {
-    inputs: [_RealType]
-	outputs: [_RealType]
+    inputs: [_DoubleType]
+	outputs: [_DoubleType]
     linkTo: ["m"]
 #    declarations: ['']
 #    initializations: ["// %%token%% = 0;"]
@@ -20,8 +20,8 @@ platformModule __Sin {
 # }
 
 platformModule __Cos {
-    inputs: [_RealType]
-	outputs: [_RealType]
+    inputs: [_DoubleType]
+	outputs: [_DoubleType]
     linkTo: ["m"]
 #    declarations: ['']
 #    initializations: ["// %%token%% = 0;"]

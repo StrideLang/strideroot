@@ -9,9 +9,8 @@ domainResource _DomainFunction {
 	meta: 'Main function in _RootContext'
 }
 
-
 _domainDefinition RootDomain {
-	framework: _CppFramework
+	framework: _JitFramework
 	requiresResources: [_RootContext]
 	providesResources: [_DomainFunction]
 	rate: -1 # -1 is 'one-shot/final' domain
