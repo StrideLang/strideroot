@@ -4,7 +4,7 @@ frameworkDataType _RealType {
 }
 
 frameworkDataType _IntType {
-	frameworkName: "int"
+	frameworkName: "int32_t"
 	includes: []
 }
 

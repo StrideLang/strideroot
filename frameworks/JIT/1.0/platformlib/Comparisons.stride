@@ -26,7 +26,7 @@ platformModule Greater@Double_Bool {
 #    linkTo: []
 #    declarations: ['']
     # initializations: ["// CPP Greater Init"]
-    processing: "__stride_Greater_b_dd"
+    processing: "fcmp ogt"
     inherits: [_Signal]
 }
 
@@ -36,45 +36,39 @@ platformModule Greater@Double_Double {
 #    linkTo: []
 #    declarations: ['']
     # initializations: ["// CPP Greater Init"]
-    processing: "__stride_Greater_d_dd"
+    processing: "@__stride_Greater_d_dd"
     inherits: [_Signal]
 }
 
-# platformModule Greater@Double_Bool {
-#     inputs: [_DoubleType, _DoubleType]
-# 	outputs: [_SwitchType]
-# #    linkTo: []
-# #    declarations: ['']
-#     # initializations: ["// CPP Greater Init"]
-#     # processing: "%%token%% = fcmp [fast-math flags]* ogt double %%intokens:1%% , %%intokens:2%%"
-#     processing: "%%token%% = fcmp ogt double %%intokens:1%% %%intokens:2%%;"
-#     inherits: [_Signal]
-# }
+platformModule Greater@Int_Bool {
+    inputs: [_IntType, _IntType]
+	outputs: [_SwitchType]
+#    linkTo: []
+#    declarations: ['']
+    # initializations: ["// CPP Greater Init"]
+    processing: "icmp gt"
+    inherits: [_Signal]
+}
 
-# platformModule Greater@Double_Bool {
-#     inputs: [_Floatype, _Floatype]
-# 	outputs: [_SwitchType]
-# #    linkTo: []
-# #    declarations: ['']
-#     # initializations: ["// CPP Greater Init"]
-#     # processing: "%%token%% = fcmp [fast-math flags]* ogt double %%intokens:1%% , %%intokens:2%%"
-#     processing: "%%token%% = fcmp ogt float %%intokens:1%% %%intokens:2%%;"
-#     inherits: [_Signal]
-# }
+platformModule Equal@Double_Bool {
+    inputs: [_RealType, _RealType]
+	outputs: [_SwitchType]
+#    linkTo: []
+#    declarations: ['']
+    # initializations: ["// CPP Greater Init"]
+    processing: "fcmp oeq"
+    inherits: [_Signal]
+}
 
-# platformModule Greater@Double_Double {
-#     inputs: [_DoubleType, _DoubleType]
-# 	outputs: [_RealType]
-# #    linkTo: []
-# #    declarations: ['']
-#     # initializations: ["// CPP Greater Init"]
-#     processing: "
-#     i1 %%tmp%% = fcmp ogt double %%intokens:1%% , %%intokens:2%%;
-#     %%token%% = %%tmp%%;
-#     "
-#     inherits: [_Signal]
-# }
-
+platformModule Equal@Int_Bool {
+    inputs: [_IntType, _IntType]
+	outputs: [_SwitchType]
+#    linkTo: []
+#    declarations: ['']
+    # initializations: ["// CPP Greater Init"]
+    processing: "icmp eq"
+    inherits: [_Signal]
+}
 
 # platformModule __GreaterOrEqual {
 #     inputs: ["real", "real"]
@@ -83,16 +77,6 @@ platformModule Greater@Double_Double {
 # #    declarations: ['']
 # #    initializations: ["// %%token%% = 0;"]
 #     processing: "%%intokens:0%% >= %%intokens:1%%"
-#     inherits: [_Signal]
-# }
-
-# platformModule __Equal {
-#     inputs: ["real", "real"]
-# 	outputs: ["bool"]
-# #    linkTo: []
-# #    declarations: ['']
-# #    initializations: ["// %%token%% = 0;"]
-#     processing: "%%intokens:0%% == %%intokens:1%%"
 #     inherits: [_Signal]
 # }
 
@@ -106,15 +90,25 @@ platformModule Greater@Double_Double {
 #     inherits: [_Signal]
 # }
 
-# platformModule __Less {
-#     inputs: ["real", "real"]
-# 	outputs: ["bool"]
-# #    linkTo: []
-# #    declarations: ['']
-# #    initializations: ["// %%token%% = 0;"]
-#     processing: "%%intokens:0%% < %%intokens:1%%"
-#     inherits: [_Signal]
-# }
+platformModule Less@Int_Bool {
+    inputs: [_IntType, _IntType]
+	outputs: [_SwitchType]
+#    linkTo: []
+#    declarations: ['']
+    # initializations: ["// CPP Greater Init"]
+    processing: "icmp lt"
+    inherits: [_Signal]
+}
+
+platformModule Less@Int_Bool {
+    inputs: [_RealType, _RealType]
+	outputs: [_SwitchType]
+#    linkTo: []
+#    declarations: ['']
+    # initializations: ["// CPP Greater Init"]
+    processing: "fcmp olt"
+    inherits: [_Signal]
+}
 
 # platformModule _NotEqual {
 #     inputs: ["real", "real"]

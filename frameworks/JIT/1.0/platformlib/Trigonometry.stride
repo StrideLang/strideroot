@@ -4,7 +4,7 @@ platformModule __Sin {
     linkTo: ["m"]
 #    declarations: ['']
 #    initializations: ["// %%token%% = 0;"]
-    processing: "sin"
+    processing: "@sin"
     inherits: [_Signal]
 }
 
@@ -25,7 +25,7 @@ platformModule __Cos {
     linkTo: ["m"]
 #    declarations: ['']
 #    initializations: ["// %%token%% = 0;"]
-    processing: "cos"
+    processing: "@cos"
     inherits: [_Signal]
 }
 
