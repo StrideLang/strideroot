@@ -253,7 +253,7 @@ type _Signal {
 		typeProperty Type {
 			name: "type"
 			types: [""]
-			default: _RealType
+			default: _RealType # Should be set to _DefaultTypeSignal
 			required: off
 		}
 	]

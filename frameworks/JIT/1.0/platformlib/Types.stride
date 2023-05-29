@@ -30,6 +30,10 @@ frameworkDataType _StringType {
 
 ### ----------------------
 
+alias _DefaultTypeSignal {
+    block: _RealType
+}
+
 strideTypeDefaultDataType _DefaultSignalType {
 	strideType: "signal"
 	frameworkType: _RealType
