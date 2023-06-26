@@ -1,7 +1,7 @@
 
 module BiQuad {
 	ports: [
-        mainInputPort mainInputPort {
+        mainInputPort MainInputPort {
 			block: Input
         },
 		mainOutputPort OutputPort {
