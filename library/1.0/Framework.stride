@@ -35,6 +35,14 @@ type _DomainDefinition {
 			required: on
 			meta: "The domain's rate. A value of none indicates an asynchronous or immediate domain."
 		},
+		typeProperty External {
+			name: "external"
+			types: [_Signal, _Switch]
+			default: []
+			required: off
+			meta: "Signals and switches in this domain that are owned outside the domain.
+					Within the domain they behave as belonging to the domain"
+		},
 		typeProperty RequiresResources {
 			name: "requiresResources"
 			types: [""]
