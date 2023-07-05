@@ -9,7 +9,15 @@ toolSearch CMakeSearch {
     toolTemplate: CMakeTemplate
     rootPathRegex: ""
     nameRegex: "cmake"
-    platforms: ['macOS', 'Windows', 'Linux']
+    platforms: ['macOS', 'Linux']
+    # For security we should have hashes for known versions.
+}
+
+toolSearch CMakeSearch_Win {
+    toolTemplate: CMakeTemplate
+    rootPathRegex: ""
+    nameRegex: "cmake.exe"
+    platforms: ['Windows']
     # For security we should have hashes for known versions.
 }
 
