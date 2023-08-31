@@ -212,7 +212,7 @@ platformBlock _SerialOutput {
    declarations: ['std::string __serialVar;']
 #    initializations: [""]
     processing: '
-	__serialVar =  "%%bundle_index%%:" + std::to_string(%%intoken:0%%) + "\n";
+	__serialVar =  "%%bundle_index%%:" + std::to_string(%%intokens:0%%) + "\n";
     size_t bytes_wrote = serialPort.write((const uint8_t*)__serialVar.data(), __serialVar.size());
 	'
     domain: SerialOutDomain
@@ -244,7 +244,7 @@ platformBlock _SerialPrintType {
 #    linkTo: ["serial"]
 #    declarations: ['']
     initializations: ["// Not implemented"]
-    processing: "serialPort.write(%%intoken:0%%);
+    processing: "serialPort.write(%%intokens:0%%);
 "
     inherits: [_Signal]
 }

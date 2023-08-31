@@ -213,7 +213,7 @@ type _PlatformCodeType {
 			name: "declarations"
 			types: [""] #TODO validate list
 			default: []
-			required: on
+			required: off
 		},
 		typeProperty Constructors {
 			name: "constructors"
@@ -225,7 +225,7 @@ type _PlatformCodeType {
 			name: "initializations"
 			types: [""] #TODO validate list
 			default: []
-			required: on
+			required: off
 		},
 		typeProperty PreProcessingOnce {
 			name: "preProcessingOnce"
@@ -242,25 +242,31 @@ type _PlatformCodeType {
 		typeProperty Processing {
 			name: "processing"
 			types: [_StringLiteral]
-			default: none
-			required: on
+			default: ""
+			required: off
 		},
 		typeProperty PostProcessing {
 			name: "postProcessing"
 			types: [_StringLiteral]
 			default: ""
-			required: on
+			required: off
 		},
 		typeProperty PostProcessingOnce {
 			name: "postProcessingOnce"
 			types: [_StringLiteral]
 			default: ""
-			required: on
+			required: off
 		},
 		typeProperty Cleanup {
 			name: "cleanup"
 			types: [_StringLiteral]
 			default: ""
+			required: off
+		},
+		typeProperty OutTokens {
+			name: "outTokens"
+			types: [_StringLiteral]
+			default: []
 			required: off
 		},
 		typeProperty Domain {

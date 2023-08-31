@@ -94,7 +94,7 @@ platformBlock _DigitalOutput {
     gpio_set_dir(%%bundle_index%%, GPIO_OUT);'
     ]
     processing: '
-	gpio_put(%%bundle_index%%, %%intoken:0%% ? 1 : 0);
+	gpio_put(%%bundle_index%%, %%intokens:0%% ? 1 : 0);
 	'
     processing: ""
     inherits: [_Signal]

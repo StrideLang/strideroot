@@ -3,7 +3,7 @@ platformModule _Floor {
     inputs: ["real"]
 	outputs: ["real"] # FIXME shoudl be "int"
     include: ["cmath"]
-    processing: "std::floor(%%intoken:0%%)"
+    processing: "std::floor(%%intokens:0%%)"
     inherits: ['signal']
 }
 
@@ -12,7 +12,7 @@ platformModule _Pow {
     inputs: ["real", "real"]
 	outputs: ["real"]
     include: ["cmath"]	
-    processing: "std::pow(%%intoken:0%%, %%intoken:1%%)"
+    processing: "std::pow(%%intokens:0%%, %%intokens:1%%)"
     inherits: ['signal']
 }
 
@@ -21,6 +21,6 @@ platformModule _Exp {
     inputs: ["real"]
 	outputs: ["real"]
     include: ["cmath"]
-    processing: "std::exp(%%intoken:0%%)"
+    processing: "std::exp(%%intokens:0%%)"
     inherits: ['signal']
 }

@@ -20,9 +20,9 @@ platformType _OscOutType {
 #    initializations: ["// INIT OSC"]
     processing: '
 	char portStr[16];
-	sprintf(portStr, "%d", (int) %%intoken:3%%);
-	lo_address addr = lo_address_new(%%intoken:2%%.c_str(), portStr);
-    lo_send(addr, %%intoken:1%%.c_str() , "f", %%intoken:0%%);
+	sprintf(portStr, "%d", (int) %%intokens:3%%);
+	lo_address addr = lo_address_new(%%intokens:2%%.c_str(), portStr);
+    lo_send(addr, %%intokens:1%%.c_str() , "f", %%intokens:0%%);
 	'
     inherits: ['signal']
 }

@@ -7,7 +7,7 @@ platformBlock _DigitalOutput {
 #    linkTo: []
 #    declarations: ['']
     initializations: ['pinMode(%%bundle_index%%, OUTPUT);']
-    processing: "digitalWrite(%%bundle_index%%, %%intoken:0%% ? HIGH : LOW);"
+    processing: "digitalWrite(%%bundle_index%%, %%intokens:0%% ? HIGH : LOW);"
     inherits: [_Signal]
 }
 

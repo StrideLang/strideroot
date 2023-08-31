@@ -7,7 +7,7 @@ platformBlock _DigitalOut {
     linkTo: []
     declarations: []
     initializations: ['MX_GPIO_Init();']
-    processing: "HAL_GPIO_WritePin(GPIOK, 1 << %%bundle_index%%, %%intoken:0%% ? GPIO_PIN_SET : GPIO_PIN_RESET);"
+    processing: "HAL_GPIO_WritePin(GPIOK, 1 << %%bundle_index%%, %%intokens:0%% ? GPIO_PIN_SET : GPIO_PIN_RESET);"
     inherits: [_Signal]
 }
 

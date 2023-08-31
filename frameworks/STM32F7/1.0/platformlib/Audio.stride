@@ -311,7 +311,7 @@ platformBlock _HwOutput {
     declarations: ['static q15_t Sample_q15[2];']
 #    initializations: ["// %%token%% = 0;"]
     processing: "
-		arm_float_to_q15(&%%intoken:0%%,&Sample_q15[%%bundle_index%%],1);
+		arm_float_to_q15(&%%intokens:0%%,&Sample_q15[%%bundle_index%%],1);
 	"
 	postProcessingOnce: "
     *I2S_TX_Buffer_p++ = Sample_q15[0];

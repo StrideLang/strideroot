@@ -232,7 +232,7 @@ platformBlock _HwOutput {
 #    linkTo: []
 #    declarations: ['']
 #    initializations: ["// %%token%% = 0;"]
-    processing: "out[%%bundle_index%%] = %%intoken:0%%;"
+    processing: "out[%%bundle_index%%] = %%intokens:0%%;"
     domain: AudioDomain
 	rate: AudioRate
     inherits: [_Signal]

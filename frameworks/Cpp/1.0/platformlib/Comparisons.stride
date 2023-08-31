@@ -5,7 +5,7 @@ platformModule __Select {
 #    linkTo: []
 #    declarations: []
     initializations: ["// %%token%% = 0;"]
-    processing: "%%intokens:0%% ? %%intokens:1%% : %%intokens:2%%"
+    outTokens: ["%%intokens:0%% ? %%intokens:1%% : %%intokens:2%%"]
     inherits: [_Signal]
 }
 
@@ -16,7 +16,7 @@ platformModule __ChooseType {
 #    linkTo: []
 #    declarations: []
     initializations: ["// %%token%% = 0;"]
-    processing: "%%intokens:0%% ? %%intokens:1%% : %%intokens:2%%"
+    outTokens: ["%%intokens:0%% ? %%intokens:1%% : %%intokens:2%%"]
     inherits: [_Signal]
 }
 
@@ -26,7 +26,7 @@ platformModule __Greater {
 #    linkTo: []
 #    declarations: ['']
     initializations: ["// CPP Greater Init"]
-    processing: "%%intokens:0%% > %%intokens:1%%"
+    outTokens: ["%%intokens:0%% > %%intokens:1%%"]
     inherits: [_Signal]
 }
 
@@ -36,7 +36,7 @@ platformModule __GreaterOrEqual {
 #    linkTo: []
 #    declarations: ['']
 #    initializations: ["// %%token%% = 0;"]
-    processing: "%%intokens:0%% >= %%intokens:1%%"
+    outTokens: ["%%intokens:0%% >= %%intokens:1%%"]
     inherits: [_Signal]
 }
 
@@ -46,7 +46,7 @@ platformModule __Equal {
 #    linkTo: []
 #    declarations: ['']
 #    initializations: ["// %%token%% = 0;"]
-    processing: "%%intokens:0%% == %%intokens:1%%"
+    outTokens: ["%%intokens:0%% == %%intokens:1%%"]
     inherits: [_Signal]
 }
 
@@ -56,7 +56,7 @@ platformModule __LessOrEqual {
 #    linkTo: []
 #    declarations: ['']
 #    initializations: ["// %%token%% = 0;"]
-    processing: "%%intokens:0%% <= %%intokens:1%%"
+    outTokens: ["%%intokens:0%% <= %%intokens:1%%"]
     inherits: [_Signal]
 }
 
@@ -66,7 +66,7 @@ platformModule __Less {
 #    linkTo: []
 #    declarations: ['']
 #    initializations: ["// %%token%% = 0;"]
-    processing: "%%intokens:0%% < %%intokens:1%%"
+    outTokens: ["%%intokens:0%% < %%intokens:1%%"]
     inherits: [_Signal]
 }
 
@@ -76,6 +76,6 @@ platformModule _NotEqual {
 #    linkTo: []
 #    declarations: ['']
 #    initializations: ["// %%token%% = 0;"]
-    processing: "%%intokens:0%% != %%intokens:1%%"
+    outTokens: ["%%intokens:0%% != %%intokens:1%%"]
     inherits: [_Signal]
 }

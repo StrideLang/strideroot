@@ -160,7 +160,7 @@ platformBlock _SerialOutput {
     channel = %%bundle_index%%;
     Serial.print(channel);
     Serial.print(":");
-    Serial.println(%%intoken:0%%);
+    Serial.println(%%intokens:0%%);
 	'
 	postProcessing: '// Post'
     inherits: [_Signal]
