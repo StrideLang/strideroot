@@ -90,25 +90,12 @@ type _Port {
 	meta: ""
 }
 
-
 type _Module {
 	typeName: "module"
 	properties: [
 		typeProperty Ports {
 			name: "ports"
 			types: [ _MainOutputPort, _MainInputPort, _PropertyOutputPort, _PropertyInputPort ] 
-			default: none
-			required: on
-		},
-		typeProperty Blocks {
-			name: "blocks"
-			types: [""] # TODO how to accept lists?
-			default: []
-			required: off
-		},
-		typeProperty Streams {
-			name: "streams"
-			types: [""]
 			default: none
 			required: on
 		},
@@ -119,10 +106,9 @@ type _Module {
 			required: off
 		}
 	]
-	inherits: [_Base]
+	inherits: [_Base, _CodeGenerator]
 	meta: "Modules encapsulate streams"
 }
-
 
 type _ModuleTemplate {
 	typeName: "moduleTemplate"

@@ -68,6 +68,24 @@ type _DomainMember {
 	inherits: [_Base]
 }
 
+type _CodeGenerator {
+	typeName: "codeGenerator"
+	properties: [
+		typeProperty {
+			name: "blocks"
+			types: [ constrainedList {anyOf: [_Streamable, _Reaction, _Module]} ]
+			default: []
+			required: off
+		},
+		typeProperty Streams {
+			name: "streams"
+			types: [ constrainedList {anyOf: [_StreamType]} ]
+			default: none
+			required: on
+		}
+	]
+}
+
 type _Base {
 	typeName: "base"
 	properties: [
