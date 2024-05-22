@@ -114,11 +114,17 @@ type _ConstrainedList {
 			types: [_IntLiteral,  _NoneLiteral]
 			default: none
 			required: off
-		}		
+		}
 		typeProperty {
 			name: "uniqueItems"
 			types: [_SwitchLiteral]
 			default: off
+			required: off
+		}	
+		typeProperty {
+			name: "allowed"
+			types: [_Block, _NoneLiteral]
+			default: []
 			required: off
 		}	
     ]
