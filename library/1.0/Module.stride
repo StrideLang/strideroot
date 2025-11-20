@@ -75,7 +75,7 @@ type _Port {
 		},
 		typeProperty Block {
 			name: "block"
-			types: [""] # This should be made to accept type handles
+			types: [_Block]
 			default: none
 			required: on
 		},
@@ -84,6 +84,22 @@ type _Port {
 			types: [""] # This should be made to accept type handles
 			default: _RealType # TODO This refers to a framework type. Should we have something in the library for basic data types?
 			required: off
+		},
+		typeProperty Size {
+			name: "size"
+			types: [_IntType] 
+			default: 0 
+			required: off
+			public: on
+			meta: "Size of connected outer block"
+		},
+		typeProperty Rate {
+			name: "rate"
+			types: [_RealType]
+			default: 0
+			required: off
+			public: on
+			meta: "Rate of connected outer block"
 		}
 	]
 	inherits: [_Base]
@@ -146,18 +162,6 @@ type _Reaction {
 			default: none
 			required: off
 		},
-		typeProperty Blocks { # User shouldn't have access to this set of blocks, how to implement that?
-			name: "blocks"
-			types: [""] # TODO how to accept lists?
-			default: []
-			required: on
-		},
-		typeProperty Streams {
-			name: "streams"
-			types: [""]
-			default: none
-			required: on
-		},
 		typeProperty Contraints {
 			name: "constraints"
 			types: [""]
@@ -165,7 +169,7 @@ type _Reaction {
 			required: off
 		}
 	]
-	inherits: [_Base, _DomainMember]
+	inherits: [_Base, _DomainMember, _CodeGenerator]
 }
 
 type _Loop {
@@ -176,18 +180,6 @@ type _Loop {
 			types: [ "" ]
 			default: none
 			required: off
-		},
-		typeProperty Blocks { 
-			name: "blocks"
-			types: [""] 
-			default: []
-			required: on
-		},
-		typeProperty Streams {
-			name: "streams"
-			types: [""]
-			default: none
-			required: on
 		},
 		typeProperty OnExecution {
 			name: "onExecution"
@@ -214,5 +206,5 @@ type _Loop {
 			required: off
 		}
 	]
-	inherits: [_Base]
+	inherits: [_Base, _CodeGenerator]
 }
