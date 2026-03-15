@@ -255,15 +255,9 @@ type _Signal {
 			types: [_IntLiteral, _RealLiteral, ""]
 			default: 0.0
 			required: off
-		},
-		typeProperty Type {
-			name: "type"
-			types: [""]
-			default: _RealType # Should be set to _DefaultTypeSignal
-			required: off
 		}
 	]
-	inherits: [_Streamable, _DomainMember]
+	inherits: [_Streamable, _Typed, _DomainMember]
 }
 
 type _Buffer {

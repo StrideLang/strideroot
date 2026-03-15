@@ -11,6 +11,18 @@ type _Alias {
 	]
 }
 
+type _Typed {
+	typeName: "_typed"
+	properties: [
+		typeProperty TypeProperty {
+			name: "type"
+			types: [_StringLiteral, ""] # allow type block
+			default: none # Should be resolved from platform and conext if not explicitly defined
+			required: off
+		}
+	]
+}
+
 type _Streamable {
 	typeName: "_streamable"
 	properties: [
