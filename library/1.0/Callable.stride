@@ -116,60 +116,16 @@ type _Port {
 	meta: ""
 }
 
-type _Module {
-	typeName: "module"
-	properties: [
-		typeProperty Contraints {
-			name: "constraints"
-			types: [""]
-			default: none
-			required: off
-		}
-	]
-	inherits: [_Base, _CodeGenerator, _Callable]
-	meta: "Modules encapsulate streams"
-}
 
-type _Reaction {
-	typeName: "reaction"
+type _Callable {
+	typeName: "callable"
 	properties: [
-		typeProperty Contraints {
-			name: "constraints"
-			types: [""]
-			default: none
+		typeProperty Ports {
+			name: "ports"
+			types: [ _MainOutputPort, _MainInputPort, _PropertyOutputPort, _PropertyInputPort ] 
+			default: []
 			required: off
 		}
 	]
-	inherits: [_Base, _DomainMember, _CodeGenerator, _Callable]
-}
-
-type _Loop {
-	typeName: "loop"
-	properties: [
-		typeProperty OnExecution {
-			name: "onExecution"
-			types: [""]
-			default: none
-			required: off
-		},
-		typeProperty OnTermination {
-			name: "onTermination"
-			types: [""]
-			default: none
-			required: off
-		},
-		typeProperty TerminateWhen {
-			name: "terminateWhen"
-			types: [""]
-			default: none
-			required: off
-		},
-		typeProperty Contraints {
-			name: "constraints"
-			types: [""]
-			default: none
-			required: off
-		}
-	]
-	inherits: [_Base, _CodeGenerator, _Callable]
+	meta: "Objects can be used as functions within streams"
 }

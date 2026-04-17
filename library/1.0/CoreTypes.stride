@@ -165,11 +165,18 @@ type _TypeProperty {
 			default: none
 			required: on
 		},
-		typeProperty Public {
+		typeProperty Public { # TODO enforce
 			name: "public"
 			types: [_SwitchLiteral]
-			default: off
+			default: on
 			required: off
+		},
+		typeProperty Writeable {
+			name: "writeable"
+			types: [_SwitchLiteral]
+			default: on
+			required: off
+			meta: "Defines whether type is publicly writeable." # TODO enforce
 		}
 	]
 	inherits: [_Base]
