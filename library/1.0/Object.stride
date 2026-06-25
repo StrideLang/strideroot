@@ -104,7 +104,7 @@ type _Base {
 		typeProperty Inherits {
 			name: "inherits"
 			types: [_StringLiteral, ""]
-			default: _Base
+			default: [ _Base ]
 			required: off
 		},
 		typeProperty Meta {

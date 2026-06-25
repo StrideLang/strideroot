@@ -264,7 +264,7 @@ type _Signal {
 			required: off
 		}
 	]
-	inherits: [_Streamable, _Typed, _DomainMember]
+	inherits: [_Streamable, _Typed, _DomainMember, _Resetable]
 }
 
 type _Buffer {
