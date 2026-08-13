@@ -26,7 +26,7 @@ platformModule Greater@Double_Bool {
 #    linkTo: []
 #    declarations: ['']
     # initializations: ["// CPP Greater Init"]
-    processing: "fcmp ogt"
+    processing: "llvm::fcmp ogt %%intokens:0%% %%intokens:1%%"
     inherits: [_Signal]
 }
 
@@ -46,7 +46,7 @@ platformModule Greater@Int_Bool {
 #    linkTo: []
 #    declarations: ['']
     # initializations: ["// CPP Greater Init"]
-    processing: "icmp gt"
+    processing: "llvm::icmp sgt %%intokens:0%% %%intokens:1%%"
     inherits: [_Signal]
 }
 
@@ -56,7 +56,7 @@ platformModule Equal@Double_Bool {
 #    linkTo: []
 #    declarations: ['']
     # initializations: ["// CPP Greater Init"]
-    processing: "fcmp oeq"
+    processing: "llvm::fcmp oeq %%intokens:0%% %%intokens:1%%"
     inherits: [_Signal]
 }
 
@@ -66,7 +66,7 @@ platformModule Equal@Int_Bool {
 #    linkTo: []
 #    declarations: ['']
     # initializations: ["// CPP Greater Init"]
-    processing: "icmp eq"
+    processing: "llvm::icmp eq %%intokens:0%% %%intokens:1%%"
     inherits: [_Signal]
 }
 
@@ -96,17 +96,17 @@ platformModule Less@Int_Bool {
 #    linkTo: []
 #    declarations: ['']
     # initializations: ["// CPP Greater Init"]
-    processing: "icmp lt"
+    processing: "llvm::icmp slt %%intokens:0%% %%intokens:1%%"
     inherits: [_Signal]
 }
 
-platformModule Less@Int_Bool {
+platformModule Less@Double_Bool {
     inputs: [_RealType, _RealType]
 	outputs: [_SwitchType]
 #    linkTo: []
 #    declarations: ['']
     # initializations: ["// CPP Greater Init"]
-    processing: "fcmp olt"
+    processing: "llvm::fcmp olt %%intokens:0%% %%intokens:1%%"
     inherits: [_Signal]
 }
 
