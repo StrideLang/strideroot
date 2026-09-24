@@ -210,7 +210,8 @@ type _Type {
 			required: off
 		}
 	]
-	meta: "type cannot inherit from 'base' to avoid circular dependencies"
+	inherits: []
+	meta: "type cannot inherit from '_Base' to avoid circular dependencies"
 }
 
 type _Constant {
