@@ -50,7 +50,7 @@ type _StateType {
 		},
 		typeProperty {
 			name: "initialState"
-			types: [_StateType]
+			types: [_StateType, _NoneLiteral]
 			default: none
 			required: off
 			meta: "The default sub-state to enter when this state becomes active."

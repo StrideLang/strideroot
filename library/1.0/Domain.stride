@@ -138,6 +138,17 @@ type _DomainDefinition {
 			types: [_StringLiteral]
 			default: ""
 			required: off
+		},
+		typeProperty StateMachines {
+			name: "stateMachines"
+			types: [
+				constrainedList {
+					anyOf: [_StateType]
+				}
+			]
+			default: []
+			required: off
+			meta: "State machines executed continuously within this domain."
 		}
 	]
 #	inherits: [_Base]
