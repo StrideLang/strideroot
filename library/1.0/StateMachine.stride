@@ -16,11 +16,39 @@ type _TransitionType {
 			meta: "Boolean stream or reaction that must evaluate to true to allow the transition."
 		},
 		typeProperty {
+			name: "guard"
+			types: [ constrainedList {anyOf:[_StreamType, _Streamable, _NoneLiteral] } ]
+			default: none
+			required: off
+			meta: "Guard signal, variable, or block required for the transition."
+		},
+		typeProperty {
+			name: "triggerOnGuard"
+			types: [ _SwitchLiteral ]
+			default: off
+			required: off
+			meta: "If on, transition triggers directly on guard signal changes."
+		},
+		typeProperty {
+			name: "onTransition"
+			types: [ constrainedList { anyOf: [_StreamType] } ]
+			default: []
+			required: off
+			meta: "Stream expressions to execute during the transition."
+		},
+		typeProperty {
 			name: "actions"
 			types: [ constrainedList { anyOf: [_StreamType] } ]
 			default: []
 			required: off
 			meta: "Stream expressions to execute during the transition."
+		},
+		typeProperty {
+			name: "targetState"
+			types: [ _StateType, _NoneLiteral ]
+			default: none
+			required: off
+			meta: "The target state for the transition."
 		},
 		typeProperty {
 			name: "newState"
@@ -91,6 +119,13 @@ type _StateType {
 			meta: "Stream expressions executed exactly once when entering this state."
 		},
 		typeProperty {
+			name: "onEnter"
+			types: [ constrainedList { anyOf: [_StreamType] } ]
+			default: []
+			required: off
+			meta: "Stream expressions executed exactly once when entering this state."
+		},
+		typeProperty {
 			name: "onProcess"
 			types: [ constrainedList { anyOf: [_StreamType] } ]
 			default: []
@@ -107,7 +142,7 @@ type _StateType {
 		typeProperty {
 			name: "onDone"
 			types: [
-                constrainedList {
+				constrainedList {
 					anyOf: [_TransitionType]
 				}
 			]
@@ -118,7 +153,7 @@ type _StateType {
 		typeProperty {
 			name: "transitions"
 			types: [
-                constrainedList {
+				constrainedList {
 					anyOf: [_TransitionType]
 				}
 			]

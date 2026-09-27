@@ -56,6 +56,18 @@ type _DomainDefinition {
 			required: off
 			meta: "A list of resources provided by the domain"
 		},
+		typeProperty Inputs {
+			name: "inputs"
+			types: [constrainedList {anyOf: [_BlockType]}]
+			default: []
+			required: off
+		},
+		typeProperty Outputs {
+			name: "outputs"
+			types: [constrainedList {anyOf: [_BlockType]}]
+			default: []
+			required: off
+		},
 #		typeProperty GlobalsTag {
 #			name: "globalsTag"
 #			types: [_StringLiteral]
