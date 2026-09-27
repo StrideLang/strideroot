@@ -70,7 +70,7 @@ platformModule __Less {
     inherits: [_Signal]
 }
 
-platformModule _NotEqual {
+platformModule __NotEqual {
     inputs: ["real", "real"]
 	outputs: ["bool"]
 #    linkTo: []
@@ -79,3 +79,46 @@ platformModule _NotEqual {
     outTokens: ["%%intokens:0%% != %%intokens:1%%"]
     inherits: [_Signal]
 }
+
+platformModule __And {
+    inputs: ["bool", "bool"]
+	outputs: ["bool"]
+    outTokens: ["%%intokens:0%% && %%intokens:1%%"]
+    inherits: [_Signal]
+}
+
+platformModule __Or {
+    inputs: ["bool", "bool"]
+	outputs: ["bool"]
+    outTokens: ["%%intokens:0%% || %%intokens:1%%"]
+    inherits: [_Signal]
+}
+
+platformModule __Not {
+    inputs: ["bool"]
+	outputs: ["bool"]
+    outTokens: ["!%%intokens:0%%"]
+    inherits: [_Signal]
+}
+
+platformModule __Xor {
+    inputs: ["bool", "bool"]
+	outputs: ["bool"]
+    outTokens: ["%%intokens:0%% != %%intokens:1%%"]
+    inherits: [_Signal]
+}
+
+platformModule __Nand {
+    inputs: ["bool", "bool"]
+	outputs: ["bool"]
+    outTokens: ["!(%%intokens:0%% && %%intokens:1%%)"]
+    inherits: [_Signal]
+}
+
+platformModule __Nor {
+    inputs: ["bool", "bool"]
+	outputs: ["bool"]
+    outTokens: ["!(%%intokens:0%% || %%intokens:1%%)"]
+    inherits: [_Signal]
+}
+

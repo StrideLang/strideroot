@@ -278,3 +278,130 @@ module Compare {
     ]
     meta: "Not implemented..."
 }
+
+module And {
+    ports: [
+        mainOutputPort OutputPort {
+            name:       'output'
+            block: Output
+        },
+        mainInputPort InputPort {
+            name:       'input'
+            block: Input
+        }
+    ]
+    blocks: [
+        switch Input[2] {domain: OutputPort.domain},
+        switch Output {domain: OutputPort.domain}
+    ]
+    streams: [
+       [Input[0], Input[1]] >> __And() >> Output;
+    ]
+    meta: "Logical AND operation"
+}
+
+module Or {
+    ports: [
+        mainOutputPort OutputPort {
+            name:       'output'
+            block: Output
+        },
+        mainInputPort InputPort {
+            name:       'input'
+            block: Input
+        }
+    ]
+    blocks: [
+        switch Input[2] {domain: OutputPort.domain},
+        switch Output {domain: OutputPort.domain}
+    ]
+    streams: [
+       [Input[0], Input[1]] >> __Or() >> Output;
+    ]
+    meta: "Logical OR operation"
+}
+
+module Not {
+    ports: [
+        mainOutputPort OutputPort {
+            name:       'output'
+            block: Output
+        },
+        mainInputPort InputPort {
+            name:       'input'
+            block: Input
+        }
+    ]
+    blocks: [
+        switch Input {domain: OutputPort.domain},
+        switch Output {domain: OutputPort.domain}
+    ]
+    streams: [
+       Input >> __Not() >> Output;
+    ]
+    meta: "Logical NOT operation"
+}
+
+module Xor {
+    ports: [
+        mainOutputPort OutputPort {
+            name:       'output'
+            block: Output
+        },
+        mainInputPort InputPort {
+            name:       'input'
+            block: Input
+        }
+    ]
+    blocks: [
+        switch Input[2] {domain: OutputPort.domain},
+        switch Output {domain: OutputPort.domain}
+    ]
+    streams: [
+       [Input[0], Input[1]] >> __Xor() >> Output;
+    ]
+    meta: "Logical XOR operation"
+}
+
+module Nand {
+    ports: [
+        mainOutputPort OutputPort {
+            name:       'output'
+            block: Output
+        },
+        mainInputPort InputPort {
+            name:       'input'
+            block: Input
+        }
+    ]
+    blocks: [
+        switch Input[2] {domain: OutputPort.domain},
+        switch Output {domain: OutputPort.domain}
+    ]
+    streams: [
+       [Input[0], Input[1]] >> __Nand() >> Output;
+    ]
+    meta: "Logical NAND operation"
+}
+
+module Nor {
+    ports: [
+        mainOutputPort OutputPort {
+            name:       'output'
+            block: Output
+        },
+        mainInputPort InputPort {
+            name:       'input'
+            block: Input
+        }
+    ]
+    blocks: [
+        switch Input[2] {domain: OutputPort.domain},
+        switch Output {domain: OutputPort.domain}
+    ]
+    streams: [
+       [Input[0], Input[1]] >> __Nor() >> Output;
+    ]
+    meta: "Logical NOR operation"
+}
+
