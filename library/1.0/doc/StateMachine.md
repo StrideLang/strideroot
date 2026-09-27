@@ -1,6 +1,6 @@
 # Stride State Machine Formalization
 
-This document outlines the declarative State Machine syntax for the Stride language, detailing the core schema and applied use cases. The schema provides structural completeness with respect to standard UML Statecharts and W3C SCXML formalizations.
+This document outlines the declarative State Machine syntax for the Stride language, detailing the core schema, execution semantics, and applied use cases. The schema provides structural completeness with respect to standard UML Statecharts and W3C SCXML formalizations.
 
 ## Core Schema (`StateMachine.stride`)
 **Path:** `strideroot/library/1.0/StateMachine.stride`
@@ -8,45 +8,74 @@ This document outlines the declarative State Machine syntax for the Stride langu
 The core library defines two universal base types: `_StateType` and `_TransitionType`.
 
 ### Architectural Principles
-- **Backend-Agnostic Design:** The schema is declarative, defining properties rather than execution logic. The Stride compiler determines the implementation, generating either flattened `enum`/`switch` branching for embedded MCUs or polymorphic classes (State Object Pattern) for high-level runtime environments.
-- **Stream-Driven Actions:** Lifecycle hooks (`onEntry`, `onProcess`, `onExit`) and transition `actions` strictly accept constrained lists of `_StreamType`. Encapsulating continuous logic within `onProcess` prevents the need for external polling streams.
+- **Backend-Agnostic Design:** The schema is declarative, defining structural properties rather than platform-specific execution logic. The Stride compiler determines the implementation, generating optimized `enum`/`switch` branching for embedded MCUs or polymorphic JIT compilation for high-level runtime environments.
+- **Stream-Driven Actions:** Lifecycle hooks (`onEntry`, `onProcess`, `onExit`) and transition action hooks (`onTransition`/`actions`) strictly accept constrained lists of `_StreamType`. Encapsulating continuous logic within `onProcess` eliminates the need for external polling loops.
+
+---
 
 ## State Lifecycle & Execution Semantics
+
 When a state machine processes data, it adheres strictly to the following structural and lifecycle rules:
 
 ### Lifecycle Hooks
-- `onEntry`: Stream expressions executed exactly once when the state becomes active. If the state contains child states, the parent's `onEntry` is executed before the child's `onEntry` (Top-Down).
-- `onProcess`: Stream expressions executed continuously (e.g., per tick or event loop) as long as the state remains active.
-- `onExit`: Stream expressions executed exactly once when the state is deactivated. When exiting a hierarchical state, the child's `onExit` executes before the parent's `onExit` (Bottom-Up).
+- `onEntry`: Stream expressions executed exactly once when the state becomes active. For hierarchical states, parent `onEntry` executes before child `onEntry` (Top-Down).
+- `onProcess`: Stream expressions executed continuously (per tick/sample) while the state remains active.
+- `onExit`: Stream expressions executed exactly once when exiting the state. For hierarchical states, child `onExit` executes before parent `onExit` (Bottom-Up).
 
-### Transitions, Preemption & Completion
+### Transitions & Guards
 Transitions dictate how the state machine moves from one state to another. They are evaluated sequentially based on their definition order in the `transitions` list.
 
-**Internal Transitions vs Self-Transitions**
-- **Internal Transitions:** Defined by entirely omitting the `newState` property. When triggered, the transition's `actions` are executed, but the state machine remains in the current state. **`onExit` and `onEntry` are NOT called.**
-- **Self-Transitions:** Defined when `newState` points to the *current* state. When triggered, the transition acts externally: the state's `onExit` is called, the transition `actions` execute, and the state's `onEntry` is called again.
+- `targetState` (or `newState`): The destination state. If omitted or set to `none`, the transition acts as an internal transition (executes `onTransition` actions without exiting or re-entering the current state).
+- `guard`: A signal variable, expression block (e.g. `[ GuardSignal > 0 ]`), string/keyword (`none`), or list specifying the guard condition required for the transition.
+- `triggerOnGuard`: Switch (`on` / `off`, default `off`). When `on`, the transition triggers directly whenever the guard condition evaluates to true (automatic guard-driven transition).
+- `onTransition` (or `actions`): Stream expressions executed while traversing the transition, after state `onExit` streams and before target state `onEntry` streams.
 
-**Transition Evaluation Order & Hierarchical Preemption**
-- **Order of Evaluation:** If multiple transitions have their `signal` and `condition` met simultaneously, the transition defined *highest* in the `transitions` list is executed.
-- **Hierarchical Preemption:** Parent state transitions take precedence over child state transitions. If a parent transition fires, the active child state is preempted. The child's `onExit` hook runs, followed by the parent's `onExit` hook, before the transition completes.
+### Guard Condition Updates (`updateGuard` & `updateGuardOnDomain`)
+To cleanly decouple continuous guard computation from transition branching, states can define explicit guard update streams:
 
-**Completion Transitions (`isFinal` and `onDone`)**
-When a child state marked `isFinal: on` is reached, it signals completion to the parent state. The parent will then evaluate its `onDone` transitions.
-- *Parallel Synchronization:* If the parent is an orthogonal state (`isParallel: on`), the parent will NOT evaluate `onDone` until *every* parallel region has reached its respective `isFinal: on` state.
+- `updateGuard`: List of stream expressions that re-compute or update guard signals/variables.
+- `updateGuardOnDomain`: Switch (`on` / `off`, default `off`).
+  - `off`: `updateGuard` streams execute only when the owning state is active, immediately before evaluating transition guards.
+  - `on`: `updateGuard` streams are hoisted to the main domain processing loop, executing unconditionally on every tick even when the owning state is inactive.
 
-### Orthogonality & History
-**Orthogonal Regions (`isParallel: on`)**
-When `isParallel: on` is specified, all child states in the `states` list become active simultaneously (rather than just the `initialState`).
-- *Exiting:* If the parent state transitions out, *all* active parallel child states have their `onExit` hooks called before the parent exits. 
+> [!TIP]
+> **Best Practices for `updateGuard`:**
+> 1. Keep `updateGuardOnDomain` set to `off` by default to avoid unnecessary CPU overhead and signal mutations from inactive states.
+> 2. Ensure guard updates perform pure signal evaluation where possible.
+> 3. In nested hierarchical states, parent `updateGuard` streams execute before child `updateGuard` streams.
 
-**History Pseudo-states (`resumeLastState: on`)**
-Instructs the state machine to remember the active child hierarchy when the state is exited. Upon re-entry, it restores the hierarchy instead of starting at `initialState`.
-- *First Entry:* If the state has never been entered, it defaults to the `initialState`.
-- *Final States:* If the state previously reached an `isFinal: on` child state before exiting, re-entry defaults back to the `initialState` (the history is cleared upon completion).
+---
+
+## Hierarchical, Parallel & History Formalizations
+
+### Transition Evaluation & Inheritance
+- **Order of Evaluation:** Within a state, transitions are evaluated sequentially. If multiple transitions evaluate to true simultaneously, the transition defined highest in the list executes.
+- **Hierarchical Preemption & Inheritance:** Active sub-states inherit transitions defined on all ancestor states. Sub-state transitions take precedence over parent transitions. If an ancestor transition fires:
+  1. Exit hooks (`onExit`) execute bottom-up from the active leaf sub-state up to the ancestor state owning the transition.
+  2. Ancestors with `resumeLastState: on` save the active leaf state ID into their history variable.
+  3. `onTransition` action streams execute.
+  4. Active state switches to the target state (resolving leaf initial state or restored history state).
+  5. Target state entry hooks (`onEntry`) execute top-down.
+
+### Orthogonal Regions (`isParallel: on`)
+When `isParallel: on` is specified, all child states in the `states` list become active simultaneously (rather than just `initialState`).
+- *Execution:* `onProcess` streams for all active parallel regions execute concurrently each tick.
+- *Exiting:* Exiting a parallel parent state executes `onExit` hooks for all active parallel regions before the parent state exits.
+
+### History Pseudo-States (`resumeLastState: on`)
+Instructs the state machine to remember the active child sub-state hierarchy when the composite state is exited. Upon re-entry, it restores the hierarchy instead of resetting to `initialState`.
+- *First Entry:* If the state has never been entered, it defaults to `initialState`.
+- *Final States:* If the state previously reached an `isFinal: on` child state before exiting, re-entry defaults back to `initialState`.
+
+### Completion States (`isFinal: on` & `onDone`)
+- `isFinal: on`: Reaching a state marked `isFinal: on` signals completion of its parent composite state.
+- `onDone`: Transitions defined on a parent state that evaluate automatically when all active child states reach an `isFinal: on` state.
+
+---
 
 ## Implementation Example (Bluetooth Headset)
 
-The following example demonstrates how the Stride syntax models a complex embedded system (a Bluetooth headset). It illustrates hardware hooks (`onEntry`/`onExit`), continuous data streams (`onProcess`), and hierarchical preemption.
+The following example demonstrates how Stride models a complex embedded system (a Bluetooth headset). It illustrates hardware hooks (`onEntry`/`onExit`), continuous data streams (`onProcess`), guard signals, and hierarchical preemption.
 
 ```mermaid
 stateDiagram-v2
@@ -78,17 +107,18 @@ stateDiagram-v2
 ```
 
 ```stride
-# Shared hardware signals/events used by the transitions
-blocks: [
-    signal PowerButtonHold { type: _IntType }
-    signal BluetoothConnected { type: _IntType }
-    signal BluetoothDisconnected { type: _IntType }
-    signal CallIncoming { type: _IntType }
-    signal CallEnded { type: _IntType }
-    signal MediaPlay { type: _IntType }
-    signal MediaPause { type: _IntType }
-    signal PairingButtonPress { type: _IntType }
-]
+# Shared hardware signals used by transitions
+signal PowerButtonHold { domain: RootDomain type: _IntType }
+signal BluetoothConnected { domain: RootDomain type: _IntType }
+signal BluetoothDisconnected { domain: RootDomain type: _IntType }
+signal CallIncoming { domain: RootDomain type: _IntType }
+signal CallEnded { domain: RootDomain type: _IntType }
+signal MediaPlay { domain: RootDomain type: _IntType }
+signal MediaPause { domain: RootDomain type: _IntType }
+signal PairingButtonPress { domain: RootDomain type: _IntType }
+signal IsRadioReady { domain: RootDomain type: _IntType }
+signal IsRadioOff { domain: RootDomain type: _IntType }
+signal IsPairingTimeout { domain: RootDomain type: _IntType }
 
 state BluetoothHeadset {
     states: [Off, PoweringOn, Active, PoweringOff]
@@ -96,41 +126,41 @@ state BluetoothHeadset {
 }
 
 state Off {
-    onEntry: [ on >> EnterDeepSleep(); ]
+    onEntry: [ EnterDeepSleep(); ]
     
     transitions: [
         transition {
-            signal: PowerButtonHold
-            newState: PoweringOn
+            guard: PowerButtonHold
+            targetState: PoweringOn
         }
     ]
 }
 
 state PoweringOn {
     onEntry: [ 
-        on >> WakeRadio(); 
-        on >> PlayPowerOnChime(); 
+        WakeRadio(); 
+        PlayPowerOnChime(); 
     ]
     
     transitions: [
         transition {
-            condition: IsRadioReady
-            newState: Active
+            guard: IsRadioReady
+            targetState: Active
         }
     ]
 }
 
 state PoweringOff {
     onEntry: [ 
-        on >> PlayPowerOffChime(); 
-        on >> DisconnectRadio(); 
-        on >> EnterDeepSleep(); 
+        PlayPowerOffChime(); 
+        DisconnectRadio(); 
+        EnterDeepSleep(); 
     ]
     
     transitions: [
         transition {
-            condition: IsRadioOff
-            newState: Off
+            guard: IsRadioOff
+            targetState: Off
         }
     ]
 }
@@ -144,43 +174,43 @@ state Active {
     
     transitions: [
         transition {
-            signal: PowerButtonHold
-            newState: PoweringOff
+            guard: PowerButtonHold
+            targetState: PoweringOff
         }
     ]
 }
 
 state Pairing {
     onEntry: [ 
-        on >> EnableDiscoverableMode(); 
-        on >> PlayPairingPrompt(); 
+        EnableDiscoverableMode(); 
+        PlayPairingPrompt(); 
     ]
-    onProcess: [ on >> FlashBlueRedLED(); ]
-    onExit: [ on >> DisableDiscoverableMode(); ]
+    onProcess: [ FlashBlueRedLED(); ]
+    onExit: [ DisableDiscoverableMode(); ]
     
     transitions: [
         transition {
-            signal: BluetoothConnected
-            newState: Connected
+            guard: BluetoothConnected
+            targetState: Connected
         },
         transition {
-            condition: IsPairingTimeout
-            newState: Disconnected
+            guard: IsPairingTimeout
+            targetState: Disconnected
         }
     ]
 }
 
 state Disconnected {
-    onProcess: [ on >> FlashBlueLED_Slow(); ]
+    onProcess: [ FlashBlueLED_Slow(); ]
     
     transitions: [
         transition {
-            signal: BluetoothConnected
-            newState: Connected
+            guard: BluetoothConnected
+            targetState: Connected
         },
         transition {
-            signal: PairingButtonPress 
-            newState: Pairing
+            guard: PairingButtonPress 
+            targetState: Pairing
         }
     ]
 }
@@ -190,61 +220,61 @@ state Connected {
     states: [Connected_Idle, MediaStreaming, InCall]
     initialState: Connected_Idle
     
-    onEntry: [ on >> PlayConnectedChime(); ]
-    onExit: [ on >> PlayDisconnectedChime(); ]
+    onEntry: [ PlayConnectedChime(); ]
+    onExit: [ PlayDisconnectedChime(); ]
     
     transitions: [
         transition {
-            signal: BluetoothDisconnected
-            newState: Disconnected
+            guard: BluetoothDisconnected
+            targetState: Disconnected
         }
     ]
 }
 
 state Connected_Idle {
-    onProcess: [ on >> DoubleFlashBlueLED(); ]
+    onProcess: [ DoubleFlashBlueLED(); ]
     
     transitions: [
         transition {
-            signal: MediaPlay
-            newState: MediaStreaming
+            guard: MediaPlay
+            targetState: MediaStreaming
         },
         transition {
-            signal: CallIncoming
-            newState: InCall
+            guard: CallIncoming
+            targetState: InCall
         }
     ]
 }
 
 state MediaStreaming {
-    onEntry: [ on >> ConfigureAudioHighQuality(); ]
-    onProcess: [ on >> StreamAudioData(); ]
+    onEntry: [ ConfigureAudioHighQuality(); ]
+    onProcess: [ StreamAudioData(); ]
     
     transitions: [
         transition {
-            signal: MediaPause
-            newState: Connected_Idle
+            guard: MediaPause
+            targetState: Connected_Idle
         },
         transition {
-            # An incoming call preeempts media streaming
-            signal: CallIncoming
-            newState: InCall
+            # An incoming call preempts media streaming
+            guard: CallIncoming
+            targetState: InCall
         }
     ]
 }
 
 state InCall {
     onEntry: [ 
-        on >> ConfigureAudioLowLatency(); 
-        on >> EnableMicrophone(); 
+        ConfigureAudioLowLatency(); 
+        EnableMicrophone(); 
     ]
-    onProcess: [ on >> StreamVoiceData(); ]
-    onExit: [ on >> DisableMicrophone(); ]
+    onProcess: [ StreamVoiceData(); ]
+    onExit: [ DisableMicrophone(); ]
     
     transitions: [
         transition {
-            signal: CallEnded
-            newState: Connected_Idle 
+            guard: CallEnded
+            targetState: Connected_Idle 
         }
     ]
 }

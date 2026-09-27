@@ -17,10 +17,10 @@ type _TransitionType {
 		},
 		typeProperty {
 			name: "guard"
-			types: [ constrainedList {anyOf:[_StreamType, _Streamable, _NoneLiteral] } ]
+			types: [ _Streamable, _NoneLiteral, _StringType ]
 			default: none
 			required: off
-			meta: "Guard signal, variable, or block required for the transition."
+			meta: "Guard signal or variable block required for the transition (or none)."
 		},
 		typeProperty {
 			name: "triggerOnGuard"
@@ -112,14 +112,21 @@ type _StateType {
 			meta: "Context or shared variables available within this state."
 		},
 		typeProperty {
-			name: "onEntry"
+			name: "updateGuard"
 			types: [ constrainedList { anyOf: [_StreamType] } ]
 			default: []
 			required: off
-			meta: "Stream expressions executed exactly once when entering this state."
+			meta: "Stream expressions executed to update guard conditions before transition evaluation."
 		},
 		typeProperty {
-			name: "onEnter"
+			name: "updateGuardOnDomain"
+			types: [_SwitchLiteral]
+			default: off
+			required: off
+			meta: "If on, updateGuard streams execute unconditionally on every domain tick."
+		},
+		typeProperty {
+			name: "onEntry"
 			types: [ constrainedList { anyOf: [_StreamType] } ]
 			default: []
 			required: off
