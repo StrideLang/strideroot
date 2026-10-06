@@ -15,3 +15,114 @@ module ExpectEqual {
 		Actual >> Expected;
 	]
 }
+
+module ExpectNear {
+	ports: [
+		mainOutputPort OutputPort {
+			block: Expected
+		},
+		mainInputPort InputPort {
+			block: Actual
+		},
+		propertyInputPort EpsilonPort {
+			name: 'epsilon'
+			block: Epsilon
+		}
+	]
+	blocks: [
+		propertyBlock Epsilon {
+			default: 0.0001
+		}
+	]
+	streams: [
+		Actual >> Expected;
+	]
+}
+
+module ExpectTrue {
+	ports: [
+		mainInputPort InputPort {
+			block: Actual
+		}
+	]
+	blocks: [
+	]
+	streams: [
+	]
+}
+
+module ExpectFalse {
+	ports: [
+		mainInputPort InputPort {
+			block: Actual
+		}
+	]
+	blocks: [
+	]
+	streams: [
+	]
+}
+
+module ExpectGt {
+	ports: [
+		mainOutputPort OutputPort {
+			block: Expected
+		},
+		mainInputPort InputPort {
+			block: Actual
+		}
+	]
+	blocks: [
+	]
+	streams: [
+		Actual >> Expected;
+	]
+}
+
+module ExpectGe {
+	ports: [
+		mainOutputPort OutputPort {
+			block: Expected
+		},
+		mainInputPort InputPort {
+			block: Actual
+		}
+	]
+	blocks: [
+	]
+	streams: [
+		Actual >> Expected;
+	]
+}
+
+module ExpectLt {
+	ports: [
+		mainOutputPort OutputPort {
+			block: Expected
+		},
+		mainInputPort InputPort {
+			block: Actual
+		}
+	]
+	blocks: [
+	]
+	streams: [
+		Actual >> Expected;
+	]
+}
+
+module ExpectLe {
+	ports: [
+		mainOutputPort OutputPort {
+			block: Expected
+		},
+		mainInputPort InputPort {
+			block: Actual
+		}
+	]
+	blocks: [
+	]
+	streams: [
+		Actual >> Expected;
+	]
+}
