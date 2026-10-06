@@ -2,27 +2,23 @@
 
 module ExpectEqual {
 	ports: [
-		mainOutputPort OutputPort {
-			block: Expected
-		},
 		mainInputPort InputPort {
-			block: Actual
+			name: 'input'
+			block: Input
 		}
 	]
 	blocks: [
+		signal Input[2]
 	]
 	streams: [
-		Actual >> Expected;
 	]
 }
 
 module ExpectNear {
 	ports: [
-		mainOutputPort OutputPort {
-			block: Expected
-		},
 		mainInputPort InputPort {
-			block: Actual
+			name: 'input'
+			block: Input
 		},
 		propertyInputPort EpsilonPort {
 			name: 'epsilon'
@@ -30,22 +26,24 @@ module ExpectNear {
 		}
 	]
 	blocks: [
+		signal Input[2]
 		propertyBlock Epsilon {
 			default: 0.0001
 		}
 	]
 	streams: [
-		Actual >> Expected;
 	]
 }
 
 module ExpectTrue {
 	ports: [
 		mainInputPort InputPort {
-			block: Actual
+			name: 'input'
+			block: Input
 		}
 	]
 	blocks: [
+		switch Input
 	]
 	streams: [
 	]
@@ -54,10 +52,12 @@ module ExpectTrue {
 module ExpectFalse {
 	ports: [
 		mainInputPort InputPort {
-			block: Actual
+			name: 'input'
+			block: Input
 		}
 	]
 	blocks: [
+		switch Input
 	]
 	streams: [
 	]
@@ -65,64 +65,56 @@ module ExpectFalse {
 
 module ExpectGt {
 	ports: [
-		mainOutputPort OutputPort {
-			block: Expected
-		},
 		mainInputPort InputPort {
-			block: Actual
+			name: 'input'
+			block: Input
 		}
 	]
 	blocks: [
+		signal Input[2]
 	]
 	streams: [
-		Actual >> Expected;
 	]
 }
 
 module ExpectGe {
 	ports: [
-		mainOutputPort OutputPort {
-			block: Expected
-		},
 		mainInputPort InputPort {
-			block: Actual
+			name: 'input'
+			block: Input
 		}
 	]
 	blocks: [
+		signal Input[2]
 	]
 	streams: [
-		Actual >> Expected;
 	]
 }
 
 module ExpectLt {
 	ports: [
-		mainOutputPort OutputPort {
-			block: Expected
-		},
 		mainInputPort InputPort {
-			block: Actual
+			name: 'input'
+			block: Input
 		}
 	]
 	blocks: [
+		signal Input[2]
 	]
 	streams: [
-		Actual >> Expected;
 	]
 }
 
 module ExpectLe {
 	ports: [
-		mainOutputPort OutputPort {
-			block: Expected
-		},
 		mainInputPort InputPort {
-			block: Actual
+			name: 'input'
+			block: Input
 		}
 	]
 	blocks: [
+		signal Input[2]
 	]
 	streams: [
-		Actual >> Expected;
 	]
 }
