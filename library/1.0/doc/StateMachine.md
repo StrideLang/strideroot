@@ -28,21 +28,34 @@ Transitions dictate how the state machine moves from one state to another. They 
 - `targetState` (or `newState`): The destination state. If omitted or set to `none`, the transition acts as an internal transition (executes `onTransition` actions without exiting or re-entering the current state).
 - `guard`: A signal variable, expression block (e.g. `[ GuardSignal > 0 ]`), string/keyword (`none`), or list specifying the guard condition required for the transition.
 - `triggerOnGuard`: Switch (`on` / `off`, default `off`). When `on`, the transition triggers directly whenever the guard condition evaluates to true (automatic guard-driven transition).
-- `onTransition` (or `actions`): Stream expressions executed while traversing the transition, after state `onExit` streams and before target state `onEntry` streams.
+- `onTransition`: Stream expressions executed while traversing the transition, after state `onExit` streams and before target state `onEntry` streams.
 
-### Guard Condition Updates (`updateGuard` & `updateGuardOnDomain`)
-To cleanly decouple continuous guard computation from transition branching, states can define explicit guard update streams:
+### Discrete Tick Semantics & Transition Timing
+In Stride domains, execution occurs in discrete ticks (samples). Within each domain tick, state machine processing follows a deterministic phase order:
 
-- `updateGuard`: List of stream expressions that re-compute or update guard signals/variables.
-- `updateGuardOnDomain`: Switch (`on` / `off`, default `off`).
-  - `off`: `updateGuard` streams execute only when the owning state is active, immediately before evaluating transition guards.
-  - `on`: `updateGuard` streams are hoisted to the main domain processing loop, executing unconditionally on every tick even when the owning state is inactive.
+1. **Initial Entry Tick (Domain Startup):**
+   - If the state machine is not yet entered (`isEntered == false`), the initial state's `onEntry` streams execute top-down, `isEntered` is marked `true`, and the initial state immediately executes its `onProcess` stream in the same initial tick.
 
-> [!TIP]
-> **Best Practices for `updateGuard`:**
-> 1. Keep `updateGuardOnDomain` set to `off` by default to avoid unnecessary CPU overhead and signal mutations from inactive states.
-> 2. Ensure guard updates perform pure signal evaluation where possible.
-> 3. In nested hierarchical states, parent `updateGuard` streams execute before child `updateGuard` streams.
+2. **Transition Tick (When a Transition Fires):**
+   - Transition guards are evaluated (including inherited ancestor transitions).
+   - When a transition fires:
+     1. `onExit` streams execute bottom-up for the exiting state hierarchy.
+     2. History state variables are recorded for any exiting composite state with `resumeLastState: on`.
+     3. `onTransition` action streams execute.
+     4. The active state ID is updated to the target state (resolving leaf initial or restored history states).
+     5. The transition request queue is cleared.
+     6. `updateGuard` and `onEntry` streams execute top-down for the target state hierarchy synchronously within this same transition tick.
+     7. The tick completes.
+
+3. **Steady-State Processing Tick (No Transition Firing):**
+   - Transition guards are evaluated (none trigger).
+   - `onProcess` streams of the active state execute.
+   - If the active state has `isParallel: on`, `onProcess` streams of all its active parallel child regions execute concurrently in the same tick.
+
+> [!NOTE]
+> **Execution Timing (`onEntry` vs `onProcess`):**
+> - **Same Tick (`onEntry` & `updateGuard`):** `onEntry` and `updateGuard` execute immediately in the **same tick** that the state change occurs. This establishes target state invariants and initializes guard signals instantaneously so external readers or next-step transitions observe a consistent state.
+> - **Next Tick (`onProcess`):** Continuous signal processing via `onProcess` begins on the tick *after* the transition completes. This prevents duplicate or partial sample calculations within a single time slice.
 
 ---
 
@@ -279,3 +292,14 @@ state InCall {
     ]
 }
 ```
+
+---
+
+## Future Work
+
+### Immediate Processing & Run-to-Completion (`immediateProcessOnTransition`)
+While the default discrete tick semantics (executing transitions and state entry in one tick, and `onProcess` in the subsequent tick) provide deterministic behavior for synchronous domains (like DSP and audio), future versions could introduce an optional configuration flag:
+
+- **`immediateProcessOnTransition: on`**:
+  Allows event-driven domains to optionally execute the newly entered state's `onProcess` stream immediately within the transition tick. This enables micro-step chaining and Run-to-Completion (RTC) semantics for UI and asynchronous event-queue processing without waiting for the next sample boundary.
+
