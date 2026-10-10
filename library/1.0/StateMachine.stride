@@ -9,15 +9,8 @@ type _TransitionType {
 			meta: "The event or signal that triggers this transition."
 		},
 		typeProperty {
-			name: "condition"
-			types: [ "" ]
-			default: none
-			required: off
-			meta: "Boolean stream or reaction that must evaluate to true to allow the transition."
-		},
-		typeProperty {
 			name: "guard"
-			types: [ _Streamable, _NoneLiteral, _StringType ]
+			types: [ _Streamable, _NoneLiteral ]
 			default: none
 			required: off
 			meta: "Guard signal or variable block required for the transition (or none)."
@@ -37,22 +30,8 @@ type _TransitionType {
 			meta: "Stream expressions to execute during the transition."
 		},
 		typeProperty {
-			name: "actions"
-			types: [ constrainedList { anyOf: [_StreamType] } ]
-			default: []
-			required: off
-			meta: "Stream expressions to execute during the transition."
-		},
-		typeProperty {
 			name: "targetState"
 			types: [ _StateType, _NoneLiteral ]
-			default: none
-			required: off
-			meta: "The target state for the transition."
-		},
-		typeProperty {
-			name: "newState"
-			types: [ _StateType ]
 			default: none
 			required: off
 			meta: "The target state for the transition."

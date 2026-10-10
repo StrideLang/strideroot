@@ -3,11 +3,17 @@
 type _FunctionTest {
 	typeName: "functionTest"
 	properties: [
+		typeProperty Target {
+			name: "target"
+			types: [""]
+			default: none
+			required: off
+		}
 		typeProperty Function {
 			name: "function"
 			types: [""]
 			default: none
-			required: on
+			required: off
 		}
 		typeProperty Prepare {
 			name: "prepare"

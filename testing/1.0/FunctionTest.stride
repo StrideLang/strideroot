@@ -3,11 +3,11 @@
 type _FunctionTest {
 	typeName: "functionTest"
 	properties: [
-		typeProperty Function {
-			name: "function"
+		typeProperty Target {
+			name: "target"
 			types: [""]
 			default: none
-			required: on
+			required: off
 		}
 		typeProperty Prepare {
 			name: "prepare"
@@ -23,7 +23,7 @@ type _FunctionTest {
 		}
 		typeProperty Timeout {
 			name: "timeout"
-			types: ["real"]
+			types: [_RealType]
 			default: 0.0
 			required: off
 		}

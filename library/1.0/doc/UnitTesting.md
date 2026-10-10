@@ -238,3 +238,34 @@ functionTest FilterResponseTest {
     ]
 }
 ```
+
+---
+
+## 6. CMake & CTest Integration
+
+Tests written in `.stride` files integrate directly with CMake and CTest without requiring external plugins:
+
+```cmake
+file(GLOB STRIDE_TEST_FILES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/data/*Test.stride")
+
+foreach(TEST_FILE ${STRIDE_TEST_FILES})
+    get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
+    add_test(
+        NAME "stridetest.${TEST_NAME}"
+        COMMAND stridetest "${TEST_FILE}"
+    )
+    set_tests_properties("stridetest.${TEST_NAME}" PROPERTIES
+        LABELS "StrideLanguage"
+        TIMEOUT 30
+    )
+endforeach()
+```
+
+### Running Tests
+```powershell
+# Run all tests with diagnostics
+ctest --test-dir build --output-on-failure
+
+# Filter only Stride language unit tests
+ctest --test-dir build --output-on-failure -R "stridetest\."
+```

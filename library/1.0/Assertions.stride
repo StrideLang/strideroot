@@ -8,7 +8,7 @@ module ExpectEqual {
 		}
 	]
 	blocks: [
-		signal Input[2]
+		signal Input[2] {}
 	]
 	streams: [
 	]
@@ -26,7 +26,7 @@ module ExpectNear {
 		}
 	]
 	blocks: [
-		signal Input[2]
+		signal Input[2] {}
 		propertyBlock Epsilon {
 			default: 0.0001
 		}
@@ -43,7 +43,7 @@ module ExpectTrue {
 		}
 	]
 	blocks: [
-		switch Input
+		switch Input {}
 	]
 	streams: [
 	]
@@ -57,7 +57,7 @@ module ExpectFalse {
 		}
 	]
 	blocks: [
-		switch Input
+		switch Input {}
 	]
 	streams: [
 	]
@@ -71,7 +71,7 @@ module ExpectGt {
 		}
 	]
 	blocks: [
-		signal Input[2]
+		signal Input[2] {}
 	]
 	streams: [
 	]
@@ -85,7 +85,7 @@ module ExpectGe {
 		}
 	]
 	blocks: [
-		signal Input[2]
+		signal Input[2] {}
 	]
 	streams: [
 	]
@@ -99,7 +99,7 @@ module ExpectLt {
 		}
 	]
 	blocks: [
-		signal Input[2]
+		signal Input[2] {}
 	]
 	streams: [
 	]
@@ -113,7 +113,7 @@ module ExpectLe {
 		}
 	]
 	blocks: [
-		signal Input[2]
+		signal Input[2] {}
 	]
 	streams: [
 	]
