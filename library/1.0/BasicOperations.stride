@@ -1,125 +1,112 @@
+# BasicOperations.stride
+# Array reduction and aggregation operations for Stride
+
 loop Sum {
-    ports:      [
+    ports: [
         mainInputPort InputPort {
-            block:  Input
-            meta:   'Bundle of signals to be added'
-        }
+            block: Input
+            meta: "Array of signals to be summed"
+        },
         mainOutputPort OutputPort {
-            block:  Output
-            meta:   'The sum of all signals at the input'
+            block: Output
+            meta: "The sum of all signals in the array"
         }
     ]
-    blocks:     [
-        signal Input [InputPort.size] {
-            rate:       OutputPort.rate
-            domain:     OutputPort.domain
-        }
+    blocks: [
+        signal Input[InputPort.size] {
+            rate: OutputPort.rate
+            domain: OutputPort.domain
+        },
         signal Output {
-            default:    0.0
-            rate:       OutputPort.rate
-            domain:     OutputPort.domain
-            reset:      Reset
-        }
+            default: 0.0
+            rate: OutputPort.rate
+            domain: OutputPort.domain
+            reset: Reset
+        },
         signal Index {
-            default:    0
-            rate:       none
-            domain:     OutputPort.domain
-            reset:      Reset
-        }
+            default: 0
+            rate: none
+            domain: OutputPort.domain
+            reset: Reset
+        },
         switch Done {
-            domain:     OutputPort.domain
-        }
-        trigger Reset {
-            #domain:     OutputPort.domain
-        }
+            domain: OutputPort.domain
+        },
+        trigger Reset {}
     ]
-    onExecution:    Reset
-    terminateWhen:  Done
-    streams:    [
-        Input[Index] + Output >>  Output;
+    onExecution: Reset
+    terminateWhen: Done
+    streams: [
+        Input[Index] + Output >> Output;
         Index + 1 >> Index;
-        [ Index , InputPort.size ] >>  Equal () >> Done;
+        [Index, InputPort.size] >> Equal() >> Done;
     ]
-    meta: 'Add all the signals at the input port'
+    meta: "Adds all signals in the input array: Input >> Sum() >> Output."
 }
 
 module Average {
-    ports:      [
+    ports: [
         mainInputPort InputPort {
-            block:  Input
-            meta:   ''
-        }
+            block: Input
+            meta: "Array of signals to be averaged"
+        },
         mainOutputPort OutputPort {
-            block:  Output
-            meta:   ''
+            block: Output
+            meta: "Arithmetic mean of all signals in the array"
         }
     ]
-    blocks:     [
-        signal Input [InputPort.size] {
-            rate:       OutputPort.rate
-            domain:     OutputPort.domain
-        }
+    blocks: [
+        signal Input[InputPort.size] {
+            rate: OutputPort.rate
+            domain: OutputPort.domain
+        },
         signal Output {
-            rate:       OutputPort.rate
-            domain:     OutputPort.domain
-        }
-        signal Sum {
-            rate:       OutputPort.rate
-            domain:     OutputPort.domain
+            rate: OutputPort.rate
+            domain: OutputPort.domain
+        },
+        signal SumVal {
+            rate: OutputPort.rate
+            domain: OutputPort.domain
         }
     ]
-    streams:    [
-        Input >> Sum() >> Sum;
-        Sum / InputPort.size >> Output;
+    streams: [
+        Input >> Sum() >> SumVal;
+        SumVal / InputPort.size >> Output;
     ]
+    meta: "Computes the arithmetic mean of all signals in the input array: Input >> Average() >> Output."
 }
-
 
 module Clip {
-    ports:      [
+    ports: [
         mainInputPort InputPort {
-            block:  Input
-            meta:   ''
-        }
+            block: Input
+            meta: "Input signal to constrain"
+        },
         mainOutputPort OutputPort {
-            block:  Output
-            meta:   ''
-        }
+            block: Output
+            meta: "Clipped output signal"
+        },
         propertyInputPort MinimumPort {
-            name: 'minimum'
-            block:  Min
-            meta:   ''
-        }
-        propertyInputPort MaximumPort {
-            name: 'maximum'
-            block:  Max
-            meta:   ''
-        }
-    ]
-    blocks:     [
-        signal Input {
-            rate:       OutputPort.rate
-            domain:     OutputPort.domain
-        }
-        signal Output {
-            rate:       OutputPort.rate
-            domain:     OutputPort.domain
-        }
-        signal Min {
-            rate:       OutputPort.rate
+            name: "minimum"
+            block: MinVal
             default: 0.0
-            domain:     OutputPort.domain
-        }
-        signal Max {
-            rate:       OutputPort.rate
+            meta: "Lower bound"
+        },
+        propertyInputPort MaximumPort {
+            name: "maximum"
+            block: MaxVal
             default: 1.0
-            domain:     OutputPort.domain
+            meta: "Upper bound"
         }
     ]
-    streams:    [
-        [Input, Min] >> Less() >> Select(whenOn: Min whenOff: Input) >> Input;  
-        [Input, Max] >> Greater() >> Select(whenOn: Max whenOff: Input) >> Output;  
+    blocks: [
+        signal Input  { domain: OutputPort.domain }
+        signal Output { domain: OutputPort.domain }
+        signal MinVal { domain: OutputPort.domain default: 0.0 }
+        signal MaxVal { domain: OutputPort.domain default: 1.0 }
     ]
-    meta: 'Limit signal within the values of minimum and maximum'
+    streams: [
+        Input >> Clamp(min: MinVal max: MaxVal) >> Output;
+    ]
+    meta: "Limits signal within minimum and maximum values: Input >> Clip(minimum: 0.0 maximum: 1.0) >> Output."
 }
-
