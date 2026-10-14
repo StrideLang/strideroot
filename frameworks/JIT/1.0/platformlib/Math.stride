@@ -1,4 +1,20 @@
 
+platformModule __Abs {
+    inputs: [_RealType]
+    outputs: [_RealType]
+    linkTo: ["m"]
+    processing: "@fabs"
+    inherits: [_Signal]
+}
+
+platformModule __Floor {
+    inputs: [_RealType]
+    outputs: [_RealType]
+    linkTo: ["m"]
+    processing: "@floor"
+    inherits: [_Signal]
+}
+
 # platformModule _Floor {
 #     inputs: [_RealType]
 # 	outputs: [_RealType] # FIXME shoudl be "int"
