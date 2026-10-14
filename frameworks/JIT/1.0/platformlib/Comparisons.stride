@@ -135,6 +135,27 @@ platformModule Nor@Bool_Bool {
     inherits: [_Signal]
 }
 
+platformModule Select@Double {
+    inputs: [_SwitchType, _RealType, _RealType]
+    outputs: [_RealType]
+    processing: "%%outtokens:0%% = llvm::select %%intokens:0%%, %%intokens:1%%, %%intokens:2%%"
+    inherits: [_Signal]
+}
+
+platformModule Select@Int {
+    inputs: [_SwitchType, _IntType, _IntType]
+    outputs: [_IntType]
+    processing: "%%outtokens:0%% = llvm::select %%intokens:0%%, %%intokens:1%%, %%intokens:2%%"
+    inherits: [_Signal]
+}
+
+platformModule Select@Bool {
+    inputs: [_SwitchType, _SwitchType, _SwitchType]
+    outputs: [_SwitchType]
+    processing: "%%outtokens:0%% = llvm::select %%intokens:0%%, %%intokens:1%%, %%intokens:2%%"
+    inherits: [_Signal]
+}
+
 # ==============================================================================
 # Platform Modules with '__' prefix (for library wrapper module calls)
 # ==============================================================================
@@ -271,3 +292,25 @@ platformModule __Nor@Bool_Bool {
     processing: "%%outtokens:0%% = llvm::nor %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
+
+platformModule __Select@Double {
+    inputs: [_SwitchType, _RealType, _RealType]
+    outputs: [_RealType]
+    processing: "%%outtokens:0%% = llvm::select %%intokens:0%%, %%intokens:1%%, %%intokens:2%%"
+    inherits: [_Signal]
+}
+
+platformModule __Select@Int {
+    inputs: [_SwitchType, _IntType, _IntType]
+    outputs: [_IntType]
+    processing: "%%outtokens:0%% = llvm::select %%intokens:0%%, %%intokens:1%%, %%intokens:2%%"
+    inherits: [_Signal]
+}
+
+platformModule __Select@Bool {
+    inputs: [_SwitchType, _SwitchType, _SwitchType]
+    outputs: [_SwitchType]
+    processing: "%%outtokens:0%% = llvm::select %%intokens:0%%, %%intokens:1%%, %%intokens:2%%"
+    inherits: [_Signal]
+}
+

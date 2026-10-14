@@ -13,9 +13,21 @@ module OnChange {
         }
     ]
     blocks: [
-        signal Input   { domain: OutputPort.domain }
-        switch Output  { domain: OutputPort.domain }
-        signal Prev    { domain: OutputPort.domain }
+        signal Input {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+        switch Output {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+        signal Prev{
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
     ]
     streams: [
         [Input, Prev] >> NotEqual() >> Output;
@@ -36,10 +48,27 @@ module RisingEdge {
         }
     ]
     blocks: [
-        switch Input   { domain: OutputPort.domain }
-        switch Output  { domain: OutputPort.domain }
-        switch Prev    { domain: OutputPort.domain default: off }
-        switch NotPrev { domain: OutputPort.domain }
+        switch Input   {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+        switch Output  {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+        switch Prev    {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+            default: off
+        }
+        switch NotPrev {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
     ]
     streams: [
         Prev >> Not() >> NotPrev;
@@ -61,10 +90,27 @@ module FallingEdge {
         }
     ]
     blocks: [
-        switch Input  { domain: OutputPort.domain }
-        switch Output { domain: OutputPort.domain }
-        switch Prev   { domain: OutputPort.domain default: off }
-        switch NotIn  { domain: OutputPort.domain }
+        switch Input  {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+        switch Output {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+        switch Prev   {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+            default: off
+        }
+        switch NotIn  {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
     ]
     streams: [
         Input >> Not() >> NotIn;
@@ -92,10 +138,28 @@ module Latch {
         }
     ]
     blocks: [
-        signal Input   { domain: OutputPort.domain }
-        signal Output  { domain: OutputPort.domain }
-        switch Trigger { domain: OutputPort.domain default: off }
-        signal Held    { domain: OutputPort.domain default: 0.0 }
+        signal Input   {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+        signal Output  {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+        switch Trigger {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+            default: off
+        }
+        signal Held    {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+            default: 0.0
+        }
     ]
     streams: [
         [Trigger, Input, Held] >> __Select() >> Held;
@@ -122,10 +186,28 @@ module Smooth {
         }
     ]
     blocks: [
-        signal Input  { domain: OutputPort.domain }
-        signal Output { domain: OutputPort.domain }
-        signal Coeff  { domain: OutputPort.domain default: 0.95 }
-        signal Prev   { domain: OutputPort.domain default: 0.0 }
+        signal Input {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+        signal Output {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+        signal Coeff {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+            default: 0.95
+        }
+        signal Prev {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+            default: 0.0
+        }
     ]
     streams: [
         (Input * (1.0 - Coeff)) + (Prev * Coeff) >> Output;

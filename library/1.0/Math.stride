@@ -31,8 +31,16 @@ module Abs {
 		}
 	]
 	blocks: [
-		signal Input  { domain: OutputPort.domain }
-		signal Output { domain: OutputPort.domain }
+		signal Input  {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+		signal Output {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
 	]
 	streams: [
 		Input >> __Abs() >> Output;
@@ -52,11 +60,31 @@ module Sign {
 		}
 	]
 	blocks: [
-		signal Input  { domain: OutputPort.domain }
-		signal Output { domain: OutputPort.domain }
-		switch IsPos  { domain: OutputPort.domain }
-		switch IsNeg  { domain: OutputPort.domain }
-		signal PosVal { domain: OutputPort.domain }
+		signal Input  {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+		signal Output {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+		switch IsPos  {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+		switch IsNeg  {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+		signal PosVal {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
 	]
 	streams: [
 		[Input, 0.0] >> Greater() >> IsPos;
@@ -79,8 +107,16 @@ module Cos {
 		}
 	]
 	blocks: [
-		signal Input  { domain: OutputPort.domain }
-		signal Output { domain: OutputPort.domain }
+		signal Input  {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+		signal Output {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
 	]
 	streams: [
 		Input >> __Cos() >> Output;
@@ -100,8 +136,16 @@ module Sin {
 		}
 	]
 	blocks: [	
-		signal Input  { domain: OutputPort.domain }
-		signal Output { domain: OutputPort.domain }
+		signal Input  {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+		signal Output {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
 	]
 	streams: [
 		Input >> __Sin() >> Output;
@@ -121,8 +165,16 @@ module Tan {
 		}
 	]
 	blocks: [
-		signal Input  { domain: OutputPort.domain }
-		signal Output { domain: OutputPort.domain }
+		signal Input  {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+		signal Output {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
 	]
 	streams: [
 		Input >> __Tan() >> Output;
@@ -143,10 +195,14 @@ module Divide {
 	]
 	blocks: [
 		signal Input[2] { 
+			rate: OutputPort.rate
+			type: OutputPort.type
 			domain: OutputPort.domain
 			meta: "Input values"
 		},
 		signal Output { 
+			rate: OutputPort.rate
+			type: OutputPort.type
 			domain: OutputPort.domain
 			meta: "Result of the division"
 		}
@@ -170,12 +226,14 @@ module Multiply {
 	]
 	blocks: [
 		signal Input[2] { 
+			rate: OutputPort.rate
+			type: OutputPort.type
 			domain: OutputPort.domain
-			meta: "Input values"
 		},
 		signal Output { 
+			rate: OutputPort.rate
+			type: OutputPort.type
 			domain: OutputPort.domain
-			meta: "Result of the multiplication" 
 		}
 	]
 	streams: [
@@ -196,8 +254,16 @@ module Inverse {
 		}
 	]
 	blocks: [
-		signal Input  { domain: OutputPort.domain meta: "Value to negate" },
-		signal Output { domain: OutputPort.domain meta: "The negated value" }
+		signal Input  { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		},
+		signal Output { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
 	]
 	streams: [
 		-Input >> Output;
@@ -218,9 +284,13 @@ module Pow {
 	]
 	blocks: [
 		signal Input[2] { 
+			rate: OutputPort.rate
+			type: OutputPort.type
 			domain: OutputPort.domain
 		},
 		signal Output {
+			rate: OutputPort.rate
+			type: OutputPort.type
 			domain: OutputPort.domain
 		}
 	]
@@ -242,8 +312,16 @@ module Exp {
 		}
 	]
 	blocks: [
-		signal Input  { domain: OutputPort.domain },
-		signal Output { domain: OutputPort.domain }
+		signal Input  { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		},
+		signal Output { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
 	]
 	streams: [
 		Input >> __Exp() >> Output;
@@ -264,12 +342,18 @@ module Max {
 	]
 	blocks: [
 		signal Input[2] {
+			rate: OutputPort.rate
+			type: OutputPort.type
 			domain: OutputPort.domain
 		},
 		signal Output {
+			rate: OutputPort.rate
+			type: OutputPort.type
 			domain: OutputPort.domain
 		},
 		switch Cond {
+			rate: OutputPort.rate
+			type: OutputPort.type
 			domain: OutputPort.domain
 		}
 	]
@@ -293,12 +377,18 @@ module Min {
 	]
 	blocks: [
 		signal Input[2] {
+			rate: OutputPort.rate
+			type: OutputPort.type
 			domain: OutputPort.domain
 		},
-		signal Output {
+		signal Output { 
+			rate: OutputPort.rate
+			type: OutputPort.type
 			domain: OutputPort.domain
 		},
 		switch Cond {
+			rate: OutputPort.rate
+			type: OutputPort.type
 			domain: OutputPort.domain
 		}
 	]
@@ -333,11 +423,33 @@ module Clamp {
 		}
 	]
 	blocks: [
-		signal Input  { domain: OutputPort.domain }
-		signal Output { domain: OutputPort.domain }
-		signal MinVal { domain: OutputPort.domain default: 0.0 }
-		signal MaxVal { domain: OutputPort.domain default: 1.0 }
-		signal Temp   { domain: OutputPort.domain }
+		signal Input  { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
+		signal Output { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
+		signal MinVal { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 0.0
+		}
+		signal MaxVal { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 1.0
+		}
+		signal Temp   { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
 	]
 	streams: [
 		[Input, MinVal] >> Max() >> Temp;
@@ -358,8 +470,16 @@ module Floor {
 		}
 	]
 	blocks: [
-		signal Input  { domain: OutputPort.domain },
-		signal Output { domain: OutputPort.domain }
+		signal Input  { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		},
+		signal Output { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
 	]
 	streams: [
 		Input >> __Floor() >> Output;
@@ -391,15 +511,53 @@ module Wrap {
 		}
 	]
 	blocks: [
-		signal Input  { domain: OutputPort.domain }
-		signal Output { domain: OutputPort.domain }
-		signal MinVal { domain: OutputPort.domain default: 0.0 }
-		signal MaxVal { domain: OutputPort.domain default: 1.0 }
-		signal Range  { domain: OutputPort.domain }
-		signal Offset { domain: OutputPort.domain }
-		signal ModVal { domain: OutputPort.domain }
-		signal Quo    { domain: OutputPort.domain }
-		signal Fl     { domain: OutputPort.domain }
+		signal Input  { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
+		signal Output { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
+		signal MinVal { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 0.0
+		}
+		signal MaxVal { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 1.0
+		}
+		signal Range  { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
+		signal Offset { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
+		signal ModVal { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
+		signal Quo    { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
+		signal Fl     { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
 	]
 	streams: [
 		MaxVal - MinVal >> Range;
@@ -436,10 +594,28 @@ module Lerp {
 		}
 	]
 	blocks: [
-		signal Input  { domain: OutputPort.domain }
-		signal Output { domain: OutputPort.domain }
-		signal Target { domain: OutputPort.domain default: 0.0 }
-		signal Factor { domain: OutputPort.domain default: 0.5 }
+		signal Input  { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
+		signal Output { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
+		signal Target { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 0.0
+		}
+		signal Factor { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 0.5
+		}
 	]
 	streams: [
 		Input + ((Target - Input) * Factor) >> Output;
@@ -483,13 +659,45 @@ module Map {
 		}
 	]
 	blocks: [
-		signal Input  { domain: OutputPort.domain }
-		signal Output { domain: OutputPort.domain }
-		signal InMin  { domain: OutputPort.domain default: 0.0 }
-		signal InMax  { domain: OutputPort.domain default: 1.0 }
-		signal OutMin { domain: OutputPort.domain default: 0.0 }
-		signal OutMax { domain: OutputPort.domain default: 1.0 }
-		signal Norm   { domain: OutputPort.domain }
+		signal Input  { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
+		signal Output { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
+		signal InMin  { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 0.0
+		}
+		signal InMax  { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 1.0
+		}
+		signal OutMin { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 0.0
+		}
+		signal OutMax { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 1.0
+		}
+		signal Norm   { 
+			rate: OutputPort.rate
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
 	]
 	streams: [
 		(Input - InMin) / (InMax - InMin) >> Norm;

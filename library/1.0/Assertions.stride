@@ -5,6 +5,7 @@ module ExpectEqual {
 		mainInputPort InputPort {
 			name: 'input'
 			block: Input
+			meta: "Two-element input list with values expected to be equal: [Actual, Expected]"
 		}
 	]
 	blocks: [
@@ -12,6 +13,7 @@ module ExpectEqual {
 	]
 	streams: [
 	]
+	meta: "Equality assertion module. Declared for schema validation; handled with special treatment in the testing framework."
 }
 
 module ExpectNear {
@@ -19,10 +21,12 @@ module ExpectNear {
 		mainInputPort InputPort {
 			name: 'input'
 			block: Input
+			meta: "Two-element input list with values expected to be close: [Actual, Expected]"
 		},
 		propertyInputPort EpsilonPort {
 			name: 'epsilon'
 			block: Epsilon
+			meta: "Tolerance threshold for approximate comparison"
 		}
 	]
 	blocks: [
@@ -33,6 +37,7 @@ module ExpectNear {
 	]
 	streams: [
 	]
+	meta: "Approximate equality assertion within epsilon tolerance. Declared for schema validation; handled with special treatment in the testing framework."
 }
 
 module ExpectTrue {
@@ -40,6 +45,7 @@ module ExpectTrue {
 		mainInputPort InputPort {
 			name: 'input'
 			block: Input
+			meta: "Condition value expected to be true (on)"
 		}
 	]
 	blocks: [
@@ -47,6 +53,7 @@ module ExpectTrue {
 	]
 	streams: [
 	]
+	meta: "Condition assertion (true). Declared for schema validation; handled with special treatment in the testing framework."
 }
 
 module ExpectFalse {
@@ -54,6 +61,7 @@ module ExpectFalse {
 		mainInputPort InputPort {
 			name: 'input'
 			block: Input
+			meta: "Condition value expected to be false (off)"
 		}
 	]
 	blocks: [
@@ -61,6 +69,7 @@ module ExpectFalse {
 	]
 	streams: [
 	]
+	meta: "Condition assertion (false). Declared for schema validation; handled with special treatment in the testing framework."
 }
 
 module ExpectGt {
@@ -68,6 +77,7 @@ module ExpectGt {
 		mainInputPort InputPort {
 			name: 'input'
 			block: Input
+			meta: "Two-element input list for greater-than comparison: [Actual, Expected]"
 		}
 	]
 	blocks: [
@@ -75,6 +85,7 @@ module ExpectGt {
 	]
 	streams: [
 	]
+	meta: "Greater-than assertion module (Actual > Expected). Declared for schema validation; handled with special treatment in the testing framework."
 }
 
 module ExpectGe {
@@ -82,6 +93,7 @@ module ExpectGe {
 		mainInputPort InputPort {
 			name: 'input'
 			block: Input
+			meta: "Two-element input list for greater-than-or-equal comparison: [Actual, Expected]"
 		}
 	]
 	blocks: [
@@ -89,6 +101,7 @@ module ExpectGe {
 	]
 	streams: [
 	]
+	meta: "Greater-than-or-equal assertion module (Actual >= Expected). Declared for schema validation; handled with special treatment in the testing framework."
 }
 
 module ExpectLt {
@@ -96,6 +109,7 @@ module ExpectLt {
 		mainInputPort InputPort {
 			name: 'input'
 			block: Input
+			meta: "Two-element input list for less-than comparison: [Actual, Expected]"
 		}
 	]
 	blocks: [
@@ -103,6 +117,7 @@ module ExpectLt {
 	]
 	streams: [
 	]
+	meta: "Less-than-or-equal assertion module (Actual < Expected). Declared for schema validation; handled with special treatment in the testing framework."
 }
 
 module ExpectLe {
@@ -110,6 +125,7 @@ module ExpectLe {
 		mainInputPort InputPort {
 			name: 'input'
 			block: Input
+			meta: "Two-element input list for less-than-or-equal comparison: [Actual, Expected]"
 		}
 	]
 	blocks: [
@@ -117,4 +133,5 @@ module ExpectLe {
 	]
 	streams: [
 	]
+	meta: "Less-than-or-equal assertion module (Actual <= Expected). Declared for schema validation; handled with special treatment in the testing framework."
 }

@@ -15,17 +15,20 @@ loop Sum {
     blocks: [
         signal Input[InputPort.size] {
             rate: OutputPort.rate
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal Output {
             default: 0.0
             rate: OutputPort.rate
+            type: OutputPort.type
             domain: OutputPort.domain
             reset: Reset
         },
         signal Index {
             default: 0
             rate: none
+            type: _IntType
             domain: OutputPort.domain
             reset: Reset
         },
@@ -58,14 +61,17 @@ module Average {
     blocks: [
         signal Input[InputPort.size] {
             rate: OutputPort.rate
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal Output {
             rate: OutputPort.rate
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal SumVal {
             rate: OutputPort.rate
+            type: OutputPort.type
             domain: OutputPort.domain
         }
     ]
@@ -100,10 +106,28 @@ module Clip {
         }
     ]
     blocks: [
-        signal Input  { domain: OutputPort.domain }
-        signal Output { domain: OutputPort.domain }
-        signal MinVal { domain: OutputPort.domain default: 0.0 }
-        signal MaxVal { domain: OutputPort.domain default: 1.0 }
+        signal Input  {
+            rate: OutputPort.rate
+            type: OutputPort.type 
+            domain: OutputPort.domain  
+        }
+        signal Output {
+            rate: OutputPort.rate
+            type: OutputPort.type 
+            domain: OutputPort.domain
+        }
+        signal MinVal {
+            rate: OutputPort.rate
+            type: OutputPort.type 
+            domain: OutputPort.domain
+            default: 0.0
+        }
+        signal MaxVal {
+            rate: OutputPort.rate
+            type: OutputPort.type 
+            domain: OutputPort.domain
+            default: 1.0
+        }
     ]
     streams: [
         Input >> Clamp(min: MinVal max: MaxVal) >> Output;

@@ -60,3 +60,23 @@ functionTest NotEqualTest {
         [ Output, [ off, on, off ] ] >> ExpectEqual();
     ]
 }
+
+functionTest AllOnTest {
+    target: AllOn
+    prepare: [
+        [ [ on, on, off ], [ off, on, on ], [ on, on, on ] ] >> Input;
+    ]
+    validate: [
+        [ Output, [ off, off, on ] ] >> ExpectEqual();
+    ]
+}
+
+functionTest AllOffTest {
+    target: AllOff
+    prepare: [
+        [ [ off, off, on ], [ on, on, off ], [ off, off, off ] ] >> Input;
+    ]
+    validate: [
+        [ Output, [ off, off, on ] ] >> ExpectEqual();
+    ]
+}

@@ -13,8 +13,16 @@ module Greater {
         }
     ]
     blocks: [
-        signal Input[2] { domain: OutputPort.domain }
-        switch Output   { domain: OutputPort.domain }
+        signal Input[2] {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+        switch Output{
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
     ]
     streams: [
         [Input[0], Input[1]] >> __Greater() >> Output;
@@ -34,8 +42,16 @@ module GreaterOrEqual {
         }
     ]
     blocks: [
-        signal Input[2] { domain: OutputPort.domain }
-        switch Output   { domain: OutputPort.domain }
+        signal Input[2]{
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+        switch Output{
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
     ]
     streams: [
         [Input[0], Input[1]] >> __GreaterOrEqual() >> Output;
@@ -55,8 +71,16 @@ module Less {
         }
     ]
     blocks: [
-        signal Input[2] { domain: OutputPort.domain }
-        switch Output   { domain: OutputPort.domain }
+        signal Input[2] {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+        switch Output{
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
     ]
     streams: [
         [Input[0], Input[1]] >> __Less() >> Output;
@@ -76,8 +100,16 @@ module LessOrEqual {
         }
     ]
     blocks: [
-        signal Input[2] { domain: OutputPort.domain }
-        switch Output   { domain: OutputPort.domain }
+        signal Input[2] {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+        switch Output{
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
     ]
     streams: [
         [Input[0], Input[1]] >> __LessOrEqual() >> Output;
@@ -97,8 +129,16 @@ module Equal {
         }
     ]
     blocks: [
-        signal Input[2] { domain: OutputPort.domain }
-        switch Output   { domain: OutputPort.domain }
+        signal Input[2] {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+        switch Output{
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
     ]
     streams: [
         [Input[0], Input[1]] >> __Equal() >> Output;
@@ -118,11 +158,112 @@ module NotEqual {
         }
     ]
     blocks: [
-        signal Input[2] { domain: OutputPort.domain }
-        switch Output   { domain: OutputPort.domain }
+        signal Input[2] {
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+        switch Output{
+            rate: OutputPort.rate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
     ]
     streams: [
         [Input[0], Input[1]] >> __NotEqual() >> Output;
     ]
     meta: "Compares two input values: outputs on if Input[0] != Input[1], else off."
+}
+
+loop AllOn {
+    ports: [
+        mainInputPort InputPort {
+            block: Input
+            meta: "Array of switches to be checked"
+        },
+        mainOutputPort OutputPort {
+            block: Output
+            meta: "Switch that is on only if all input switches are on"
+        }
+    ]
+    blocks: [
+        switch Input[InputPort.size] {
+            rate: OutputPort.rate
+            domain: OutputPort.domain
+        },
+        switch Output {
+            default: on
+            rate: OutputPort.rate
+            domain: OutputPort.domain
+            reset: Reset
+        },
+        signal Index {
+            default: 0
+            rate: none
+            type: _IntType
+            domain: OutputPort.domain
+            reset: Reset
+        },
+        switch Done {
+            domain: OutputPort.domain
+        },
+        trigger Reset {}
+    ]
+    onExecution: Reset
+    terminateWhen: Done
+    streams: [
+        [Output, Input[Index]] >> And() >> Output;
+        Index + 1 >> Index;
+        [Index, InputPort.size] >> Equal() >> Done;
+    ]
+    meta: "Outputs on if all switches in the input array are on: Input >> AllOn() >> Output."
+}
+
+loop AllOff {
+    ports: [
+        mainInputPort InputPort {
+            block: Input
+            meta: "Array of switches to be checked"
+        },
+        mainOutputPort OutputPort {
+            block: Output
+            meta: "Switch that is on only if all input switches are off"
+        }
+    ]
+    blocks: [
+        switch Input[InputPort.size] {
+            rate: OutputPort.rate
+            domain: OutputPort.domain
+        },
+        switch Output {
+            default: on
+            rate: OutputPort.rate
+            domain: OutputPort.domain
+            reset: Reset
+        },
+        switch InputOff {
+            rate: OutputPort.rate
+            domain: OutputPort.domain
+        },
+        signal Index {
+            default: 0
+            rate: none
+            type: _IntType
+            domain: OutputPort.domain
+            reset: Reset
+        },
+        switch Done {
+            domain: OutputPort.domain
+        },
+        trigger Reset {}
+    ]
+    onExecution: Reset
+    terminateWhen: Done
+    streams: [
+        Input[Index] >> Not() >> InputOff;
+        [Output, InputOff] >> And() >> Output;
+        Index + 1 >> Index;
+        [Index, InputPort.size] >> Equal() >> Done;
+    ]
+    meta: "Outputs on if all switches in the input array are off: Input >> AllOff() >> Output."
 }
