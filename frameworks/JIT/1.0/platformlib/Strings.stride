@@ -120,8 +120,35 @@ platformModule Print {
 }
 
 platformModule Concat {
-    inputs: [_StringType, _StringType]
+    inputs: [
+        constrainedList {
+            minItems: 2
+            anyOf: [_StringType]
+        }
+    ]
     outputs: [_StringType]
-    processing: "@__stride_jit_string_concat2"
+    processing: "@__stride_jit_string_concat_n"
     inherits: [_Signal]
 }
+
+platformModule Repeat {
+    inputs: [_StringType, _IntType]
+    outputs: [_StringType]
+    processing: "@__stride_jit_string_repeat"
+    inherits: [_Signal]
+}
+
+platformModule TokenAt {
+    inputs: [_StringType, _StringType, _IntType]
+    outputs: [_StringType]
+    processing: "@__stride_jit_string_token_at"
+    inherits: [_Signal]
+}
+
+platformModule TokenCount {
+    inputs: [_StringType, _StringType]
+    outputs: [_IntType]
+    processing: "@__stride_jit_string_token_count"
+    inherits: [_Signal]
+}
+
