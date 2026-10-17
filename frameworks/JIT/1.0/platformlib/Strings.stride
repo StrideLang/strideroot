@@ -139,13 +139,27 @@ platformModule Print {
 platformModule Concat {
     meta: "Concatenates two or more strings into a contiguous output string."
     inputs: [
-        constrainedList {
-            minItems: 2
-            anyOf: [_StringType]
+        variadic {
+            types: [_StringType]
+            min: 2
         }
     ]
     outputs: [_StringType]
     processing: "@__stride_jit_string_concat_n"
+    inherits: [_Signal]
+}
+
+platformModule Format {
+    meta: "Formats values into a string using a template with '{}' placeholders."
+    inputs: [
+        _StringType,
+        variadic {
+            types: [_IntType, _RealType, _SwitchType, _StringType]
+            min: 1
+        }
+    ]
+    outputs: [_StringType]
+    processing: "@__stride_jit_string_format"
     inherits: [_Signal]
 }
 

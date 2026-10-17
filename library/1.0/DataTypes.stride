@@ -25,3 +25,32 @@ type _TypeClassConversion {
     ]
     meta: ""
 }
+
+type _Variadic {
+    typeName: "variadic"
+    properties: [
+        typeProperty Types {
+            name: "types"
+            types: [""]
+            default: none
+            required: on
+            meta: "Allowed data types for the variadic arguments"
+        },
+        typeProperty Min {
+            name: "min"
+            types: [_IntLiteral]
+            default: 1
+            required: off
+            meta: "Minimum number of arguments required"
+        },
+        typeProperty Max {
+            name: "max"
+            types: [_IntLiteral, _NoneLiteral]
+            default: none
+            required: off
+            meta: "Maximum number of arguments allowed (none for unbounded)"
+        }
+    ]
+    meta: "Specifies a variable-length list of input arguments"
+}
+
