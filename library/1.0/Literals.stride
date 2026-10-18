@@ -5,7 +5,7 @@ type _StringLiteral {
 	properties: [
 		typeProperty Value {
 			name: "value"
-			types: [_StringLiteral]
+			allowedTypes: _StringLiteral
 			default: ""
 			required: off
 		}
@@ -17,7 +17,7 @@ type _IntLiteral {
 	properties: [
 		typeProperty Value {
 			name: "value"
-			types: [_IntLiteral]
+			allowedTypes: _IntLiteral
 			default: 1
 			required: off
 		}
@@ -29,7 +29,7 @@ type _RealLiteral {
 	properties: [
 		typeProperty Value {
 			name: "value"
-			types: [_RealLiteral]
+			allowedTypes: _RealLiteral
 			default: 0.0
 			required: off
 		}
@@ -42,7 +42,7 @@ type _PortProperty {
 	properties: [
 #		typeProperty Value {
 #			name: "value"
-#			types: [""]
+#			allowedTypes: _Any
 #			default: none
 #			required: off
 #		}
@@ -54,7 +54,7 @@ type _SwitchLiteral {
 	properties: [
 #		typeProperty Value {
 #			name: "value"
-#			types: [""]
+#			allowedTypes: _Any
 #			default: none
 #			required: off
 #		}
@@ -66,7 +66,7 @@ type _NoneLiteral {
 	properties: [
 #		typeProperty Value {
 #			name: "value"
-#			types: [""]
+#			allowedTypes: _Any
 #			default: none
 #			required: off
 #		}

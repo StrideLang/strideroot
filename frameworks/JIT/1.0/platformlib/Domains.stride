@@ -1,5 +1,5 @@
 resource _RootContext {
-	dependsOn: none
+	dependsOn: []
 	exclusive: none
 	meta: 'Root computation and memory context'
 }

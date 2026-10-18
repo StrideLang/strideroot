@@ -4,7 +4,7 @@ type _TableType {
 	properties: [
 		typeProperty DataTypePort {
 			name: "dataType"
-			types: [_StringLiteral]
+			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _NoneLiteral] }
 			default: none
 			required: off
 		}
@@ -20,13 +20,13 @@ type _BufferType {
 	properties: [
 		typeProperty ClassNamePort {
 			name: "className"
-			types: [_StringLiteral]
+			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _NoneLiteral] }
 			default: none
 			required: off
 		}
 		typeProperty DeclarationPort {
 			name: "declaration"
-			types: [_StringLiteral]
+			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _NoneLiteral] }
 			default: none
 			required: off
 		}

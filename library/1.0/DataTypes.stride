@@ -3,10 +3,9 @@ type _TypeClass {
     properties: [
         typeProperty Types {
             name: "types"
-            types: [""]
-            default: none
+            allowedTypes: constrainedList { anyOf: [_Base, _Any] }
             required: on
-            meta: "Members of the the type class"
+            meta: "Members of the type class"
         }
     ]
     meta: ""
@@ -17,10 +16,10 @@ type _TypeClassConversion {
     properties: [
 #        typeProperty Types {
 #            name: "types"
-#            types: [""]
-#            default: none
+#            allowedTypes: constrainedList { anyOf: [_Base, _Any] }
+#            default: []
 #            required: on
-#            meta: "Members of the the type class"
+#            meta: "Members of the type class"
 #        }
     ]
     meta: ""
@@ -31,21 +30,20 @@ type _Variadic {
     properties: [
         typeProperty Types {
             name: "types"
-            types: [""]
-            default: none
+            allowedTypes: constrainedList { anyOf: [_Base, _Any] }
             required: on
             meta: "Allowed data types for the variadic arguments"
         },
         typeProperty Min {
             name: "min"
-            types: [_IntLiteral]
+            allowedTypes: _IntLiteral
             default: 1
             required: off
             meta: "Minimum number of arguments required"
         },
         typeProperty Max {
             name: "max"
-            types: [_IntLiteral, _NoneLiteral]
+            allowedTypes: constrainedEntity { anyOf: [_IntLiteral, _NoneLiteral] }
             default: none
             required: off
             meta: "Maximum number of arguments allowed (none for unbounded)"
@@ -53,4 +51,3 @@ type _Variadic {
     ]
     meta: "Specifies a variable-length list of input arguments"
 }
-

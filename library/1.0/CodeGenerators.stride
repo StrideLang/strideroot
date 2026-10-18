@@ -3,14 +3,13 @@ type _CodeGenerator {
 	properties: [
 		typeProperty {
 			name: "blocks"
-			types: [ constrainedList {anyOf: [_Streamable, _Reaction, _Module]} ]
+			allowedTypes: constrainedList { anyOf: [_Streamable, _Reaction, _Module] }
 			default: []
 			required: off
 		},
 		typeProperty Streams {
 			name: "streams"
-			types: [ constrainedList {anyOf: [_StreamType]} ]
-			default: none
+			allowedTypes: constrainedList { anyOf: [_StreamType] }
 			required: on
 		}
 	]
@@ -21,8 +20,8 @@ type _Module {
 	properties: [
 		typeProperty Contraints {
 			name: "constraints"
-			types: [""]
-			default: none
+			allowedTypes: constrainedList { anyOf: [_StreamType, _Constraint, _Any] }
+			default: []
 			required: off
 		}
 	]
@@ -35,8 +34,8 @@ type _Reaction {
 	properties: [
 		typeProperty Contraints {
 			name: "constraints"
-			types: [""]
-			default: none
+			allowedTypes: constrainedList { anyOf: [_StreamType, _Constraint, _Any] }
+			default: []
 			required: off
 		}
 	]
@@ -48,26 +47,26 @@ type _Loop {
 	properties: [
 		typeProperty OnExecution {
 			name: "onExecution"
-			types: [""]
+			allowedTypes: constrainedEntity { anyOf: [_StreamType, _Streamable, _Reaction, _NoneLiteral] }
 			default: none
 			required: off
 		},
 		typeProperty OnTermination {
 			name: "onTermination"
-			types: [""]
+			allowedTypes: constrainedEntity { anyOf: [_StreamType, _Streamable, _Reaction, _NoneLiteral] }
 			default: none
 			required: off
 		},
 		typeProperty TerminateWhen {
 			name: "terminateWhen"
-			types: [""]
+			allowedTypes: constrainedEntity { anyOf: [_StreamType, _Streamable, _Switch, _Signal, _NoneLiteral] }
 			default: none
 			required: off
 		},
 		typeProperty Contraints {
 			name: "constraints"
-			types: [""]
-			default: none
+			allowedTypes: constrainedList { anyOf: [_StreamType, _Constraint, _Any] }
+			default: []
 			required: off
 		}
 	]

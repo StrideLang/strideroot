@@ -15,7 +15,7 @@ type _PropertyInputPort {
 	properties: [
 		typeProperty Default {
 			name: "default"
-			types: [""]
+			allowedTypes: constrainedEntity { anyOf: [_Any, _NoneLiteral] }
 			default: none
 			required: off
 		}
@@ -29,7 +29,7 @@ type _PropertyOutputPort {
 	properties: [
 		typeProperty Default {
 			name: "default"
-			types: [""]
+			allowedTypes: constrainedEntity { anyOf: [_Any, _NoneLiteral] }
 			default: none
 			required: off
 		}
@@ -43,28 +43,28 @@ type _PortAttributes {
 	properties: [
 		typeProperty Rate {
 			name: "rate"
-			types: [""]
+			allowedTypes: constrainedEntity { anyOf: [_RealLiteral, _IntLiteral, _NoneLiteral] }
 			default: 0
 			writeable: off
 			required: off
 		},
 		typeProperty Domain {
 			name: "domain"
-			types: [""] # This should be made to accept type handles
+			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _DomainDefinition, _NoneLiteral] } # This should be made to accept type handles
 			default: none
 			writeable: off
 			required: off
 		},
 		typeProperty Type {
 			name: "type"
-			types: [""] # This should be made to accept type handles
+			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _FrameworkDataType, _NoneLiteral] } # This should be made to accept type handles
 			default: none
 			writeable: off
 			required: off
 		},
 		typeProperty Size {
 			name: "size"
-			types: [""] # This should be made to accept type handles
+			allowedTypes: constrainedEntity { anyOf: [_IntLiteral, _NoneLiteral] } # This should be made to accept type handles
 			default: none
 			writeable: off
 			required: off
@@ -79,25 +79,24 @@ type _Port {
 	properties: [
 		typeProperty Name {
 			name: "name"
-			types: [_StringLiteral]
+			allowedTypes: _StringLiteral
 			default: ""
 			required: off
 		},
 		typeProperty Block {
 			name: "block"
-			types: [_Block]
-			default: none
+			allowedTypes: _Block
 			required: on
 		},
 		typeProperty Type {
 			name: "type"
-			types: [""] # This should be made to accept type handles
+			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _FrameworkDataType, _NoneLiteral] } # This should be made to accept type handles
 			default: none # None means undefined. Should be resolved from context, and if not possible should resolve to _DefaultSignalType
 			required: off
 		},
 		typeProperty Size {
 			name: "size"
-			types: [_IntType] 
+			allowedTypes: constrainedEntity { anyOf: [_IntLiteral, _NoneLiteral] } 
 			default: 0 
 			required: off
 			public: on
@@ -105,7 +104,7 @@ type _Port {
 		},
 		typeProperty Rate {
 			name: "rate"
-			types: [_RealType]
+			allowedTypes: constrainedEntity { anyOf: [_RealLiteral, _IntLiteral, _NoneLiteral] }
 			default: 0
 			required: off
 			public: on
@@ -122,7 +121,7 @@ type _Callable {
 	properties: [
 		typeProperty Ports {
 			name: "ports"
-			types: [ _MainOutputPort, _MainInputPort, _PropertyOutputPort, _PropertyInputPort ] 
+			allowedTypes: constrainedList { anyOf: [_MainOutputPort, _MainInputPort, _PropertyOutputPort, _PropertyInputPort] } 
 			default: []
 			required: off
 		}

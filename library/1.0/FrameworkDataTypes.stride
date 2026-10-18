@@ -1,15 +1,11 @@
-
-
-
 type _FrameworkTypeClass {
 	typeName: "frameworkTypeClass"
 	properties: [
 		typeProperty Types {
 			name: "types"
-			types: [""]
-			default: none
+			allowedTypes: constrainedList { anyOf: [_FrameworkDataType] }
 			required: on
-			meta: "Members of the the type class"
+			meta: "Members of the type class"
 		}
 	]
 	meta: ""
@@ -20,21 +16,20 @@ type _FrameworkDataType {
 	properties: [
 		typeProperty Name {
 			name: "name"
-			types: [_StringLiteral]
+			allowedTypes: _StringLiteral
 			default: ""
 			required: off
 			meta: "Name of the data type"
 		}
 		typeProperty FrameworkName {
 			name: "frameworkName"
-			types: [_StringLiteral]
-			default: none
+			allowedTypes: _StringLiteral
 			required: on
 			meta: "Name of the data type on the target platform"
 		}
 		typeProperty Includes {
 			name: "includes"
-			types: [""]
+			allowedTypes: constrainedList { anyOf: [_StringLiteral] }
 			default: []
 			required: off
 			meta: "Additional include files for the type"
@@ -42,4 +37,3 @@ type _FrameworkDataType {
 	]
 	meta: ""
 }
-

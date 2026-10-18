@@ -1,10 +1,9 @@
-
 type _Alias {
 	typeName: "alias"
 	properties: [
 		typeProperty InputName {
 			name: "block"
-			types: [""]
+			allowedTypes: _Any
 			default: none
 			required: off
 		}
@@ -16,8 +15,8 @@ type _Typed {
 	properties: [
 		typeProperty TypeProperty {
 			name: "type"
-			types: [_StringLiteral, ""] # allow type block
-			default: none # Should be resolved from platform and conext if not explicitly defined
+			allowedTypes: _Any # allow type block or string
+			default: none # Should be resolved from platform and context if not explicitly defined
 			required: off
 		}
 	]
@@ -28,13 +27,13 @@ type _Streamable {
 	properties: [
 		typeProperty InputName {
 			name: "inputName"
-			types: [_StringLiteral, ""]
+			allowedTypes: _Any
 			default: none
 			required: off
 		},
 		typeProperty OutputName {
 			name: "outputName"
-			types: [_StringLiteral, ""]
+			allowedTypes: _Any
 			default: none
 			required: off
 		}
@@ -47,7 +46,7 @@ type _Resetable {
 	properties: [
 		typeProperty Reset {
 			name: "reset"
-			types: [""]
+			allowedTypes: constrainedEntity { anyOf: [_Any, _NoneLiteral] }
 			default: none
 			required: off
 		}
@@ -59,7 +58,7 @@ type _Rated {
 	properties: [
 		typeProperty Rate {
 			name: "rate"
-			types: [_IntLiteral, _RealLiteral, _PortProperty, _NoneLiteral]
+			allowedTypes: constrainedEntity { anyOf: [_IntLiteral, _RealLiteral, _PortProperty, _NoneLiteral] }
 			default: none
 			required: off
 		}
@@ -72,7 +71,7 @@ type _DomainMember {
 	properties: [
 		typeProperty Domain {
 			name: "domain"
-			types: ["", _StringLiteral, _DomainDefinition]
+			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _DomainDefinition, _NoneLiteral] }
 			default: none
 			required: off
 		}
@@ -80,18 +79,35 @@ type _DomainMember {
 	inherits: [_Base]
 }
 
+type _CodeGenerator {
+	typeName: "codeGenerator"
+	properties: [
+		typeProperty {
+			name: "blocks"
+			allowedTypes: constrainedList { anyOf: [_Streamable, _Reaction, _Module] }
+			default: []
+			required: off
+		},
+		typeProperty Streams {
+			name: "streams"
+			allowedTypes: constrainedList { anyOf: [_StreamType] }
+			required: on
+		}
+	]
+}
+
 type _Base {
 	typeName: "base"
 	properties: [
 		typeProperty Inherits {
 			name: "inherits"
-			types: [_StringLiteral, ""]
+			allowedTypes: constrainedList { anyOf: [_StringLiteral, _Base] }
 			default: [ _Base ]
 			required: off
 		},
 		typeProperty Meta {
 			name: "meta"
-			types: [_StringLiteral, _Constant]
+			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _Constant] }
 			default: ""
 			required: off
 		}

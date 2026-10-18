@@ -5,31 +5,29 @@ type _FunctionTest {
 	properties: [
 		typeProperty Target {
 			name: "target"
-			types: [""]
+			allowedTypes: constrainedEntity { anyOf: [_Any, _NoneLiteral] }
 			default: none
 			required: off
 		}
 		typeProperty Function {
 			name: "function"
-			types: [""]
+			allowedTypes: constrainedEntity { anyOf: [_Any, _NoneLiteral] }
 			default: none
 			required: off
 		}
 		typeProperty Prepare {
 			name: "prepare"
-			types: [""]
-			default: none
+			allowedTypes: constrainedList { anyOf: [_StreamType] }
 			required: on
 		}
 		typeProperty Validate {
 			name: "validate"
-			types: [""]
-			default: none
+			allowedTypes: constrainedList { anyOf: [_StreamType] }
 			required: on
 		}
 		typeProperty Timeout {
 			name: "timeout"
-			types: ["real"]
+			allowedTypes: constrainedEntity { anyOf: [_RealLiteral, _IntLiteral] }
 			default: 0.0
 			required: off
 		}
