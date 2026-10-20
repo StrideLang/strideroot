@@ -28,31 +28,31 @@ type _FunctionTest {
     properties: [
         typeProperty Target {
             name: "target"
-            types: [""]
+            allowedTypes: [""]
             default: none
             required: off
         }
         typeProperty Function {
             name: "function"
-            types: [""]
+            allowedTypes: [""]
             default: none
             required: off
         }
         typeProperty Prepare {
             name: "prepare"
-            types: [""]
+            allowedTypes: [""]
             default: none
             required: on
         }
         typeProperty Validate {
             name: "validate"
-            types: [""]
+            allowedTypes: [""]
             default: none
             required: on
         }
         typeProperty Timeout {
             name: "timeout"
-            types: ["real"]
+            allowedTypes: ["real"]
             default: 0.0
             required: off
         }

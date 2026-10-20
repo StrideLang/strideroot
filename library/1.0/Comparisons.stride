@@ -20,7 +20,6 @@ module Greater {
         }
         switch Output{
             rate: OutputPort.rate
-            type: OutputPort.type
             domain: OutputPort.domain
         }
     ]
@@ -49,7 +48,6 @@ module GreaterOrEqual {
         }
         switch Output{
             rate: OutputPort.rate
-            type: OutputPort.type
             domain: OutputPort.domain
         }
     ]
@@ -78,7 +76,6 @@ module Less {
         }
         switch Output{
             rate: OutputPort.rate
-            type: OutputPort.type
             domain: OutputPort.domain
         }
     ]
@@ -107,7 +104,6 @@ module LessOrEqual {
         }
         switch Output{
             rate: OutputPort.rate
-            type: OutputPort.type
             domain: OutputPort.domain
         }
     ]
@@ -136,7 +132,6 @@ module Equal {
         }
         switch Output{
             rate: OutputPort.rate
-            type: OutputPort.type
             domain: OutputPort.domain
         }
     ]
@@ -165,7 +160,6 @@ module NotEqual {
         }
         switch Output{
             rate: OutputPort.rate
-            type: OutputPort.type
             domain: OutputPort.domain
         }
     ]

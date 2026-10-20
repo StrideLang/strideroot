@@ -46,7 +46,7 @@ type _Resetable {
 	properties: [
 		typeProperty Reset {
 			name: "reset"
-			allowedTypes: constrainedEntity { anyOf: [_Any, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_Any, _NoneLiteral] }
 			default: none
 			required: off
 		}
@@ -58,7 +58,7 @@ type _Rated {
 	properties: [
 		typeProperty Rate {
 			name: "rate"
-			allowedTypes: constrainedEntity { anyOf: [_IntLiteral, _RealLiteral, _PortProperty, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral, _PortProperty, _NoneLiteral] }
 			default: none
 			required: off
 		}
@@ -71,7 +71,7 @@ type _DomainMember {
 	properties: [
 		typeProperty Domain {
 			name: "domain"
-			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _DomainDefinition, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _DomainDefinition, _NoneLiteral] }
 			default: none
 			required: off
 		}
@@ -84,13 +84,13 @@ type _CodeGenerator {
 	properties: [
 		typeProperty {
 			name: "blocks"
-			allowedTypes: constrainedList { anyOf: [_Streamable, _Reaction, _Module] }
+			allowedTypes: constrainedList { allowed: [_Streamable, _Reaction, _Module] }
 			default: []
 			required: off
 		},
 		typeProperty Streams {
 			name: "streams"
-			allowedTypes: constrainedList { anyOf: [_StreamType] }
+			allowedTypes: constrainedList { allowed: [_StreamType] }
 			required: on
 		}
 	]
@@ -101,13 +101,13 @@ type _Base {
 	properties: [
 		typeProperty Inherits {
 			name: "inherits"
-			allowedTypes: constrainedList { anyOf: [_StringLiteral, _Base] }
+			allowedTypes: constrainedList { allowed: [_StringLiteral, _Base] }
 			default: [ _Base ]
 			required: off
 		},
 		typeProperty Meta {
 			name: "meta"
-			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _Constant] }
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _Constant] }
 			default: ""
 			required: off
 		}

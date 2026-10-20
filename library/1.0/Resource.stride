@@ -9,28 +9,28 @@ type _ResourceConfigurationType {
 		},
 		typeProperty PossibleValues {
 			name: "possibleValues"
-			allowedTypes: constrainedList { anyOf: [_Any] }
+			allowedTypes: constrainedList { allowed: [_Any] }
 			default: []
 			required: off
 			meta: "List of possible values for the option if empty, free selection"
 		},
 		typeProperty Minimum {
 			name: "minimum"
-			allowedTypes: constrainedEntity { anyOf: [_IntLiteral, _RealLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral, _NoneLiteral] }
 			default: none
 			required: off
 			meta: "Minimum value allowed"
 		},
 		typeProperty Maximum {
 			name: "maximum"
-			allowedTypes: constrainedEntity { anyOf: [_IntLiteral, _RealLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral, _NoneLiteral] }
 			default: none
 			required: off
 			meta: "Maximum value allowed"
 		},
 		typeProperty Default {
 			name: "default"
-			allowedTypes: constrainedEntity { anyOf: [_Any, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_Any, _NoneLiteral] }
 			default: none
 			required: off
 			meta: "Default value for option"
@@ -43,7 +43,7 @@ type _ResourceConfigurationType {
 		},
 		typeProperty Override {
 			name: "override"
-			allowedTypes: constrainedList { anyOf: [_List, _Any] }
+			allowedTypes: constrainedList { allowed: [_List, _Any] }
 			default: []
 			required: off
 			meta: "Override"
@@ -59,55 +59,55 @@ type _ResourceType {
 	properties: [
 		typeProperty Name {
 			name: "name"
-			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] }
 			default: none
 			required: off
 		},
 		typeProperty DependsOn {
 			name: "dependsOn"
-			allowedTypes: constrainedList { anyOf: [_ResourceType, _DomainResourceType, _StringLiteral] }
+			allowedTypes: constrainedList { allowed: [_ResourceType, _DomainResourceType, _StringLiteral] }
 			default: []
 			required: off
 		},
 		typeProperty Exclusive {
 			name: "exclusive"
-			allowedTypes: constrainedEntity { anyOf: [_SwitchLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_SwitchLiteral, _NoneLiteral] }
 			default: off
 			required: off
 		},
 		typeProperty Configuration {
 			name: "configuration"
-			allowedTypes: constrainedList { anyOf: [_ResourceConfigurationType, _StringLiteral] }
+			allowedTypes: constrainedList { allowed: [_ResourceConfigurationType, _StringLiteral] }
 			default: []
 			required: off
 		},
 		typeProperty Substitutions {
 			name: "substitutions"
-			allowedTypes: constrainedList { anyOf: [_StringLiteral] }
+			allowedTypes: constrainedList { allowed: [_StringLiteral] }
 			default: []
 			required: off
 		},
 		typeProperty Initializations {
 			name: "initializations"
-			allowedTypes: constrainedList { anyOf: [_StringLiteral] }
+			allowedTypes: constrainedList { allowed: [_StringLiteral] }
 			default: []
 			required: off
 		},
 		typeProperty Includes {
 			name: "includes"
-			allowedTypes: constrainedList { anyOf: [_StringLiteral] }
+			allowedTypes: constrainedList { allowed: [_StringLiteral] }
 			default: []
 			required: off
 		},
 		typeProperty Declarations {
 			name: "declarations"
-			allowedTypes: constrainedList { anyOf: [_StringLiteral] }
+			allowedTypes: constrainedList { allowed: [_StringLiteral] }
 			default: []
 			required: off
 		},
 		typeProperty Properties {
 			name: "properties"
-			allowedTypes: constrainedList { anyOf: [_TypeProperty, _Constraint, _StringLiteral] }
+			allowedTypes: constrainedList { allowed: [_TypeProperty, _Constraint, _StringLiteral] }
 			default: []
 			required: off
 		}
@@ -120,25 +120,25 @@ type _DomainResourceType {
 	properties: [
 		typeProperty Name {
 			name: "name"
-			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] }
 			default: none
 			required: off
 		},
 		typeProperty Exclusive {
 			name: "exclusive"
-			allowedTypes: constrainedEntity { anyOf: [_SwitchLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_SwitchLiteral, _NoneLiteral] }
 			default: off
 			required: off
 		},
 		typeProperty Configuration {
 			name: "configuration"
-			allowedTypes: constrainedList { anyOf: [_ResourceConfigurationType, _StringLiteral] }
+			allowedTypes: constrainedList { allowed: [_ResourceConfigurationType, _StringLiteral] }
 			default: []
 			required: off
 		},
 		typeProperty Properties {
 			name: "properties"
-			allowedTypes: constrainedList { anyOf: [_TypeProperty, _Constraint, _StringLiteral] }
+			allowedTypes: constrainedList { allowed: [_TypeProperty, _Constraint, _StringLiteral] }
 			default: []
 			required: off
 		}

@@ -3,7 +3,7 @@ type _Constant {
 	properties: [
 		typeProperty Value {
 			name: "value"
-			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _IntLiteral, _RealLiteral, _SwitchLiteral, _Constant, _ResourceType, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _IntLiteral, _RealLiteral, _SwitchLiteral, _Constant, _ResourceType, _NoneLiteral] }
 			default: none
 			required: off
 #			meta: "The constant value"
@@ -38,13 +38,13 @@ type _Signal {
 	properties: [
 		typeProperty Value {
 			name: "value"
-			allowedTypes: constrainedEntity { anyOf: [_IntLiteral, _RealLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral] }
 			default: 0.0
 			required: off
 		},
 		typeProperty Default {
 			name: "default"
-			allowedTypes: constrainedEntity { anyOf: [_IntLiteral, _RealLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral] }
 			default: 0.0
 			required: off
 		}
@@ -57,7 +57,7 @@ type _Buffer {
 	properties: [
 		typeProperty TypePort {
 			name: "type"
-			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] }
 			default: none
 			required: off
 		},
@@ -68,13 +68,13 @@ type _Buffer {
 		},
 		typeProperty RatePort {
 			name: "rate"
-			allowedTypes: constrainedEntity { anyOf: [_IntLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] }
 			default: none
 			required: off
 		},
 		typeProperty DefaultPort {
 			name: "default"
-			allowedTypes: constrainedEntity { anyOf: [_IntLiteral, _RealLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral, _NoneLiteral] }
 			default: none
 			required: off
 		},
@@ -99,13 +99,13 @@ type _Table {
 		},
 		typeProperty RatePort {
 			name: "rate"
-			allowedTypes: constrainedEntity { anyOf: [_IntLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] }
 			default: none
 			required: off
 		},
 		typeProperty TypePort {
 			name: "type"
-			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] }
 			default: none
 			required: off
 		},
@@ -131,7 +131,7 @@ type _StringType {
 		}
 		typeProperty MaxSize {
 			name: "maxSize"
-			allowedTypes: constrainedEntity { anyOf: [_IntLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] }
 			default: none
 			required: off
 			meta: "Maximum size of the string"
@@ -185,28 +185,28 @@ type _IteratorType {
 		},
 		typeProperty Rate {
 			name: "rate"
-			allowedTypes: constrainedEntity { anyOf: [_IntLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] }
 			default: none
 			required: off
 			meta: "Not supported yet, but could be of use in the future"
 		},
 		typeProperty Domain {
 			name: "domain"
-			allowedTypes: constrainedEntity { anyOf: [_Domain, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_Domain, _NoneLiteral] }
 			default: none
 			required: off
 			meta: "Not supported yet, but could be of use in the future"
 		},
 		typeProperty Reset {
 			name: "reset"
-			allowedTypes: constrainedEntity { anyOf: [_Trigger, _Signal, _Switch, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_Trigger, _Signal, _Switch, _NoneLiteral] }
 			default: none
 			required: off
 			meta: "This trigger will reset this iterator when triggered"
 		}
 		typeProperty Done {
 			name: "done"
-			allowedTypes: constrainedEntity { anyOf: [_Trigger, _Signal, _Switch, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_Trigger, _Signal, _Switch, _NoneLiteral] }
 			default: none
 			required: off
 			meta: "This trigger will be triggered when the iterator finishes a whole run"
@@ -220,7 +220,7 @@ type _GroupType {
 	properties: [
 		typeProperty Members {
 			name: "members"
-			allowedTypes: constrainedList { anyOf: [_Streamable] }
+			allowedTypes: constrainedList { allowed: [_Streamable] }
 			required: on
 			meta: "Members of the group"
 		}

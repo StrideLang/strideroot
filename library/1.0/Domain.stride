@@ -3,38 +3,38 @@ type _DomainDefinition {
 	properties: [
         typeProperty Substitutions {
 			name: "substitutions"
-			allowedTypes: constrainedList { anyOf: [_Any] }
+			allowedTypes: constrainedList { allowed: [_Any] }
 			default: []
 			required: off
 		},
 		typeProperty Framework {
 			name: "framework"
-			allowedTypes: _StringLiteral
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _FrameworkDescriptionType, _NoneLiteral] }
 			required: on
 		},
 		typeProperty ParentDomain {
 			name: "parentDomain"
-			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _DomainDefinition, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _DomainDefinition, _NoneLiteral] }
 			default: none
 			required: off
 			meta: "The domain's parent domain."
 		},
 		typeProperty MaxInstances {
 			name: "maxInstances"
-			allowedTypes: constrainedEntity { anyOf: [_IntLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] }
 			default: none
 			required: off
 			meta: "The maximum number of instances of this domain that can be created. Setting to none means no limit"
 		},
 		typeProperty DomainRate {
 			name: "rate"
-			allowedTypes: constrainedEntity { anyOf: [_RealLiteral, _IntLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_RealLiteral, _IntLiteral, _NoneLiteral] }
 			required: on
 			meta: "The domain's rate. A value of none indicates an asynchronous or immediate domain."
 		},
 		typeProperty External {
 			name: "external"
-			allowedTypes: constrainedList { anyOf: [_Signal, _Switch] }
+			allowedTypes: constrainedList { allowed: [_Signal, _Switch] }
 			default: []
 			required: off
 			meta: "Signals and switches in this domain that are owned outside the domain.
@@ -42,27 +42,27 @@ type _DomainDefinition {
 		},
 		typeProperty RequiresResources {
 			name: "requiresResources"
-			allowedTypes: constrainedList { anyOf: [_ResourceType] }
+			allowedTypes: constrainedList { allowed: [_ResourceType] }
 			default: []
 			required: off
 			meta: "A list of resources required by the domain"
 		},
 		typeProperty ProvidesResources {
 			name: "providesResources"
-			allowedTypes: constrainedList { anyOf: [_DomainResourceType] }
+			allowedTypes: constrainedList { allowed: [_DomainResourceType] }
 			default: []
 			required: off
 			meta: "A list of resources provided by the domain"
 		},
 		typeProperty Inputs {
 			name: "inputs"
-			allowedTypes: constrainedList { anyOf: [_Streamable, _Port, _Any] }
+			allowedTypes: constrainedList { allowed: [_Streamable, _Port, _Any] }
 			default: []
 			required: off
 		},
 		typeProperty Outputs {
 			name: "outputs"
-			allowedTypes: constrainedList { anyOf: [_Streamable, _Port, _Any] }
+			allowedTypes: constrainedList { allowed: [_Streamable, _Port, _Any] }
 			default: []
 			required: off
 		},
@@ -98,13 +98,13 @@ type _DomainDefinition {
 #		},
 		typeProperty DomainIncludes {
 			name: "domainIncludes"
-			allowedTypes: constrainedList { anyOf: [_StringLiteral] }
+			allowedTypes: constrainedList { allowed: [_StringLiteral] }
 			default: []
 			required: off
 		},
 		typeProperty DomainDeclarations {
 			name: "domainDeclarations"
-			allowedTypes: constrainedList { anyOf: [_StringLiteral] }
+			allowedTypes: constrainedList { allowed: [_StringLiteral] }
 			default: []
 			required: off
 		},
@@ -151,7 +151,7 @@ type _DomainDefinition {
 		},
 		typeProperty StateMachines {
 			name: "stateMachines"
-			allowedTypes: constrainedList { anyOf: [_StateType] }
+			allowedTypes: constrainedList { allowed: [_StateType] }
 			default: []
 			required: off
 			meta: "State machines executed continuously within this domain."

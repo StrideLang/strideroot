@@ -3,7 +3,7 @@ type _FrameworkTypeClass {
 	properties: [
 		typeProperty Types {
 			name: "types"
-			allowedTypes: constrainedList { anyOf: [_FrameworkDataType] }
+			allowedTypes: constrainedList { allowed: [_FrameworkDataType] }
 			required: on
 			meta: "Members of the type class"
 		}
@@ -29,7 +29,7 @@ type _FrameworkDataType {
 		}
 		typeProperty Includes {
 			name: "includes"
-			allowedTypes: constrainedList { anyOf: [_StringLiteral] }
+			allowedTypes: constrainedList { allowed: [_StringLiteral] }
 			default: []
 			required: off
 			meta: "Additional include files for the type"

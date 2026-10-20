@@ -3,21 +3,21 @@ type _TransitionType {
 	properties: [
 		typeProperty {
 			name: "signal"
-			allowedTypes: constrainedEntity { anyOf: [_Signal, _Switch, _StringLiteral, _PortProperty, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_Signal, _Switch, _StringLiteral, _PortProperty, _NoneLiteral] }
 			default: none
 			required: off
 			meta: "The event or signal that triggers this transition."
 		},
 		typeProperty {
 			name: "label"
-			allowedTypes: _StringType
+			allowedTypes: _StringLiteral
 			default: ""
 			required: off
 			meta: "The label or description for this transition."
 		},
 		typeProperty {
 			name: "guard"
-			allowedTypes: constrainedEntity { anyOf: [_Streamable, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_Streamable, _List, _IntLiteral, _SwitchLiteral, _NoneLiteral, _Any] }
 			default: none
 			required: off
 			meta: "Guard signal or variable block required for the transition (or none)."
@@ -31,14 +31,14 @@ type _TransitionType {
 		},
 		typeProperty {
 			name: "onTransition"
-			allowedTypes: constrainedList { anyOf: [_StreamType] }
+			allowedTypes: constrainedList { allowed: [_StreamType] }
 			default: []
 			required: off
 			meta: "Stream expressions to execute during the transition."
 		},
 		typeProperty {
 			name: "targetState"
-			allowedTypes: constrainedEntity { anyOf: [_StateType, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_StateType, _NoneLiteral] }
 			default: none
 			required: off
 			meta: "The target state for the transition."
@@ -54,7 +54,7 @@ type _StateType {
 			name: "states"
 			allowedTypes: constrainedList {
 				uniqueItems: on
-				anyOf: [_StateType]
+				allowed: [_StateType]
 			}
 			default: []
 			required: off
@@ -62,7 +62,7 @@ type _StateType {
 		},
 		typeProperty {
 			name: "initialState"
-			allowedTypes: constrainedEntity { anyOf: [_StateType, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_StateType, _NoneLiteral] }
 			default: none
 			required: off
 			meta: "The default sub-state to enter when this state becomes active."
@@ -90,14 +90,14 @@ type _StateType {
 		},
 		typeProperty {
 			name: "blocks"
-			allowedTypes: constrainedList { anyOf: [_Streamable, _Reaction, _Module] }
+			allowedTypes: constrainedList { allowed: [_Streamable, _Reaction, _Module] }
 			default: []
 			required: off
 			meta: "Context or shared variables available within this state."
 		},
 		typeProperty {
 			name: "updateGuard"
-			allowedTypes: constrainedList { anyOf: [_StreamType] }
+			allowedTypes: constrainedList { allowed: [_StreamType] }
 			default: []
 			required: off
 			meta: "Stream expressions executed to update guard conditions before transition evaluation."
@@ -111,21 +111,21 @@ type _StateType {
 		},
 		typeProperty {
 			name: "onEntry"
-			allowedTypes: constrainedList { anyOf: [_StreamType] }
+			allowedTypes: constrainedList { allowed: [_StreamType] }
 			default: []
 			required: off
 			meta: "Stream expressions executed exactly once when entering this state."
 		},
 		typeProperty {
 			name: "onProcess"
-			allowedTypes: constrainedList { anyOf: [_StreamType] }
+			allowedTypes: constrainedList { allowed: [_StreamType] }
 			default: []
 			required: off
 			meta: "Stream expressions executed continuously while in this state (e.g., per tick)."
 		},
 		typeProperty {
 			name: "onExit"
-			allowedTypes: constrainedList { anyOf: [_StreamType] }
+			allowedTypes: constrainedList { allowed: [_StreamType] }
 			default: []
 			required: off
 			meta: "Stream expressions executed exactly once before exiting this state."
@@ -133,7 +133,7 @@ type _StateType {
 		typeProperty {
 			name: "onDone"
 			allowedTypes: constrainedList {
-				anyOf: [_TransitionType]
+				allowed: [_TransitionType]
 			}
 			default: []
 			required: off
@@ -142,7 +142,7 @@ type _StateType {
 		typeProperty {
 			name: "transitions"
 			allowedTypes: constrainedList {
-				anyOf: [_TransitionType]
+				allowed: [_TransitionType]
 			}
 			default: []
 			required: off

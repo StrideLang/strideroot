@@ -15,7 +15,7 @@ type _PropertyInputPort {
 	properties: [
 		typeProperty Default {
 			name: "default"
-			allowedTypes: constrainedEntity { anyOf: [_Any, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_Any, _NoneLiteral] }
 			default: none
 			required: off
 		}
@@ -29,7 +29,7 @@ type _PropertyOutputPort {
 	properties: [
 		typeProperty Default {
 			name: "default"
-			allowedTypes: constrainedEntity { anyOf: [_Any, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_Any, _NoneLiteral] }
 			default: none
 			required: off
 		}
@@ -43,28 +43,28 @@ type _PortAttributes {
 	properties: [
 		typeProperty Rate {
 			name: "rate"
-			allowedTypes: constrainedEntity { anyOf: [_RealLiteral, _IntLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_RealLiteral, _IntLiteral, _NoneLiteral] }
 			default: 0
 			writeable: off
 			required: off
 		},
 		typeProperty Domain {
 			name: "domain"
-			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _DomainDefinition, _NoneLiteral] } # This should be made to accept type handles
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _DomainDefinition, _NoneLiteral] } # This should be made to accept type handles
 			default: none
 			writeable: off
 			required: off
 		},
 		typeProperty Type {
 			name: "type"
-			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _FrameworkDataType, _NoneLiteral] } # This should be made to accept type handles
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _FrameworkDataType, _NoneLiteral] } # This should be made to accept type handles
 			default: none
 			writeable: off
 			required: off
 		},
 		typeProperty Size {
 			name: "size"
-			allowedTypes: constrainedEntity { anyOf: [_IntLiteral, _NoneLiteral] } # This should be made to accept type handles
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } # This should be made to accept type handles
 			default: none
 			writeable: off
 			required: off
@@ -89,14 +89,14 @@ type _Port {
 			required: on
 		},
 		typeProperty Type {
-			name: "type"
-			allowedTypes: constrainedEntity { anyOf: [_StringLiteral, _FrameworkDataType, _NoneLiteral] } # This should be made to accept type handles
+			name: "allowedTypes"
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _FrameworkDataType, _NoneLiteral] } # This should be made to accept type handles
 			default: none # None means undefined. Should be resolved from context, and if not possible should resolve to _DefaultSignalType
 			required: off
 		},
 		typeProperty Size {
 			name: "size"
-			allowedTypes: constrainedEntity { anyOf: [_IntLiteral, _NoneLiteral] } 
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } 
 			default: 0 
 			required: off
 			public: on
@@ -104,7 +104,7 @@ type _Port {
 		},
 		typeProperty Rate {
 			name: "rate"
-			allowedTypes: constrainedEntity { anyOf: [_RealLiteral, _IntLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_RealLiteral, _IntLiteral, _NoneLiteral] }
 			default: 0
 			required: off
 			public: on
@@ -121,7 +121,7 @@ type _Callable {
 	properties: [
 		typeProperty Ports {
 			name: "ports"
-			allowedTypes: constrainedList { anyOf: [_MainOutputPort, _MainInputPort, _PropertyOutputPort, _PropertyInputPort] } 
+			allowedTypes: constrainedList { allowed: [_MainOutputPort, _MainInputPort, _PropertyOutputPort, _PropertyInputPort] } 
 			default: []
 			required: off
 		}
