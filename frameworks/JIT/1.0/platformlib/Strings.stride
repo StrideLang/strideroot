@@ -4,7 +4,7 @@ platformModule Substring {
     meta: "Extracts a zero-copy substring slice given start index and length (-1 for remainder of string)."
     inputs: [_StringType, _IntType, _IntType]
     outputs: [_StringType]
-    processing: "@__stride_jit_string_substring"
+    processing: "%%outtokens:0%% = @__stride_jit_string_substring %%intokens:0%%, %%intokens:1%%, %%intokens:2%%"
     inherits: [_Signal]
 }
 
@@ -12,7 +12,7 @@ platformModule Trim {
     meta: "Trims leading and trailing characters matching the charset from the input string."
     inputs: [_StringType, _StringType]
     outputs: [_StringType]
-    processing: "@__stride_jit_string_trim"
+    processing: "%%outtokens:0%% = @__stride_jit_string_trim %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
@@ -20,7 +20,7 @@ platformModule TrimLeft {
     meta: "Trims leading characters matching the charset from the input string."
     inputs: [_StringType, _StringType]
     outputs: [_StringType]
-    processing: "@__stride_jit_string_trim_left"
+    processing: "%%outtokens:0%% = @__stride_jit_string_trim_left %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
@@ -28,7 +28,7 @@ platformModule TrimRight {
     meta: "Trims trailing characters matching the charset from the input string."
     inputs: [_StringType, _StringType]
     outputs: [_StringType]
-    processing: "@__stride_jit_string_trim_right"
+    processing: "%%outtokens:0%% = @__stride_jit_string_trim_right %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
@@ -36,7 +36,7 @@ platformModule Find {
     meta: "Finds the first occurrence of a substring starting from an offset; returns 0-based index or -1 if not found."
     inputs: [_StringType, _StringType, _IntType]
     outputs: [_IntType]
-    processing: "@__stride_jit_string_find"
+    processing: "%%outtokens:0%% = @__stride_jit_string_find %%intokens:0%%, %%intokens:1%%, %%intokens:2%%"
     inherits: [_Signal]
 }
 
@@ -44,7 +44,7 @@ platformModule FindLast {
     meta: "Finds the last occurrence of a substring; returns 0-based index or -1 if not found."
     inputs: [_StringType, _StringType]
     outputs: [_IntType]
-    processing: "@__stride_jit_string_find_last"
+    processing: "%%outtokens:0%% = @__stride_jit_string_find_last %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
@@ -52,7 +52,7 @@ platformModule Contains {
     meta: "Checks if the string contains the specified substring; returns on/off switch."
     inputs: [_StringType, _StringType]
     outputs: [_SwitchType]
-    processing: "@__stride_jit_string_contains"
+    processing: "%%outtokens:0%% = @__stride_jit_string_contains %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
@@ -60,7 +60,7 @@ platformModule StartsWith {
     meta: "Checks if the string starts with the specified prefix; returns on/off switch."
     inputs: [_StringType, _StringType]
     outputs: [_SwitchType]
-    processing: "@__stride_jit_string_starts_with"
+    processing: "%%outtokens:0%% = @__stride_jit_string_starts_with %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
@@ -68,7 +68,7 @@ platformModule EndsWith {
     meta: "Checks if the string ends with the specified suffix; returns on/off switch."
     inputs: [_StringType, _StringType]
     outputs: [_SwitchType]
-    processing: "@__stride_jit_string_ends_with"
+    processing: "%%outtokens:0%% = @__stride_jit_string_ends_with %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
@@ -76,7 +76,7 @@ platformModule Equal@String_Bool {
     meta: "Compares two strings for byte-wise equality; returns on/off switch."
     inputs: [_StringType, _StringType]
     outputs: [_SwitchType]
-    processing: "@__stride_jit_string_equal"
+    processing: "%%outtokens:0%% = @__stride_jit_string_equal %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
@@ -84,7 +84,7 @@ platformModule Compare@String_Int {
     meta: "Performs lexicographical comparison of two strings; returns negative, 0, or positive integer."
     inputs: [_StringType, _StringType]
     outputs: [_IntType]
-    processing: "@__stride_jit_string_compare"
+    processing: "%%outtokens:0%% = @__stride_jit_string_compare %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
@@ -92,7 +92,7 @@ platformModule Length {
     meta: "Returns the byte length of the string."
     inputs: [_StringType]
     outputs: [_IntType]
-    processing: "@__stride_jit_string_length"
+    processing: "%%outtokens:0%% = @__stride_jit_string_length %%intokens:0%%"
     inherits: [_Signal]
 }
 
@@ -100,7 +100,7 @@ platformModule IsEmpty {
     meta: "Checks if the string is empty (length == 0); returns on/off switch."
     inputs: [_StringType]
     outputs: [_SwitchType]
-    processing: "@__stride_jit_string_is_empty"
+    processing: "%%outtokens:0%% = @__stride_jit_string_is_empty %%intokens:0%%"
     inherits: [_Signal]
 }
 
@@ -108,7 +108,7 @@ platformModule Parse@String_Int {
     meta: "Parses an integer from the string, returning the provided default value if parsing fails."
     inputs: [_StringType, _IntType]
     outputs: [_IntType]
-    processing: "@__stride_jit_string_parse_int"
+    processing: "%%outtokens:0%% = @__stride_jit_string_parse_int %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
@@ -116,7 +116,7 @@ platformModule Parse@String_Real {
     meta: "Parses a real number from the string, returning the provided default value if parsing fails."
     inputs: [_StringType, _RealType]
     outputs: [_RealType]
-    processing: "@__stride_jit_string_parse_real"
+    processing: "%%outtokens:0%% = @__stride_jit_string_parse_real %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
@@ -124,7 +124,7 @@ platformModule PrintLn {
     meta: "Prints the string followed by a newline to standard output."
     inputs: [_StringType]
     outputs: []
-    processing: "@__stride_jit_string_println"
+    processing: "@__stride_jit_string_println %%intokens:0%%"
     inherits: [_Signal]
 }
 
@@ -132,7 +132,7 @@ platformModule Print {
     meta: "Prints the string to standard output without a trailing newline."
     inputs: [_StringType]
     outputs: []
-    processing: "@__stride_jit_string_print"
+    processing: "@__stride_jit_string_print %%intokens:0%%"
     inherits: [_Signal]
 }
 
@@ -167,7 +167,7 @@ platformModule Repeat {
     meta: "Repeats the input string N times into a contiguous output string."
     inputs: [_StringType, _IntType]
     outputs: [_StringType]
-    processing: "@__stride_jit_string_repeat"
+    processing: "%%outtokens:0%% = @__stride_jit_string_repeat %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
@@ -175,7 +175,7 @@ platformModule TokenAt {
     meta: "Extracts the zero-copy token slice at the specified 0-based index using the delimiter."
     inputs: [_StringType, _StringType, _IntType]
     outputs: [_StringType]
-    processing: "@__stride_jit_string_token_at"
+    processing: "%%outtokens:0%% = @__stride_jit_string_token_at %%intokens:0%%, %%intokens:1%%, %%intokens:2%%"
     inherits: [_Signal]
 }
 
@@ -183,6 +183,6 @@ platformModule TokenCount {
     meta: "Returns the number of tokens in the string separated by the delimiter."
     inputs: [_StringType, _StringType]
     outputs: [_IntType]
-    processing: "@__stride_jit_string_token_count"
+    processing: "%%outtokens:0%% = @__stride_jit_string_token_count %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
