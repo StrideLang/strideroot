@@ -35,5 +35,86 @@ type _FrameworkDataType {
 			meta: "Additional include files for the type"
 		}
 	]
+	inherits: [_Base]
 	meta: ""
+}
+
+######################### Dummy framework types ##########################
+# Library declarations refer to these. Each framework declares its own
+# versions in its platformlib (Types.stride), which overlay these.
+
+frameworkDataType _RealType {
+	frameworkName: ""
+	meta: "Dummy type. Each framework declares its own _RealType, which overlays this one."
+}
+
+frameworkDataType _IntType {
+	frameworkName: ""
+	meta: "Dummy type. Each framework declares its own _IntType, which overlays this one."
+}
+
+frameworkDataType _UnsingedIntType {
+	frameworkName: ""
+	meta: "Dummy type. Each framework declares its own _UnsingedIntType, which overlays this one."
+}
+
+frameworkDataType _SizeType {
+	frameworkName: ""
+	meta: "Dummy type. Each framework declares its own _SizeType, which overlays this one."
+}
+
+frameworkDataType _SwitchType {
+	frameworkName: ""
+	meta: "Dummy type. Each framework declares its own _SwitchType, which overlays this one."
+}
+
+frameworkDataType _StringType {
+	frameworkName: ""
+	meta: "Dummy type. Each framework declares its own _StringType, which overlays this one."
+}
+
+typeClass _NumericTypes {
+	types: [_RealType, _IntType, _UnsingedIntType, _SizeType]
+	meta: "Dummy type class. Each framework declares its own _NumericTypes, which overlays this one."
+}
+
+# Buffer and table types (platformlib Buffer.stride in each framework)
+
+type _TableType {
+	typeName: "_tableType"
+	properties: [
+		typeProperty DataTypePort {
+			name: "dataType"
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] }
+			default: none
+			required: off
+		}
+	]
+	meta: "Dummy type. Each framework declares its own _TableType, which overlays this one."
+}
+
+type _BufferType {
+	typeName: "_bufferType"
+	properties: [
+		typeProperty ClassNamePort {
+			name: "className"
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] }
+			default: none
+			required: off
+		}
+		typeProperty DeclarationPort {
+			name: "declaration"
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] }
+			default: none
+			required: off
+		}
+	]
+	meta: "Dummy type. Each framework declares its own _BufferType, which overlays this one."
+}
+
+# Dummy type. Each framework declares its own _RingBufferType, which overlays
+# this one.
+_bufferType _RingBufferType {
+	className: none
+	declaration: none
 }

@@ -49,6 +49,13 @@ type _PortProperty {
 	]
 }
 
+type _MemberAccess {
+	typeName: "_memberAccess"
+	properties: [
+	]
+	meta: "Member access of a block property, e.g. InputPort.type"
+}
+
 type _SwitchLiteral {
 	typeName: "_switchLiteral"
 	properties: [

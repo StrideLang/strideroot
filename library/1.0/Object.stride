@@ -15,7 +15,7 @@ type _Typed {
 	properties: [
 		typeProperty TypeProperty {
 			name: "type"
-			allowedTypes: [_NumericTypes, _NoneLiteral] # typeClass provided by the framework
+			allowedTypes: [_NumericTypes, _MemberAccess, _NoneLiteral] # typeClass provided by the framework, or a port attribute (e.g. InputPort.type)
 			default: none # Resolved from stream connections, otherwise the first member of _NumericTypes
 			required: off
 		}

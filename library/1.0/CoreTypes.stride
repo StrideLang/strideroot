@@ -119,7 +119,7 @@ type _Table {
 	inherits: [_DomainMember, _Resetable]
 }
 
-type _StringType {
+type _String {
 	typeName: "string"
 	properties: [
 		typeProperty Default {
