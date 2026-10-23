@@ -72,12 +72,10 @@ module Sign {
         }
 		switch IsPos  {
             rate: OutputPort.rate
-            type: OutputPort.type
             domain: OutputPort.domain
         }
 		switch IsNeg  {
             rate: OutputPort.rate
-            type: OutputPort.type
             domain: OutputPort.domain
         }
 		signal PosVal {
@@ -353,7 +351,6 @@ module Max {
 		},
 		switch Cond {
 			rate: OutputPort.rate
-			type: OutputPort.type
 			domain: OutputPort.domain
 		}
 	]
@@ -388,7 +385,6 @@ module Min {
 		},
 		switch Cond {
 			rate: OutputPort.rate
-			type: OutputPort.type
 			domain: OutputPort.domain
 		}
 	]
@@ -412,13 +408,11 @@ module Clamp {
 		propertyInputPort MinValPort {
 			name: "min"
 			block: MinVal
-			default: 0.0
 			meta: "Minimum lower bound"
 		},
 		propertyInputPort MaxValPort {
 			name: "max"
 			block: MaxVal
-			default: 1.0
 			meta: "Maximum upper bound"
 		}
 	]
@@ -500,13 +494,11 @@ module Wrap {
 		propertyInputPort MinValPort {
 			name: "min"
 			block: MinVal
-			default: 0.0
 			meta: "Range lower bound"
 		},
 		propertyInputPort MaxValPort {
 			name: "max"
 			block: MaxVal
-			default: 1.0
 			meta: "Range upper bound"
 		}
 	]
@@ -583,13 +575,11 @@ module Lerp {
 		propertyInputPort TargetPort {
 			name: "target"
 			block: Target
-			default: 0.0
 			meta: "Target signal to blend towards"
 		},
 		propertyInputPort FactorPort {
 			name: "factor"
 			block: Factor
-			default: 0.5
 			meta: "Blend factor from 0.0 (Input) to 1.0 (Target)"
 		}
 	]
@@ -636,25 +626,21 @@ module Map {
 		propertyInputPort InMinPort {
 			name: "inMin"
 			block: InMin
-			default: 0.0
 			meta: "Source range minimum"
 		},
 		propertyInputPort InMaxPort {
 			name: "inMax"
 			block: InMax
-			default: 1.0
 			meta: "Source range maximum"
 		},
 		propertyInputPort OutMinPort {
 			name: "outMin"
 			block: OutMin
-			default: 0.0
 			meta: "Target range minimum"
 		},
 		propertyInputPort OutMaxPort {
 			name: "outMax"
 			block: OutMax
-			default: 1.0
 			meta: "Target range maximum"
 		}
 	]

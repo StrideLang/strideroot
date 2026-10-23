@@ -5,10 +5,10 @@ type _TypeClass {
             name: "types"
             allowedTypes: constrainedList { allowed: [_Base, _Any] }
             required: on
-            meta: "Members of the type class"
+            meta: "Members of the type class. The first member is the default data type."
         }
     ]
-    meta: ""
+    meta: "Groups framework data types. Use in allowedTypes to accept any member."
 }
 
 type _TypeClassConversion {

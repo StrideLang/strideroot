@@ -20,7 +20,6 @@ module OnChange {
         }
         switch Output {
             rate: OutputPort.rate
-            type: OutputPort.type
             domain: OutputPort.domain
         }
         signal Prev{
@@ -50,23 +49,19 @@ module RisingEdge {
     blocks: [
         switch Input   {
             rate: OutputPort.rate
-            type: OutputPort.type
             domain: OutputPort.domain
         }
         switch Output  {
             rate: OutputPort.rate
-            type: OutputPort.type
             domain: OutputPort.domain
         }
         switch Prev    {
             rate: OutputPort.rate
-            type: OutputPort.type
             domain: OutputPort.domain
             default: off
         }
         switch NotPrev {
             rate: OutputPort.rate
-            type: OutputPort.type
             domain: OutputPort.domain
         }
     ]
@@ -92,23 +87,19 @@ module FallingEdge {
     blocks: [
         switch Input  {
             rate: OutputPort.rate
-            type: OutputPort.type
             domain: OutputPort.domain
         }
         switch Output {
             rate: OutputPort.rate
-            type: OutputPort.type
             domain: OutputPort.domain
         }
         switch Prev   {
             rate: OutputPort.rate
-            type: OutputPort.type
             domain: OutputPort.domain
             default: off
         }
         switch NotIn  {
             rate: OutputPort.rate
-            type: OutputPort.type
             domain: OutputPort.domain
         }
     ]
@@ -133,7 +124,6 @@ module Latch {
         propertyInputPort TriggerProperty {
             name: "trigger"
             block: Trigger
-            default: off
             meta: "Sample trigger: when on, samples Input; when off, holds previous value"
         }
     ]
@@ -150,7 +140,6 @@ module Latch {
         }
         switch Trigger {
             rate: OutputPort.rate
-            type: OutputPort.type
             domain: OutputPort.domain
             default: off
         }
@@ -181,7 +170,6 @@ module Smooth {
         propertyInputPort CoeffProperty {
             name: "coefficient"
             block: Coeff
-            default: 0.95
             meta: "Smoothing coefficient between 0.0 (no smoothing) and 1.0 (freeze)"
         }
     ]

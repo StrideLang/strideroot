@@ -31,39 +31,8 @@ frameworkDataType _StringType {
 }
 
 ### ----------------------
+# Type classes: the first member of 'types' is the default data type.
 
-
-strideTypeDefaultDataType _DefaultSignalType {
-	strideType: "signal"
-	frameworkType: _RealType
-}
-
-strideTypeDefaultDataType _DefaultTableType {
-	strideType: "table"
-	frameworkType: _RealType
-}
-
-strideTypeDefaultDataType _DefaultSwitchType {
-	strideType: "switch"
-	frameworkType: _SwitchType
-}
-
-strideTypeDefaultDataType _DefaultTriggerType {
-	strideType: "trigger"
-	frameworkType: _SwitchType
-}
-
-strideTypeDefaultDataType _DefaultBufferType {
-	strideType: "buffer"
-	frameworkType: _RealType
-}
-
-strideTypeDefaultDataType _DefaultStringType {
-	strideType: "string"
-	frameworkType: _StringType
-}
-
-strideTypeDefaultDataType _DefaultSIteratorType {
-	strideType: "iterator"
-	frameworkType: _IntType
+typeClass _NumericTypes {
+	types: [_RealType, _IntType, _UnsingedIntType, _SizeType]
 }

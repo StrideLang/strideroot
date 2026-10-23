@@ -95,13 +95,11 @@ module Clip {
         propertyInputPort MinimumPort {
             name: "minimum"
             block: MinVal
-            default: 0.0
             meta: "Lower bound"
         },
         propertyInputPort MaximumPort {
             name: "maximum"
             block: MaxVal
-            default: 1.0
             meta: "Upper bound"
         }
     ]

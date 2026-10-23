@@ -24,7 +24,6 @@ module Select {
         propertyInputPort WhenOffProperty {
             name: "whenOff"
             block: WhenOff
-            default: none
             meta: "Signal produced when Condition is off (defaults to Input if not specified)"
         }
     ]

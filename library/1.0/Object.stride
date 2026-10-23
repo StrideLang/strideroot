@@ -15,8 +15,8 @@ type _Typed {
 	properties: [
 		typeProperty TypeProperty {
 			name: "type"
-			allowedTypes: _Any # allow type block or string
-			default: none # Should be resolved from platform and context if not explicitly defined
+			allowedTypes: [_NumericTypes, _NoneLiteral] # typeClass provided by the framework
+			default: none # Resolved from stream connections, otherwise the first member of _NumericTypes
 			required: off
 		}
 	]
@@ -38,7 +38,7 @@ type _Streamable {
 			required: off
 		}
 	]
-	inherits: [_Rated]
+	inherits: []
 }
 
 type _Resetable {
@@ -63,7 +63,8 @@ type _Rated {
 			required: off
 		}
 	]
-	inherits: [_Resetable]
+	inherits: []
+	meta: "Declarations without a rate are reactive: they take the rate of whatever writes to them"
 }
 
 type _DomainMember {

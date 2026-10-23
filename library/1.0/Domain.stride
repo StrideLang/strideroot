@@ -162,11 +162,11 @@ type _DomainDefinition {
 
 module Exit {
     ports: [
-        mainInputPort MainInputPort { block: Input type: _SwitchType }
+        mainInputPort MainInputPort { block: Input }
 		# TODO add secondary port taking return value.
     ]
     blocks: [
-        switch Input {type: _SwitchType}
+        switch Input {}
     ]
     streams: [
         Input >> reaction { streams: [ 1 >> __ExitDomain(); ]}; #TODO set return value dynamically

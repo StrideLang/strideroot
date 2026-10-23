@@ -13,12 +13,6 @@ type _MainOutputPort {
 type _PropertyInputPort {
 	typeName: "propertyInputPort"
 	properties: [
-		typeProperty Default {
-			name: "default"
-			allowedTypes: constrainedEntity { allowed: [_Any, _NoneLiteral] }
-			default: none
-			required: off
-		}
 	]
 	inherits: [_Port, _PortAttributes]
 	meta: ""
@@ -27,12 +21,6 @@ type _PropertyInputPort {
 type _PropertyOutputPort {
 	typeName: "propertyOutputPort"
 	properties: [
-		typeProperty Default {
-			name: "default"
-			allowedTypes: constrainedEntity { allowed: [_Any, _NoneLiteral] }
-			default: none
-			required: off
-		}
 	]
 	inherits: [_Port, _PortAttributes]
 	meta: ""
@@ -57,10 +45,11 @@ type _PortAttributes {
 		},
 		typeProperty Type {
 			name: "type"
-			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _FrameworkDataType, _NoneLiteral] } # This should be made to accept type handles
+			allowedTypes: constrainedEntity { allowed: [_FrameworkDataType, _NoneLiteral] }
 			default: none
 			writeable: off
 			required: off
+			meta: "Data type of the block connected to the port, populated by the compiler from stream connections"
 		},
 		typeProperty Size {
 			name: "size"
@@ -71,7 +60,7 @@ type _PortAttributes {
 		}
 	]
 	inherits: []
-	meta: "Port attributes should be set by the resolver, and only readable externally"
+	meta: "Port attributes are populated by the compiler from stream connections. They are read only (e.g. InputPort.type). Ports have no type or default: these come from the declaration of the bound block."
 }
 
 type _Port {

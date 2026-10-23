@@ -10,28 +10,21 @@ module Counter {
         propertyInputPort StartValuePort {
             name: "startValue"
             block: StartValue
-            default: 0
-            domain: OutputPort.domain
             meta: "The starting value of the counter, which is also the first output value."
         },
         propertyInputPort StopValuePort {
             name: "stopValue"
             block: StopValue
-            default: 100
-            domain: OutputPort.domain
             meta: "The roll value of the counter. The maximum value before resetting to startValue."
         },
         propertyInputPort IncrementPort {
             name: "increment"
             block: Increment
-            default: 1
-            domain: OutputPort.domain
             meta: "The step value added per tick."
         },
         propertyInputPort ResetPort {
             name: "reset"
             block: Reset
-            domain: OutputPort.domain
             meta: "The counter is reset to startValue when a trigger arrives at the reset port."
         }
     ]
@@ -48,7 +41,9 @@ module Counter {
             default: 1
             domain: OutputPort.domain
         },
-        trigger Reset {},
+        trigger Reset {
+            domain: OutputPort.domain
+        },
         signal Output {
             default: 0
             domain: OutputPort.domain

@@ -10,7 +10,6 @@ module Sequencer {
         propertyInputPort ValuesPort {
             name: "values"
             block: Values
-            default: []
             meta: "Values in the sequencer"
         }
     ]
