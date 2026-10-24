@@ -64,19 +64,19 @@ functionTest NotEqualTest {
 functionTest AllOnTest {
     target: AllOn
     prepare: [
-        [ [ on, on, off ], [ off, on, on ], [ on, on, on ] ] >> Input;
+        [ [ on, on, off ], [ off, on, on ], [ on, on, on ] ] >> AllOn_Input;
     ]
     validate: [
-        [ Output, [ off, off, on ] ] >> ExpectEqual();
+        [ AllOn_Output, [ off, off, on ] ] >> ExpectEqual();
     ]
 }
 
 functionTest AllOffTest {
     target: AllOff
     prepare: [
-        [ [ off, off, on ], [ on, on, off ], [ off, off, off ] ] >> Input;
+        [ [ off, off, on ], [ on, on, off ], [ off, off, off ] ] >> AllOff_Input;
     ]
     validate: [
-        [ Output, [ off, off, on ] ] >> ExpectEqual();
+        [ AllOff_Output, [ off, off, on ] ] >> ExpectEqual();
     ]
 }

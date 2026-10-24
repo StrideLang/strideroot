@@ -4,45 +4,45 @@
 loop Sum {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            block: Sum_Input
             meta: "Array of signals to be summed"
         },
         mainOutputPort OutputPort {
-            block: Output
+            block: Sum_Output
             meta: "The sum of all signals in the array"
         }
     ]
     blocks: [
-        signal Input[InputPort.size] {
+        signal Sum_Input[InputPort.size] {
             rate: OutputPort.rate
             type: OutputPort.type
             domain: OutputPort.domain
         },
-        signal Output {
+        signal Sum_Output {
             default: 0.0
             rate: OutputPort.rate
             type: OutputPort.type
             domain: OutputPort.domain
-            reset: Reset
+            reset: Sum_Reset
         },
-        signal Index {
+        signal Sum_Index {
             default: 0
             rate: none
             type: _IntType
             domain: OutputPort.domain
-            reset: Reset
+            reset: Sum_Reset
         },
-        switch Done {
+        switch Sum_Done {
             domain: OutputPort.domain
         },
-        trigger Reset {}
+        trigger Sum_Reset {}
     ]
-    onExecution: Reset
-    terminateWhen: Done
+    onExecution: Sum_Reset
+    terminateWhen: Sum_Done
     streams: [
-        Input[Index] + Output >> Output;
-        Index + 1 >> Index;
-        [Index, InputPort.size] >> Equal() >> Done;
+        Sum_Input[Sum_Index] + Sum_Output >> Sum_Output;
+        Sum_Index + 1 >> Sum_Index;
+        [Sum_Index, InputPort.size] >> Equal() >> Sum_Done;
     ]
     meta: "Adds all signals in the input array: Input >> Sum() >> Output."
 }

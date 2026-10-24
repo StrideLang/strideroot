@@ -15,7 +15,7 @@ module OnChange {
     blocks: [
         signal Input {
             rate: OutputPort.rate
-            type: OutputPort.type
+            type: InputPort.type
             domain: OutputPort.domain
         }
         switch Output {
@@ -24,7 +24,7 @@ module OnChange {
         }
         signal Prev{
             rate: OutputPort.rate
-            type: OutputPort.type
+            type: InputPort.type
             domain: OutputPort.domain
         }
     ]
