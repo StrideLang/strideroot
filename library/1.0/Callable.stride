@@ -34,20 +34,25 @@ type _PortAttributes {
 			allowedTypes: constrainedEntity { allowed: [_RealLiteral, _IntLiteral, _NoneLiteral] }
 			default: 0
 			writeable: off
+			public: on
 			required: off
+			meta: "Rate of the block connected to the port, populated by the compiler from stream connections"
 		},
 		typeProperty Domain {
 			name: "domain"
 			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _DomainDefinition, _NoneLiteral] } # This should be made to accept type handles
 			default: none
 			writeable: off
+			public: on
 			required: off
+			meta: "Domain of the block connected to the port, populated by the compiler from stream connections"
 		},
 		typeProperty Type {
 			name: "type"
 			allowedTypes: constrainedEntity { allowed: [_FrameworkDataType, _NoneLiteral] }
 			default: none
 			writeable: off
+			public: on
 			required: off
 			meta: "Data type of the block connected to the port, populated by the compiler from stream connections"
 		},
@@ -56,7 +61,9 @@ type _PortAttributes {
 			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } # This should be made to accept type handles
 			default: none
 			writeable: off
+			public: on
 			required: off
+			meta: "Size of the block connected to the port, populated by the compiler from stream connections"
 		}
 	]
 	inherits: []
@@ -83,22 +90,6 @@ type _Port {
 			default: none # None means undefined. Should be resolved from context, and if not possible should resolve to _DefaultSignalType
 			required: off
 		},
-		typeProperty Size {
-			name: "size"
-			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } 
-			default: 0 
-			required: off
-			public: on
-			meta: "Size of connected outer block"
-		},
-		typeProperty Rate {
-			name: "rate"
-			allowedTypes: constrainedEntity { allowed: [_RealLiteral, _IntLiteral, _NoneLiteral] }
-			default: 0
-			required: off
-			public: on
-			meta: "Rate of connected outer block"
-		}
 	]
 	inherits: [_Base]
 	meta: ""
