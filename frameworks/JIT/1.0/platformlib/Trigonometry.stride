@@ -1,6 +1,6 @@
 platformModule __Sin {
-    inputs: [_DoubleType]
-	outputs: [_DoubleType]
+    inputs: [Float64]
+	outputs: [Float64]
     linkTo: ["m"]
 #    declarations: ['']
 #    initializations: ["// %%token%% = 0;"]
@@ -9,8 +9,8 @@ platformModule __Sin {
 }
 
 # platformModule Sin {
-#     inputs: [_RealType]
-# 	outputs: [_RealType]
+#     inputs: [Real]
+# 	outputs: [Real]
 #     linkTo: ["m"]
 # #    linkTo: []
 # #    declarations: ['']
@@ -20,8 +20,8 @@ platformModule __Sin {
 # }
 
 platformModule __Cos {
-    inputs: [_DoubleType]
-	outputs: [_DoubleType]
+    inputs: [Float64]
+	outputs: [Float64]
     linkTo: ["m"]
 #    declarations: ['']
 #    initializations: ["// %%token%% = 0;"]
@@ -30,8 +30,8 @@ platformModule __Cos {
 }
 
 # platformModule Cos {
-#     inputs: [_RealType]
-# 	outputs: [_RealType]
+#     inputs: [Real]
+# 	outputs: [Real]
 #     linkTo: ["m"]
 # #    linkTo: []
 # #    declarations: ['']
@@ -41,8 +41,8 @@ platformModule __Cos {
 # }
 
 # platformModule __Tan {
-#     inputs: [_RealType]
-# 	outputs: [_RealType]
+#     inputs: [Real]
+# 	outputs: [Real]
 #     linkTo: ["m"]
 # #    linkTo: []
 # #    declarations: ['']

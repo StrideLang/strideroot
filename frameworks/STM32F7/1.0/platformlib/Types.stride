@@ -1,38 +1,128 @@
+# Data types. The name of an integer type sets its sign: Int8..Int64 are
+# signed and UInt8..UInt64 unsigned. Int, UInt, Real and Size are
+# aliases of the fixed size types that this framework prefers.
 
-frameworkDataType _RealType {
-	frameworkName: "float"
-	includes: []
+frameworkDataType Int8 {
+	frameworkName: "int8_t"
+	includes: ["<cstdint>"]
+	kind: "integer"
+	bits: 8
 }
 
-frameworkDataType _IntType {
-	frameworkName: "int"
-	includes: []
+frameworkDataType Int16 {
+	frameworkName: "int16_t"
+	includes: ["<cstdint>"]
+	kind: "integer"
+	bits: 16
 }
 
-frameworkDataType _UnsingedIntType {
+frameworkDataType Int32 {
+	frameworkName: "int32_t"
+	includes: ["<cstdint>"]
+	kind: "integer"
+	bits: 32
+}
+
+frameworkDataType Int64 {
+	frameworkName: "int64_t"
+	includes: ["<cstdint>"]
+	kind: "integer"
+	bits: 64
+}
+
+frameworkDataType UInt8 {
+	frameworkName: "uint8_t"
+	includes: ["<cstdint>"]
+	kind: "integer"
+	bits: 8
+}
+
+frameworkDataType UInt16 {
+	frameworkName: "uint16_t"
+	includes: ["<cstdint>"]
+	kind: "integer"
+	bits: 16
+}
+
+frameworkDataType UInt32 {
+	frameworkName: "uint32_t"
+	includes: ["<cstdint>"]
+	kind: "integer"
+	bits: 32
+}
+
+frameworkDataType UInt64 {
 	frameworkName: "uint64_t"
 	includes: ["<cstdint>"]
+	kind: "integer"
+	bits: 64
 }
 
-frameworkDataType _SizeType {
-	frameworkName: "size_t"
+frameworkDataType Float32 {
+	frameworkName: "float"
 	includes: []
+	kind: "float"
+	bits: 32
 }
 
-frameworkDataType _SwitchType {
+frameworkDataType Float64 {
+	frameworkName: "double"
+	includes: []
+	kind: "float"
+	bits: 64
+}
+
+frameworkDataType Switch {
 	frameworkName: "bool"
 	includes: []
+	kind: "switch"
 }
 
 # FIXME fix strings
-frameworkDataType _StringType {
+frameworkDataType String {
 	frameworkName: "char *"
 	includes: []
+	kind: "string"
+}
+
+# The sizes this framework prefers
+
+# Signed integer of the size the framework prefers
+alias Int {
+	entity: Int32
+}
+
+# Unsigned integer of the size the framework prefers
+alias UInt {
+	entity: UInt32
+}
+
+# Floating point number of the size the framework prefers
+alias Real {
+	entity: Float32
+}
+
+# Unsigned integer for sizes and counts
+alias Size {
+	entity: UInt32
 }
 
 ### ----------------------
-# Type classes: the first member of 'types' is the default data type.
+# Type classes are schema types: allowedTypes lists them to accept any of
+# their members. The first member of 'types' is the default data type.
 
 typeClass _NumericTypes {
-	types: [_RealType, _IntType, _UnsingedIntType, _SizeType]
+	types: [Real, Int, UInt, Size, Float32, Float64, Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64]
+}
+
+typeClass _IntegerTypes {
+	types: [Int, UInt, Size, Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64]
+}
+
+typeClass _FloatTypes {
+	types: [Real, Float32, Float64]
+}
+
+typeClass _DataTypes {
+	types: [Real, Int, UInt, Size, Float32, Float64, Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64, Switch, String]
 }

@@ -1,5 +1,5 @@
 alias PlatformDomain {
-    block: PicoTimerDomain
+    entity: PicoTimerDomain
 }
 
 constant PicoTimerDomainRate {

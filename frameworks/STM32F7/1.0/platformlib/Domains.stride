@@ -1,14 +1,14 @@
 _frameworkDescription _STM32F7_Framework {
     frameworkName: "STM32F7"
-  	defaultDataType: _RealType
+  	defaultDataType: Real
 }
 
 alias PlatformDomain {
-    block: AudioDomain
+    entity: AudioDomain
 }
 
 alias PlatformRate {
-    block: AudioRate
+    entity: AudioRate
 }
 
 synchronization GlobalSync {

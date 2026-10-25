@@ -194,7 +194,7 @@ loop AllOn {
         signal AllOn_Index {
             default: 0
             rate: none
-            type: _IntType
+            type: Int
             domain: OutputPort.domain
             reset: AllOn_Reset
         },
@@ -242,7 +242,7 @@ loop AllOff {
         signal AllOff_Index {
             default: 0
             rate: none
-            type: _IntType
+            type: Int
             domain: OutputPort.domain
             reset: AllOff_Reset
         },

@@ -49,7 +49,7 @@ type _PortAttributes {
 		},
 		typeProperty Type {
 			name: "type"
-			allowedTypes: constrainedEntity { allowed: [_FrameworkDataType, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_DataTypes, _NoneLiteral] }
 			default: none
 			writeable: off
 			public: on
@@ -86,7 +86,7 @@ type _Port {
 		},
 		typeProperty Type {
 			name: "allowedTypes"
-			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _FrameworkDataType, _NoneLiteral] } # This should be made to accept type handles
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _DataTypes, _NoneLiteral] } # This should be made to accept type handles
 			default: none # None means undefined. Should be resolved from context, and if not possible should resolve to _DefaultSignalType
 			required: off
 		},

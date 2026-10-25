@@ -21,7 +21,7 @@ module Sequencer {
         signal Counter {
             default: 0
             domain: InputPort.domain
-            type: _SizeType
+            type: Size
             reset: CounterReset
         }
         constant Values[ValuesPort.size] {

@@ -28,7 +28,7 @@ loop Sum {
         signal Sum_Index {
             default: 0
             rate: none
-            type: _IntType
+            type: Int
             domain: OutputPort.domain
             reset: Sum_Reset
         },

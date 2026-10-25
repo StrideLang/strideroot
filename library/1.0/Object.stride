@@ -1,13 +1,15 @@
 type _Alias {
 	typeName: "alias"
 	properties: [
-		typeProperty InputName {
-			name: "block"
+		typeProperty Entity {
+			name: "entity"
 			allowedTypes: _Any
 			default: none
 			required: off
+			meta: "What the alias stands for. Aliases of aliases are followed to any depth"
 		}
 	]
+	meta: "Another name for an entity, e.g. alias Int { entity: Int32 }"
 }
 
 type _Typed {

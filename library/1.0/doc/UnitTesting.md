@@ -207,8 +207,8 @@ functionTest AccumulatorResetTest {
 _domainDefinition AudioDomain {
     framework: _JitFramework
     rate: 44100
-    inputs:  [ signal In  { domain: AudioDomain type: _RealType } ]
-    outputs: [ signal Out { domain: AudioDomain type: _RealType } ]
+    inputs:  [ signal In  { domain: AudioDomain type: Real } ]
+    outputs: [ signal Out { domain: AudioDomain type: Real } ]
 }
 
 In >> Amplifier(gain: 3.0) >> Accumulator() >> Out;

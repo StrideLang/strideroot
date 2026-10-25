@@ -1,14 +1,14 @@
 _frameworkDescription _DesktopTemplateFramework {
     frameworkName: "DesktopTemplate"
-    defaultDataType: _RealType
+    defaultDataType: Real
 }
 
 alias PlatformDomain {
-    block: AudioDomain
+    entity: AudioDomain
 }
 
 alias PlatformRate {
-    block: AudioRate
+    entity: AudioRate
 }
 
 _domainDefinition RootDomain {

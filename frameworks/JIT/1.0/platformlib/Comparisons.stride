@@ -3,155 +3,155 @@
 # ==============================================================================
 
 platformModule Greater@Double_Bool {
-    inputs: [_RealType, _RealType]
-    outputs: [_SwitchType]
+    inputs: [Real, Real]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::fcmp ogt %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule Greater@Double_Double {
-    inputs: [_RealType, _RealType]
-    outputs: [_RealType]
+    inputs: [Real, Real]
+    outputs: [Real]
     processing: "@__stride_Greater_d_dd"
     inherits: [_Signal]
 }
 
 platformModule Greater@Int_Bool {
-    inputs: [_IntType, _IntType]
-    outputs: [_SwitchType]
+    inputs: [Int, Int]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::icmp sgt %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule GreaterOrEqual@Int_Bool {
-    inputs: [_IntType, _IntType]
-    outputs: [_SwitchType]
+    inputs: [Int, Int]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::icmp sge %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule GreaterOrEqual@Double_Bool {
-    inputs: [_RealType, _RealType]
-    outputs: [_SwitchType]
+    inputs: [Real, Real]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::fcmp oge %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule Equal@Double_Bool {
-    inputs: [_RealType, _RealType]
-    outputs: [_SwitchType]
+    inputs: [Real, Real]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::fcmp oeq %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule Equal@Int_Bool {
-    inputs: [_IntType, _IntType]
-    outputs: [_SwitchType]
+    inputs: [Int, Int]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::icmp eq %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule Less@Int_Bool {
-    inputs: [_IntType, _IntType]
-    outputs: [_SwitchType]
+    inputs: [Int, Int]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::icmp slt %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule Less@Double_Bool {
-    inputs: [_RealType, _RealType]
-    outputs: [_SwitchType]
+    inputs: [Real, Real]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::fcmp olt %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule LessOrEqual@Int_Bool {
-    inputs: [_IntType, _IntType]
-    outputs: [_SwitchType]
+    inputs: [Int, Int]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::icmp sle %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule LessOrEqual@Double_Bool {
-    inputs: [_RealType, _RealType]
-    outputs: [_SwitchType]
+    inputs: [Real, Real]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::fcmp ole %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule NotEqual@Int_Bool {
-    inputs: [_IntType, _IntType]
-    outputs: [_SwitchType]
+    inputs: [Int, Int]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::icmp ne %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule NotEqual@Double_Bool {
-    inputs: [_RealType, _RealType]
-    outputs: [_SwitchType]
+    inputs: [Real, Real]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::fcmp one %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule And@Bool_Bool {
-    inputs: [_SwitchType, _SwitchType]
-    outputs: [_SwitchType]
+    inputs: [Switch, Switch]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::and %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule Or@Bool_Bool {
-    inputs: [_SwitchType, _SwitchType]
-    outputs: [_SwitchType]
+    inputs: [Switch, Switch]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::or %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule Not@Bool_Bool {
-    inputs: [_SwitchType]
-    outputs: [_SwitchType]
+    inputs: [Switch]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::not %%intokens:0%%"
     inherits: [_Signal]
 }
 
 platformModule Xor@Bool_Bool {
-    inputs: [_SwitchType, _SwitchType]
-    outputs: [_SwitchType]
+    inputs: [Switch, Switch]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::xor %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule Nand@Bool_Bool {
-    inputs: [_SwitchType, _SwitchType]
-    outputs: [_SwitchType]
+    inputs: [Switch, Switch]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::nand %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule Nor@Bool_Bool {
-    inputs: [_SwitchType, _SwitchType]
-    outputs: [_SwitchType]
+    inputs: [Switch, Switch]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::nor %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule Select@Double {
-    inputs: [_SwitchType, _RealType, _RealType]
-    outputs: [_RealType]
+    inputs: [Switch, Real, Real]
+    outputs: [Real]
     processing: "%%outtokens:0%% = llvm::select %%intokens:0%%, %%intokens:1%%, %%intokens:2%%"
     inherits: [_Signal]
 }
 
 platformModule Select@Int {
-    inputs: [_SwitchType, _IntType, _IntType]
-    outputs: [_IntType]
+    inputs: [Switch, Int, Int]
+    outputs: [Int]
     processing: "%%outtokens:0%% = llvm::select %%intokens:0%%, %%intokens:1%%, %%intokens:2%%"
     inherits: [_Signal]
 }
 
 platformModule Select@Bool {
-    inputs: [_SwitchType, _SwitchType, _SwitchType]
-    outputs: [_SwitchType]
+    inputs: [Switch, Switch, Switch]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::select %%intokens:0%%, %%intokens:1%%, %%intokens:2%%"
     inherits: [_Signal]
 }
@@ -161,155 +161,155 @@ platformModule Select@Bool {
 # ==============================================================================
 
 platformModule __Greater@Double_Bool {
-    inputs: [_RealType, _RealType]
-    outputs: [_SwitchType]
+    inputs: [Real, Real]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::fcmp ogt %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule __Greater@Double_Double {
-    inputs: [_RealType, _RealType]
-    outputs: [_RealType]
+    inputs: [Real, Real]
+    outputs: [Real]
     processing: "@__stride_Greater_d_dd"
     inherits: [_Signal]
 }
 
 platformModule __Greater@Int_Bool {
-    inputs: [_IntType, _IntType]
-    outputs: [_SwitchType]
+    inputs: [Int, Int]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::icmp sgt %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule __GreaterOrEqual@Int_Bool {
-    inputs: [_IntType, _IntType]
-    outputs: [_SwitchType]
+    inputs: [Int, Int]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::icmp sge %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule __GreaterOrEqual@Double_Bool {
-    inputs: [_RealType, _RealType]
-    outputs: [_SwitchType]
+    inputs: [Real, Real]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::fcmp oge %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule __Equal@Double_Bool {
-    inputs: [_RealType, _RealType]
-    outputs: [_SwitchType]
+    inputs: [Real, Real]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::fcmp oeq %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule __Equal@Int_Bool {
-    inputs: [_IntType, _IntType]
-    outputs: [_SwitchType]
+    inputs: [Int, Int]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::icmp eq %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule __Less@Int_Bool {
-    inputs: [_IntType, _IntType]
-    outputs: [_SwitchType]
+    inputs: [Int, Int]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::icmp slt %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule __Less@Double_Bool {
-    inputs: [_RealType, _RealType]
-    outputs: [_SwitchType]
+    inputs: [Real, Real]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::fcmp olt %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule __LessOrEqual@Int_Bool {
-    inputs: [_IntType, _IntType]
-    outputs: [_SwitchType]
+    inputs: [Int, Int]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::icmp sle %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule __LessOrEqual@Double_Bool {
-    inputs: [_RealType, _RealType]
-    outputs: [_SwitchType]
+    inputs: [Real, Real]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::fcmp ole %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule __NotEqual@Int_Bool {
-    inputs: [_IntType, _IntType]
-    outputs: [_SwitchType]
+    inputs: [Int, Int]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::icmp ne %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule __NotEqual@Double_Bool {
-    inputs: [_RealType, _RealType]
-    outputs: [_SwitchType]
+    inputs: [Real, Real]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::fcmp one %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule __And@Bool_Bool {
-    inputs: [_SwitchType, _SwitchType]
-    outputs: [_SwitchType]
+    inputs: [Switch, Switch]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::and %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule __Or@Bool_Bool {
-    inputs: [_SwitchType, _SwitchType]
-    outputs: [_SwitchType]
+    inputs: [Switch, Switch]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::or %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule __Not@Bool_Bool {
-    inputs: [_SwitchType]
-    outputs: [_SwitchType]
+    inputs: [Switch]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::not %%intokens:0%%"
     inherits: [_Signal]
 }
 
 platformModule __Xor@Bool_Bool {
-    inputs: [_SwitchType, _SwitchType]
-    outputs: [_SwitchType]
+    inputs: [Switch, Switch]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::xor %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule __Nand@Bool_Bool {
-    inputs: [_SwitchType, _SwitchType]
-    outputs: [_SwitchType]
+    inputs: [Switch, Switch]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::nand %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule __Nor@Bool_Bool {
-    inputs: [_SwitchType, _SwitchType]
-    outputs: [_SwitchType]
+    inputs: [Switch, Switch]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::nor %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
 platformModule __Select@Double {
-    inputs: [_SwitchType, _RealType, _RealType]
-    outputs: [_RealType]
+    inputs: [Switch, Real, Real]
+    outputs: [Real]
     processing: "%%outtokens:0%% = llvm::select %%intokens:0%%, %%intokens:1%%, %%intokens:2%%"
     inherits: [_Signal]
 }
 
 platformModule __Select@Int {
-    inputs: [_SwitchType, _IntType, _IntType]
-    outputs: [_IntType]
+    inputs: [Switch, Int, Int]
+    outputs: [Int]
     processing: "%%outtokens:0%% = llvm::select %%intokens:0%%, %%intokens:1%%, %%intokens:2%%"
     inherits: [_Signal]
 }
 
 platformModule __Select@Bool {
-    inputs: [_SwitchType, _SwitchType, _SwitchType]
-    outputs: [_SwitchType]
+    inputs: [Switch, Switch, Switch]
+    outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::select %%intokens:0%%, %%intokens:1%%, %%intokens:2%%"
     inherits: [_Signal]
 }

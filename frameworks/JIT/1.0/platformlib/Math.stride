@@ -1,23 +1,23 @@
 
 platformModule __Abs {
-    inputs: [_RealType]
-    outputs: [_RealType]
+    inputs: [Real]
+    outputs: [Real]
     linkTo: ["m"]
     processing: "@fabs"
     inherits: [_Signal]
 }
 
 platformModule __Floor {
-    inputs: [_RealType]
-    outputs: [_RealType]
+    inputs: [Real]
+    outputs: [Real]
     linkTo: ["m"]
     processing: "@floor"
     inherits: [_Signal]
 }
 
 # platformModule _Floor {
-#     inputs: [_RealType]
-# 	outputs: [_RealType] # FIXME shoudl be "int"
+#     inputs: [Real]
+# 	outputs: [Real] # FIXME shoudl be "int"
 #     linkTo: ["m"]
 #     processing: "floor"
 #     inherits: ['signal']
@@ -25,8 +25,8 @@ platformModule __Floor {
 
 # # Power function
 # platformModule _Pow {
-#     inputs: [_RealType, _RealType]
-# 	outputs: [_RealType]
+#     inputs: [Real, Real]
+# 	outputs: [Real]
 #     linkTo: ["m"]
 #     processing: "pow"
 #     inherits: ['signal']
@@ -34,8 +34,8 @@ platformModule __Floor {
 
 # # Power to e
 # platformModule _Exp {
-#     inputs: [_RealType]
-# 	outputs: [_RealType]
+#     inputs: [Real]
+# 	outputs: [Real]
 #     linkTo: ["m"]
 #     processing: "exp"
 #     inherits: ['signal']

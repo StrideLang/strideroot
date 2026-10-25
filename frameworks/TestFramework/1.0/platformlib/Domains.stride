@@ -4,11 +4,11 @@ _frameworkDescription _TestFramework {
 }
 
 alias PlatformDomain {
-    block: RootDomain
+    entity: RootDomain
 }
 
 alias PlatformRate {
-    block: TestRate
+    entity: TestRate
 }
 
 _domainDefinition RootDomain {

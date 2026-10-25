@@ -143,19 +143,19 @@ type _PlatformModuleType {
 	properties: [
 		typeProperty Inputs {
 			name: "inputs"
-			allowedTypes: constrainedList { allowed: [_Base, _PlatformModulePortType, _Port, _Any] }
+			allowedTypes: constrainedList { allowed: [_DataTypes, _Variadic, _PlatformModulePortType, _Port, _StringLiteral] }
 			default: []
 			required: off
 		},
 		typeProperty Outputs {
 			name: "outputs"
-			allowedTypes: constrainedList { allowed: [_Base, _PlatformModulePortType, _Port, _Any] }
+			allowedTypes: constrainedList { allowed: [_DataTypes, _Variadic, _PlatformModulePortType, _Port, _StringLiteral] }
 			default: []
 			required: off
 		},
 		typeProperty Ports {
 			name: "ports"
-			allowedTypes: constrainedList { allowed: [_Base, _PlatformModulePortType, _Port, _Any] }
+			allowedTypes: constrainedList { allowed: [_DataTypes, _Variadic, _PlatformModulePortType, _Port, _StringLiteral] }
 			default: []
 			required: off
 		},
@@ -239,8 +239,8 @@ type _FrameworkDescriptionType {
 		},
 		typeProperty DefaultDataType {
 			name: "defaultDataType"
-			allowedTypes: constrainedEntity { allowed: [_Base, _StringLiteral, _Any] }
-			default: _RealType
+			allowedTypes: constrainedEntity { allowed: [_DataTypes, _StringLiteral] }
+			default: Real
 			required: off
 		},
 		typeProperty Inherits {

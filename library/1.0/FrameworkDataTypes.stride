@@ -3,7 +3,7 @@ type _FrameworkTypeClass {
 	properties: [
 		typeProperty Types {
 			name: "types"
-			allowedTypes: constrainedList { allowed: [_FrameworkDataType] }
+			allowedTypes: constrainedList { allowed: [_FrameworkDataType, _Alias] }
 			required: on
 			meta: "Members of the type class"
 		}
@@ -11,6 +11,11 @@ type _FrameworkTypeClass {
 	meta: ""
 }
 
+# Data types are what blocks declare in their type property (Int, Real,
+# UInt8, ...). Their names never start with '_', which marks schema types
+# such as _FrameworkDataType, the type classes and the literal types.
+# The name of an integer type sets its sign: Int8..Int64 are signed and
+# UInt8..UInt64 unsigned.
 type _FrameworkDataType {
 	typeName: "frameworkDataType"
 	properties: [
@@ -24,7 +29,8 @@ type _FrameworkDataType {
 		typeProperty FrameworkName {
 			name: "frameworkName"
 			allowedTypes: _StringLiteral
-			required: on
+			default: ""
+			required: off
 			meta: "Name of the data type on the target platform"
 		}
 		typeProperty Includes {
@@ -33,6 +39,20 @@ type _FrameworkDataType {
 			default: []
 			required: off
 			meta: "Additional include files for the type"
+		}
+		typeProperty Kind {
+			name: "kind"
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "One of integer, float, switch or string"
+		}
+		typeProperty Bits {
+			name: "bits"
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "Size of integer (8, 16, 32 or 64) and float (32 or 64) types"
 		}
 	]
 	inherits: [_Base]
@@ -43,39 +63,121 @@ type _FrameworkDataType {
 # Library declarations refer to these. Each framework declares its own
 # versions in its platformlib (Types.stride), which overlay these.
 
-frameworkDataType _RealType {
-	frameworkName: ""
-	meta: "Dummy type. Each framework declares its own _RealType, which overlays this one."
+frameworkDataType Int8 {
+	kind: "integer"
+	bits: 8
+	meta: "8 bit signed integer"
 }
 
-frameworkDataType _IntType {
-	frameworkName: ""
-	meta: "Dummy type. Each framework declares its own _IntType, which overlays this one."
+frameworkDataType Int16 {
+	kind: "integer"
+	bits: 16
+	meta: "16 bit signed integer"
 }
 
-frameworkDataType _UnsingedIntType {
-	frameworkName: ""
-	meta: "Dummy type. Each framework declares its own _UnsingedIntType, which overlays this one."
+frameworkDataType Int32 {
+	kind: "integer"
+	bits: 32
+	meta: "32 bit signed integer"
 }
 
-frameworkDataType _SizeType {
-	frameworkName: ""
-	meta: "Dummy type. Each framework declares its own _SizeType, which overlays this one."
+frameworkDataType Int64 {
+	kind: "integer"
+	bits: 64
+	meta: "64 bit signed integer"
 }
 
-frameworkDataType _SwitchType {
-	frameworkName: ""
-	meta: "Dummy type. Each framework declares its own _SwitchType, which overlays this one."
+frameworkDataType UInt8 {
+	kind: "integer"
+	bits: 8
+	meta: "8 bit unsigned integer"
 }
 
-frameworkDataType _StringType {
-	frameworkName: ""
-	meta: "Dummy type. Each framework declares its own _StringType, which overlays this one."
+frameworkDataType UInt16 {
+	kind: "integer"
+	bits: 16
+	meta: "16 bit unsigned integer"
 }
+
+frameworkDataType UInt32 {
+	kind: "integer"
+	bits: 32
+	meta: "32 bit unsigned integer"
+}
+
+frameworkDataType UInt64 {
+	kind: "integer"
+	bits: 64
+	meta: "64 bit unsigned integer"
+}
+
+frameworkDataType Float32 {
+	kind: "float"
+	bits: 32
+	meta: "32 bit floating point number"
+}
+
+frameworkDataType Float64 {
+	kind: "float"
+	bits: 64
+	meta: "64 bit floating point number"
+}
+
+frameworkDataType Switch {
+	kind: "switch"
+	meta: "on or off"
+}
+
+frameworkDataType String {
+	kind: "string"
+	meta: "Text"
+}
+
+# The framework decides the size of these. Each framework declares its own
+# aliases, which overlay these.
+
+# Signed integer of the size the framework prefers
+alias Int {
+	entity: Int32
+}
+
+# Unsigned integer of the size the framework prefers
+alias UInt {
+	entity: UInt32
+}
+
+# Floating point number of the size the framework prefers
+alias Real {
+	entity: Float64
+}
+
+# Unsigned integer for sizes and counts
+alias Size {
+	entity: UInt64
+}
+
+# Type classes are schema types: allowedTypes lists them to accept any of
+# their members. Dummy type classes. Each framework declares its own, which
+# overlay these and leave out the types it doesn't support.
 
 typeClass _NumericTypes {
-	types: [_RealType, _IntType, _UnsingedIntType, _SizeType]
-	meta: "Dummy type class. Each framework declares its own _NumericTypes, which overlays this one."
+	types: [Real, Int, UInt, Size, Float32, Float64, Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64]
+	meta: "Integer and float data types. The first member is the default."
+}
+
+typeClass _IntegerTypes {
+	types: [Int, UInt, Size, Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64]
+	meta: "Integer data types"
+}
+
+typeClass _FloatTypes {
+	types: [Real, Float32, Float64]
+	meta: "Floating point data types"
+}
+
+typeClass _DataTypes {
+	types: [Real, Int, UInt, Size, Float32, Float64, Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64, Switch, String]
+	meta: "All data types"
 }
 
 # Buffer and table types (platformlib Buffer.stride in each framework)

@@ -1,6 +1,6 @@
 _frameworkDescription _WiringFramework {
     frameworkName: "Wiring"
-    defaultDataType: _RealType
+    defaultDataType: Real
 }
 
 # Resources --------------------------------

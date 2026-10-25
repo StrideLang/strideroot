@@ -121,17 +121,17 @@ stateDiagram-v2
 
 ```stride
 # Shared hardware signals used by transitions
-signal PowerButtonHold { domain: RootDomain type: _IntType }
-signal BluetoothConnected { domain: RootDomain type: _IntType }
-signal BluetoothDisconnected { domain: RootDomain type: _IntType }
-signal CallIncoming { domain: RootDomain type: _IntType }
-signal CallEnded { domain: RootDomain type: _IntType }
-signal MediaPlay { domain: RootDomain type: _IntType }
-signal MediaPause { domain: RootDomain type: _IntType }
-signal PairingButtonPress { domain: RootDomain type: _IntType }
-signal IsRadioReady { domain: RootDomain type: _IntType }
-signal IsRadioOff { domain: RootDomain type: _IntType }
-signal IsPairingTimeout { domain: RootDomain type: _IntType }
+signal PowerButtonHold { domain: RootDomain type: Int }
+signal BluetoothConnected { domain: RootDomain type: Int }
+signal BluetoothDisconnected { domain: RootDomain type: Int }
+signal CallIncoming { domain: RootDomain type: Int }
+signal CallEnded { domain: RootDomain type: Int }
+signal MediaPlay { domain: RootDomain type: Int }
+signal MediaPause { domain: RootDomain type: Int }
+signal PairingButtonPress { domain: RootDomain type: Int }
+signal IsRadioReady { domain: RootDomain type: Int }
+signal IsRadioOff { domain: RootDomain type: Int }
+signal IsPairingTimeout { domain: RootDomain type: Int }
 
 state BluetoothHeadset {
     states: [Off, PoweringOn, Active, PoweringOff]
