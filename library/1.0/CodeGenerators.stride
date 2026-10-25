@@ -62,6 +62,7 @@ type _Loop {
 			allowedTypes: constrainedEntity { allowed: [_StreamType, _Streamable, _Switch, _Signal, _NoneLiteral] }
 			default: none
 			required: off
+			meta: "Switch that ends execution. It exits immediately after any stream that turns it on: the rest of the streams, and the rest of a loop iteration, are not run."
 		},
 		typeProperty Contraints {
 			name: "constraints"
