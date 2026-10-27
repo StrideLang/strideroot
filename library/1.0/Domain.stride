@@ -32,6 +32,20 @@ type _DomainDefinition {
 			required: on
 			meta: "The domain's rate. A value of none indicates an asynchronous or immediate domain."
 		},
+		typeProperty QualityPolicyProperty {
+			name: "qualityPolicy"
+			allowedTypes: constrainedEntity { allowed: [_Any, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "The active quality policy entity for this domain (e.g. QualityPolicy::Optimal)"
+		},
+		typeProperty VariantPolicyProperty {
+			name: "variantPolicy"
+			allowedTypes: constrainedList { allowed: [_StringLiteral] }
+			default: []
+			required: off
+			meta: "Explicit list of variant tags to search in order (e.g. ['Poly5', 'Table1024'])"
+		},
 		typeProperty External {
 			name: "external"
 			allowedTypes: constrainedList { allowed: [_Signal, _Switch] }

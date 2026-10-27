@@ -225,6 +225,27 @@ type _PlatformType {
 			name: "required"
 			allowedTypes: _SwitchLiteral
 			required: on
+		},
+		typeProperty DefaultDevice {
+			name: "defaultDevice"
+			allowedTypes: constrainedEntity { allowed: [_Any, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "Default device for this platform (e.g. RP2040)"
+		},
+		typeProperty SupportedDevices {
+			name: "supportedDevices"
+			allowedTypes: constrainedList { allowed: [_Any] }
+			default: []
+			required: off
+			meta: "List of supported devices for this platform"
+		},
+		typeProperty PlatformPolicies {
+			name: "platformPolicies"
+			allowedTypes: constrainedList { allowed: [_PolicyBinding, _Any] }
+			default: []
+			required: off
+			meta: "List of platform default policyBinding bundles"
 		}
 	]
 }

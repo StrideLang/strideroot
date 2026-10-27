@@ -1,0 +1,26 @@
+#
+# Raspberry Pi Pico 2 - RP2350 Device Overlay
+#
+
+import QualityPolicy
+import PicoResources
+import RP2040
+
+device RP2350 {
+    platform: Pico
+    overlays: RP2040
+    compilerFlags: "-march=armv8-m.main -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard"
+    resources: [
+        CortexM33HardwareFpu
+    ]
+    
+    # Overrides: RP2350 has single-cycle hardware FPU; Direct/Hardware is optimal
+    devicePolicies: [
+        policyBinding [] {
+            policy: QualityPolicy::Optimal
+            function: [ Sin,        Cos        ]
+            target:   [ Sin@Direct, Cos@Direct ]
+        }
+    ]
+    meta: "Dual ARM Cortex-M33 with hardware single-precision FPU and DSP instructions"
+}

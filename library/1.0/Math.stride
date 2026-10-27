@@ -151,6 +151,40 @@ module Sin {
 	meta: "Sine function of angle in radians."
 }
 
+module Sin@Direct {
+	ports: [
+		mainInputPort InputPort { block: Input meta: "Input angle in radians" },
+		mainOutputPort OutputPort { block: Output meta: "Sine of the input angle" }
+	]
+	blocks: [
+		signal Input  { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
+		signal Output { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
+	]
+	streams: [
+		Input >> __SinDirect() >> Output;
+	]
+	meta: "Direct IEEE standard library sine function."
+}
+
+module Sin@Poly5 {
+	ports: [
+		mainInputPort InputPort { block: Input meta: "Input angle in radians [-pi, pi]" },
+		mainOutputPort OutputPort { block: Output meta: "5th-order minimax polynomial sine" }
+	]
+	blocks: [
+		signal Input  { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
+		signal Output { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
+		signal X2     { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
+		constant C1   { value: -0.1666665710 }
+		constant C2   { value:  0.0083330751 }
+	]
+	streams: [
+		Input * Input >> X2;
+		Input * (1.0 + X2 * (C1 + C2 * X2)) >> Output;
+	]
+	meta: "Universal pure Stride 5th-order minimax polynomial sine approximation."
+}
+
 module Tan {
 	ports: [
 		mainInputPort InputPort {

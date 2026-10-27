@@ -1,0 +1,87 @@
+#
+# Stride Quality Policy Package
+#
+
+package QualityPolicy
+
+constant Optimal {
+	meta: "Platform optimal: selects hardware accelerators or best platform implementation"
+}
+
+constant Fast {
+	meta: "Prioritizes execution speed and low cycle count over algorithmic precision"
+}
+
+constant Accurate {
+	meta: "Prioritizes numerical precision and exact behavior over speed"
+}
+
+constant Compact {
+	meta: "Prioritizes minimal Flash/RAM memory footprint (e.g. avoids tables, uses ROM)"
+}
+
+type _PolicyBinding {
+	typeName: "policyBinding"
+	properties: [
+		typeProperty Policy {
+			name: "policy"
+			allowedTypes: _Any
+			required: on
+			meta: "The QualityPolicy entity (e.g. QualityPolicy::Optimal)"
+		},
+		typeProperty Functions {
+			name: "function"
+			allowedTypes: constrainedList { allowed: [_Any] }
+			required: on
+			meta: "List of base callable functions to bind"
+		},
+		typeProperty Targets {
+			name: "target"
+			allowedTypes: constrainedList { allowed: [_Any] }
+			required: on
+			meta: "List of specialized target callables to execute"
+		}
+	]
+	inherits: [_Base]
+}
+
+type _DeviceType {
+	typeName: "device"
+	properties: [
+		typeProperty Platform {
+			name: "platform"
+			allowedTypes: _Any
+			required: on
+			meta: "Parent platform reference (e.g. Pico)"
+		},
+		typeProperty Overlays {
+			name: "overlays"
+			allowedTypes: constrainedEntity { allowed: [_Any, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "Base device for inheritance/overlay (e.g. RP2040)"
+		},
+		typeProperty Resources {
+			name: "resources"
+			allowedTypes: constrainedList { allowed: [_ResourceType, _Any] }
+			default: []
+			required: off
+			meta: "Hardware resources owned by this device"
+		},
+		typeProperty CompilerFlags {
+			name: "compilerFlags"
+			allowedTypes: _StringLiteral
+			default: ""
+			required: off
+			meta: "Device-specific C/C++ compilation flags"
+		},
+		typeProperty DevicePolicies {
+			name: "devicePolicies"
+			allowedTypes: constrainedList { allowed: [_PolicyBinding, _Any] }
+			default: []
+			required: off
+			meta: "List of policyBinding bundles specifying device-level overrides"
+		}
+	]
+	inherits: [_Base]
+}

@@ -135,3 +135,51 @@ module ExpectLe {
 	]
 	meta: "Less-than-or-equal assertion module (Actual <= Expected). Declared for schema validation; handled with special treatment in the testing framework."
 }
+
+module ExpectMaxError {
+	ports: [
+		mainInputPort InputPort {
+			name: 'input'
+			block: Input
+			meta: "Two-element input list for maximum absolute error comparison: [Candidate, Baseline]"
+		},
+		propertyInputPort MaxTolerancePort {
+			name: 'maxError'
+			block: MaxError
+			meta: "Maximum allowed absolute error |Candidate - Baseline|"
+		}
+	]
+	blocks: [
+		signal Input[2] {}
+		propertyBlock MaxError {
+			default: 0.0005
+		}
+	]
+	streams: [
+	]
+	meta: "Statistical maximum absolute error assertion for stream differential testing."
+}
+
+module ExpectSnr {
+	ports: [
+		mainInputPort InputPort {
+			name: 'input'
+			block: Input
+			meta: "Two-element input list for Signal-to-Noise Ratio comparison: [Candidate, Baseline]"
+		},
+		propertyInputPort MinSnrPort {
+			name: 'minSnr'
+			block: MinSnr
+			meta: "Minimum acceptable Signal-to-Noise Ratio in dB"
+		}
+	]
+	blocks: [
+		signal Input[2] {}
+		propertyBlock MinSnr {
+			default: 80.0
+		}
+	]
+	streams: [
+	]
+	meta: "Statistical Signal-to-Noise Ratio assertion for stream differential testing."
+}

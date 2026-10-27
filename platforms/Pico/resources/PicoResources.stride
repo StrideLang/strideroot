@@ -1,0 +1,28 @@
+#
+# Raspberry Pi Pico Hardware Resources
+#
+
+resource PicoBootromFloat {
+    name: "RP2040 Bootrom Floating Point"
+    includes: ["pico/float.h"]
+    meta: "ROM-based single-precision floating-point acceleration"
+}
+
+resource PicoHardwareInterpolator {
+    name: "RP2040 Hardware SIO Interpolator"
+    includes: ["hardware/interp.h"]
+    exclusive: on
+    initializations: [
+        "interp_config cfg = interp_default_config();",
+        "interp_set_config(interp0, 0, &cfg);"
+    ]
+    meta: "Hardware lane interpolator for fast table lookups"
+}
+
+resource CortexM33HardwareFpu {
+    name: "ARM Cortex-M33 Single-Precision Hardware FPU"
+    substitutions: [
+        ["CFLAGS_FPU", "-mfpu=fpv5-sp-d16 -mfloat-abi=hard"]
+    ]
+    meta: "Single-cycle hardware floating point unit present on RP2350"
+}

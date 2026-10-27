@@ -1,0 +1,41 @@
+#
+# Raspberry Pi Pico Platform Definition
+#
+
+import QualityPolicy
+import RP2040
+import RP2350
+
+platform Pico {
+    framework: "Pico"
+    defaultDevice: RP2040
+    supportedDevices: [
+        RP2040,
+        RP2350
+    ]
+    
+    # Baseline platform policies for all Pico devices
+    platformPolicies: [
+        policyBinding [] {
+            policy: QualityPolicy::Optimal
+            function: [ Sin,         Cos,         Tan         ]
+            target:   [ Sin@PicoRom, Cos@PicoRom, Tan@PicoRom ]
+        },
+        policyBinding [] {
+            policy: QualityPolicy::Fast
+            function: [ Sin,       Cos       ]
+            target:   [ Sin@Poly5, Cos@Poly5 ]
+        },
+        policyBinding [] {
+            policy: QualityPolicy::Accurate
+            function: [ Sin,        Cos        ]
+            target:   [ Sin@Direct, Cos@Direct ]
+        },
+        policyBinding [] {
+            policy: QualityPolicy::Compact
+            function: [ Sin,         Cos,         Tan         ]
+            target:   [ Sin@PicoRom, Cos@PicoRom, Tan@PicoRom ]
+        }
+    ]
+    meta: "Raspberry Pi Pico family platform support"
+}

@@ -1,0 +1,22 @@
+# SinQualityTest.stride
+# Precision differential verification test for Sine approximations
+
+functionTest SinPoly5AccuracyTest {
+    target: Sin@Poly5
+    prepare: [
+        [ -3.14159, -1.57079, -0.78539, 0.0, 0.78539, 1.57079, 3.14159 ] >> InputPort;
+    ]
+    validate: [
+        [ OutputPort, [ 0.0, -1.0, -0.707106, 0.0, 0.707106, 1.0, 0.0 ] ] >> ExpectNear(epsilon: 0.0002);
+    ]
+}
+
+functionTest SinDirectAccuracyTest {
+    target: Sin@Direct
+    prepare: [
+        [ -3.14159, -1.57079, 0.0, 1.57079, 3.14159 ] >> InputPort;
+    ]
+    validate: [
+        [ OutputPort, [ 0.0, -1.0, 0.0, 1.0, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}

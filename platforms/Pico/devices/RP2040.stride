@@ -1,0 +1,17 @@
+#
+# Raspberry Pi Pico - RP2040 Base Device Configuration
+#
+
+import QualityPolicy
+import PicoResources
+
+device RP2040 {
+    platform: Pico
+    compilerFlags: "-march=armv6-m -mcpu=cortex-m0plus -mthumb"
+    resources: [
+        PicoBootromFloat,
+        PicoHardwareInterpolator
+    ]
+    # Inherits all default platformPolicies from platform Pico
+    meta: "Dual ARM Cortex-M0+ microcontroller without hardware FPU"
+}
