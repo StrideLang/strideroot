@@ -73,3 +73,48 @@ platformModule __TanDirect {
     processing: "std::tan(%%intokens:0%%)"
     inherits: [_Signal]
 }
+
+module Sin@PicoRom {
+	ports: [
+		mainInputPort InputPort { block: Input meta: "Input angle in radians" },
+		mainOutputPort OutputPort { block: Output meta: "Pico Bootrom sine" }
+	]
+	blocks: [
+		signal Input  { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
+		signal Output { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
+	]
+	streams: [
+		Input >> __SinPicoRom() >> Output;
+	]
+	meta: "Raspberry Pi Pico Bootrom ROM accelerated sine function."
+}
+
+module Cos@PicoRom {
+	ports: [
+		mainInputPort InputPort { block: Input meta: "Input angle in radians" },
+		mainOutputPort OutputPort { block: Output meta: "Pico Bootrom cosine" }
+	]
+	blocks: [
+		signal Input  { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
+		signal Output { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
+	]
+	streams: [
+		Input >> __CosPicoRom() >> Output;
+	]
+	meta: "Raspberry Pi Pico Bootrom ROM accelerated cosine function."
+}
+
+module Tan@PicoRom {
+	ports: [
+		mainInputPort InputPort { block: Input meta: "Input angle in radians" },
+		mainOutputPort OutputPort { block: Output meta: "Pico Bootrom tangent" }
+	]
+	blocks: [
+		signal Input  { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
+		signal Output { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
+	]
+	streams: [
+		Input >> __TanPicoRom() >> Output;
+	]
+	meta: "Raspberry Pi Pico Bootrom ROM accelerated tangent function."
+}

@@ -122,6 +122,42 @@ module Cos {
 	meta: "Cosine function of angle in radians."
 }
 
+module Cos@Direct {
+	ports: [
+		mainInputPort InputPort { block: Input meta: "Input angle in radians" },
+		mainOutputPort OutputPort { block: Output meta: "Cosine of the input angle" }
+	]
+	blocks: [
+		signal Input  { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
+		signal Output { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
+	]
+	streams: [
+		Input >> __CosDirect() >> Output;
+	]
+	meta: "Direct IEEE standard library cosine function."
+}
+
+module Cos@Poly5 {
+	ports: [
+		mainInputPort InputPort { block: Input meta: "Input angle in radians [-pi, pi]" },
+		mainOutputPort OutputPort { block: Output meta: "5th-order minimax polynomial cosine" }
+	]
+	blocks: [
+		signal Input  { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
+		signal Output { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
+		signal X2     { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
+		constant C1   { value: -0.4999999963 }
+		constant C2   { value:  0.0416666418 }
+		constant C3   { value: -0.0013888397 }
+	]
+	streams: [
+		Input * Input >> X2;
+		1.0 + X2 * (C1 + X2 * (C2 + C3 * X2)) >> Output;
+	]
+	meta: "Universal pure Stride minimax polynomial cosine approximation."
+}
+
+
 module Sin {
 	ports: [
 		mainInputPort InputPort {
@@ -213,6 +249,22 @@ module Tan {
 	]
 	meta: "Tangent function of angle in radians."
 }
+
+module Tan@Direct {
+	ports: [
+		mainInputPort InputPort { block: Input meta: "Input angle in radians" },
+		mainOutputPort OutputPort { block: Output meta: "Tangent of the input angle" }
+	]
+	blocks: [
+		signal Input  { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
+		signal Output { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
+	]
+	streams: [
+		Input >> __TanDirect() >> Output;
+	]
+	meta: "Direct IEEE standard library tangent function."
+}
+
 
 module Divide {
 	ports: [
