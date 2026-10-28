@@ -1,0 +1,34 @@
+#
+# Host JIT Platform Definition
+#
+
+import QualityPolicy
+
+platform JIT {
+    framework: "JIT"
+
+    # Baseline platform policies for host JIT execution
+    platformPolicies: [
+        policyBinding [] {
+            policy: QualityPolicy::Optimal
+            function: [ Sin,        Cos,        Tan        ]
+            target:   [ Sin@Direct, Cos@Direct, Tan@Direct ]
+        },
+        policyBinding [] {
+            policy: QualityPolicy::Fast
+            function: [ Sin,       Cos       ]
+            target:   [ Sin@Poly5, Cos@Poly5 ]
+        },
+        policyBinding [] {
+            policy: QualityPolicy::Accurate
+            function: [ Sin,        Cos,        Tan        ]
+            target:   [ Sin@Direct, Cos@Direct, Tan@Direct ]
+        },
+        policyBinding [] {
+            policy: QualityPolicy::Compact
+            function: [ Sin,       Cos       ]
+            target:   [ Sin@Poly5, Cos@Poly5 ]
+        }
+    ]
+    meta: "Host JIT platform support"
+}

@@ -51,3 +51,35 @@ platformModule __Cos {
 #     inherits: [_Signal]
 # }
 
+platformModule __Tan {
+    inputs: [Float64]
+	outputs: [Float64]
+    linkTo: ["m"]
+    processing: "@tan"
+    inherits: [_Signal]
+}
+
+platformModule __SinDirect {
+    inputs: [Float64]
+	outputs: [Float64]
+    linkTo: ["m"]
+    processing: "@sin"
+    inherits: [_Signal]
+}
+
+platformModule __CosDirect {
+    inputs: [Float64]
+	outputs: [Float64]
+    linkTo: ["m"]
+    processing: "@cos"
+    inherits: [_Signal]
+}
+
+platformModule __TanDirect {
+    inputs: [Float64]
+	outputs: [Float64]
+    linkTo: ["m"]
+    processing: "@tan"
+    inherits: [_Signal]
+}
+

@@ -211,12 +211,14 @@ module Sin@Poly5 {
 		signal Input  { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
 		signal Output { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
 		signal X2     { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
-		constant C1   { value: -0.1666665710 }
-		constant C2   { value:  0.0083330751 }
+		constant C1   { value: -0.1666483932 }
+		constant C2   { value:  0.0083178591 }
+		constant C3   { value: -0.0001939485 }
+		constant C4   { value:  0.0000022109 }
 	]
 	streams: [
 		Input * Input >> X2;
-		Input * (1.0 + X2 * (C1 + C2 * X2)) >> Output;
+		Input * (1.0 + X2 * (C1 + X2 * (C2 + X2 * (C3 + C4 * X2)))) >> Output;
 	]
 	meta: "Universal pure Stride 5th-order minimax polynomial sine approximation."
 }

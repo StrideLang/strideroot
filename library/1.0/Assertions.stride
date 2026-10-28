@@ -31,7 +31,7 @@ module ExpectNear {
 	]
 	blocks: [
 		signal Input[2] {}
-		propertyBlock Epsilon {
+		signal Epsilon {
 			default: 0.0001
 		}
 	]
@@ -151,7 +151,7 @@ module ExpectMaxError {
 	]
 	blocks: [
 		signal Input[2] {}
-		propertyBlock MaxError {
+		signal MaxError {
 			default: 0.0005
 		}
 	]
@@ -175,7 +175,7 @@ module ExpectSnr {
 	]
 	blocks: [
 		signal Input[2] {}
-		propertyBlock MinSnr {
+		signal MinSnr {
 			default: 80.0
 		}
 	]

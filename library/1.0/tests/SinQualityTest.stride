@@ -31,3 +31,14 @@ functionTest SinApproximationDifferential {
         [ OutputPort, [ 0.0, -0.707106, -1.0, -0.707106, 0.0, 0.707106, 1.0, 0.707106, 0.0 ] ] >> ExpectSnr(minSnr: 80.0);
     ]
 }
+
+
+functionTest SinHostDefaultTest {
+    target: Sin
+    prepare: [
+        [ -3.14159, -1.57079, 0.0, 1.57079, 3.14159 ] >> InputPort;
+    ]
+    validate: [
+        [ OutputPort, [ 0.0, -1.0, 0.0, 1.0, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
