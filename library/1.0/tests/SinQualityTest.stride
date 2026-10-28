@@ -20,3 +20,14 @@ functionTest SinDirectAccuracyTest {
         [ OutputPort, [ 0.0, -1.0, 0.0, 1.0, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
+
+functionTest SinApproximationDifferential {
+    target: Sin@Poly5
+    prepare: [
+        [ -3.14159, -2.35619, -1.57079, -0.78539, 0.0, 0.78539, 1.57079, 2.35619, 3.14159 ] >> InputPort;
+    ]
+    validate: [
+        [ OutputPort, [ 0.0, -0.707106, -1.0, -0.707106, 0.0, 0.707106, 1.0, 0.707106, 0.0 ] ] >> ExpectMaxError(maxError: 0.0002);
+        [ OutputPort, [ 0.0, -0.707106, -1.0, -0.707106, 0.0, 0.707106, 1.0, 0.707106, 0.0 ] ] >> ExpectSnr(minSnr: 80.0);
+    ]
+}
