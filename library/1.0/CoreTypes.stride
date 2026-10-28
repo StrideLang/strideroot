@@ -61,10 +61,40 @@ type _Buffer {
 			default: none
 			required: off
 		},
-		typeProperty SizePort {
-			name: "size"
+		typeProperty CapacityPort {
+			name: "capacity"
 			allowedTypes: _IntLiteral
 			required: on
+		},
+		typeProperty FrameSizePort {
+			name: "frameSize"
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] }
+			default: none
+			required: off
+		},
+		typeProperty HopPort {
+			name: "hop"
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] }
+			default: none
+			required: off
+		},
+		typeProperty ModePort {
+			name: "mode"
+			allowedTypes: _Any
+			default: none
+			required: off
+		},
+		typeProperty TriggerModePort {
+			name: "triggerMode"
+			allowedTypes: _Any
+			default: none
+			required: off
+		},
+		typeProperty TriggerPort {
+			name: "trigger"
+			allowedTypes: _Any
+			default: none
+			required: off
 		},
 		typeProperty RatePort {
 			name: "rate"
