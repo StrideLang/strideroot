@@ -99,11 +99,11 @@ InBuffer.ready >> IncrementReaction(buffer: InBuffer) >> Result;
 
 ---
 
-## 5. Reading: The Buffer as a Block
+## 5. Reading: The Current Frame
 
-When a buffer is used as a value, its whole contents are read. It has size `capacity`, the same as a bundle of `capacity` elements of `type`.
+A buffer named on its own is only a push target (`AudioIn >> InBuffer`). Reading it is explicit, through members declared in the `_Buffer` schema. `Buf.frame` is the **current frame**: the newest `frameSize` values, oldest first (`frameSize` defaults to `capacity`). Reading the frame is a **peek**: it doesn't consume values or change `Buf.count`.
 
-The usual way to read a buffer is to pass it to a reaction or module through a property port whose internal block is a bundle of the same size:
+The usual way to read a frame is to pass the buffer to a reaction through a property port. The reaction gets a pointer to the frame, without a copy:
 
 ```stride
 reaction IncrementReaction {
@@ -112,18 +112,22 @@ reaction IncrementReaction {
         mainOutputPort OutPort { block: OutVal }
     ]
     blocks: [
-        signal InBuf[4] { type: Real }
+        signal InBuf[InBufPort.size] { type: Real }
         signal OutVal { type: Real }
     ]
     streams: [
         InBuf[0] + 10.0 >> OutVal;
     ]
 }
+
+InBuffer.ready >> IncrementReaction(buffer: InBuffer) >> Result;
 ```
 
-Port sizes follow the usual rule for bundles. If the buffer's capacity equals the port block's size, one instance is created. If the capacity is a whole multiple of the block size, that many instances are created. If it is not a whole multiple, the program is an error.
+`InBufPort.size` is the buffer's `frameSize`. A loop takes the frame through its main input, `InBuffer.frame >> FrameSum() >> Total;`. Streaming the frame into a block, `InBuffer.frame >> Snapshot;`, copies it; the block must have exactly `frameSize` elements.
 
-**Element order.** `InBuf[i]` is storage slot `i`. Under `TriggerFull`, slot 0 holds the oldest value in the window when `ready` fires, and slot `capacity - 1` holds the newest. For example, if the values 1, 2, 3, 4 are written to a buffer with capacity 4, then when `ready` turns on, `InBuf[0]` is 1 and `InBuf[3]` is 4. The same holds for the second and later windows, because the trigger fires right after the last slot is written.
+**Element order.** `InBuf[0]` is the oldest value of the frame and `InBuf[frameSize - 1]` the newest, for every trigger mode and also across the end of the ring. For example, after writing 1, 2, 3, 4 to a buffer with capacity 4, `InBuf[0]` is 1 and `InBuf[3]` is 4.
+
+`Buf.frame[i]` is not supported yet. Index the copied block, or index inside the reaction or loop.
 
 ---
 
@@ -163,7 +167,7 @@ InBuffer.ready >> IncrementReaction(buffer: InBuffer) >> Result;
 These names are reserved, but their behavior is not defined yet:
 
 * **Status members:** `halfReady`, `full` and `empty` are recognized as switch members of a buffer, the same way `ready` is. `full` and `empty` are expected to report whether the fill count is `capacity` or 0. `halfReady` is expected to mark the half-way point independently of `triggerMode`.
-* **Operational modes:** the `Buffer` package declares `Buffer::ModeSliding`, `Buffer::ModeFifo`, `Buffer::ModeOverlapAdd` and `Buffer::ModePingPong`. No buffer property selects them yet. The behavior described above is a sliding ring.
+* **Operational modes:** `mode` selects `Buffer::ModeSliding` (the default, described above). `Buffer::ModeFifo` and `Buffer::ModeOverlapAdd` are reserved and rejected for now. There is no ping-pong mode: ping-pong is `frameSize: capacity / 2` with `Buffer::TriggerHalf`, and the compiler picks the storage layout.
 
 ## 8. Open Questions
 

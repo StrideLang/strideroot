@@ -115,6 +115,14 @@ type _Buffer {
 			writeable: off
 			meta: "Samples held since the last reset or flush, up to the capacity."
 		},
+		typeProperty FramePort {
+			name: "frame"
+			allowedTypes: _NoneLiteral
+			default: none
+			required: off
+			writeable: off
+			meta: "Current frame, oldest first. Reading it is a peek: zero-copy into reactions and loops, a copy into a block."
+		},
 		typeProperty RatePort {
 			name: "rate"
 			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] }
