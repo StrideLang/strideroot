@@ -83,18 +83,37 @@ type _Buffer {
 			allowedTypes: _Any
 			default: none
 			required: off
+			public: off
 		},
 		typeProperty TriggerModePort {
 			name: "triggerMode"
 			allowedTypes: _Any
 			default: none
 			required: off
+			public: off
 		},
 		typeProperty TriggerPort {
 			name: "trigger"
 			allowedTypes: _Any
 			default: none
 			required: off
+			public: off
+		},
+		typeProperty ReadyPort {
+			name: "ready"
+			allowedTypes: _NoneLiteral
+			default: none
+			required: off
+			writeable: off
+			meta: "Trigger that is on in the tick a frame is ready."
+		},
+		typeProperty CountPort {
+			name: "count"
+			allowedTypes: _NoneLiteral
+			default: none
+			required: off
+			writeable: off
+			meta: "Samples held since the last reset or flush, up to the capacity."
 		},
 		typeProperty RatePort {
 			name: "rate"
@@ -113,6 +132,7 @@ type _Buffer {
 			allowedTypes: _Any
 			default: _RingBufferType
 			required: off
+			public: off
 		}
 	]
 	inherits: [_DomainMember, _Resetable]
