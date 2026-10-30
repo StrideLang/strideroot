@@ -63,7 +63,7 @@ type _PortAttributes {
 			writeable: off
 			public: on
 			required: off
-			meta: "Size of the block connected to the port, populated by the compiler from stream connections"
+			meta: "Size of the block connected to the port, populated by the compiler from stream connections: for an input port, what feeds the call; for an output port, what the call writes to. See doc/CodeGenerators.md."
 		}
 	]
 	inherits: []

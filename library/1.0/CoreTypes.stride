@@ -9,7 +9,8 @@ type _Constant {
 #			meta: "The constant value"
 		}
 	]
-	meta: "Holds a constant value"
+	inherits: [_Typed]
+	meta: "Holds a constant value. Without a value it is written once, by the first stream that writes it (a table filled at setup), and needs a type."
 }
 
 # TODO: Default to switch should be MasterReset
