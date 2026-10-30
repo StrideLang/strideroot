@@ -185,7 +185,7 @@ type _DomainDefinition {
 			meta: "State machines executed continuously within this domain."
 		}
 	]
-#	inherits: [_Base]
+	inherits: [_Base]
 }
 
 module Exit {
