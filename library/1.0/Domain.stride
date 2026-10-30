@@ -80,6 +80,20 @@ type _DomainDefinition {
 			default: []
 			required: off
 		},
+		typeProperty OnLoad {
+			name: "onLoad"
+			allowedTypes: constrainedList { allowed: [_StreamType] }
+			default: []
+			required: off
+			meta: "Streams that prepare what every instance of the domain shares, such as tables in constants without a value (GridRaySectionTable() >> RaySection;). They run once per program, in order, before the first instance of the domain starts: starting an instance loads the domain first if it is not loaded yet, and later instances find it loaded. They run outside any instance, so they see the blocks of the root scope (constants) and not the domain's blocks, inputs or outputs. They should give the same result whenever they run, so a host may also load the domain before its first instance."
+		},
+		typeProperty OnInit {
+			name: "onInit"
+			allowedTypes: constrainedList { allowed: [_StreamType] }
+			default: []
+			required: off
+			meta: "Streams that prepare one instance of the domain, such as placing a game's starting pieces (Create_Black();). They run in order every time an instance starts or restarts, before any other part of its start: after the domain is loaded (so they can read what onLoad prepared), but before the domain's blocks take their default values and its state machines enter their initial states. Every block has a default, so a value they write to a block of the domain is replaced when the blocks are reset after them: what they do lasts only through what they call outside the domain, such as a host's functions. They run inside the instance, so they can read the domain's blocks and inputs as well as the root scope."
+		},
 #		typeProperty GlobalsTag {
 #			name: "globalsTag"
 #			allowedTypes: _StringLiteral
