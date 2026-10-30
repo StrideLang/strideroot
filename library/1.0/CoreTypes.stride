@@ -6,10 +6,10 @@ type _Constant {
 			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _IntLiteral, _RealLiteral, _SwitchLiteral, _Constant, _ResourceType, _NoneLiteral] }
 			default: none
 			required: off
-#			meta: "The constant value"
 		}
 	]
-	inherits: [_Typed]
+	inherits: [_Typed, _Base]
+	# TODO we should be able to have the schema validation enforce the requirement to either have a value or a type.
 	meta: "Holds a constant value. Without a value it is written once, by the first stream that writes it (a table filled at setup), and needs a type."
 }
 

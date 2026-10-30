@@ -228,7 +228,9 @@ what the call writes to. The loop fills it in place, so a loop can fill a
 table it doesn't know the size of:
 
 ```stride
-# GameFunctions.stride: one entry per ray, as many as the table
+# Written like GameFunctions.stride's GridRayAheadTable (whose blocks are
+# named GridRayAheadTable_Index and so on): one entry per ray, as many as
+# the table
 loop GridRayAheadTable {
     ports: [ mainOutputPort OutputPort { block: Output } ]
     blocks: [
