@@ -110,6 +110,18 @@ type _ResourceType {
 			allowedTypes: constrainedList { allowed: [_TypeProperty, _Constraint, _StringLiteral] }
 			default: []
 			required: off
+		},
+		typeProperty Pins {
+			name: "pins"
+			allowedTypes: constrainedList { allowed: [_StringLiteral] }
+			default: []
+			required: off
+		},
+		typeProperty Capabilities {
+			name: "capabilities"
+			allowedTypes: constrainedList { allowed: [_StringLiteral] }
+			default: []
+			required: off
 		}
 	]
 }
@@ -139,6 +151,18 @@ type _DomainResourceType {
 		typeProperty Properties {
 			name: "properties"
 			allowedTypes: constrainedList { allowed: [_TypeProperty, _Constraint, _StringLiteral] }
+			default: []
+			required: off
+		},
+		typeProperty Pins {
+			name: "pins"
+			allowedTypes: constrainedList { allowed: [_StringLiteral] }
+			default: []
+			required: off
+		},
+		typeProperty Capabilities {
+			name: "capabilities"
+			allowedTypes: constrainedList { allowed: [_StringLiteral] }
 			default: []
 			required: off
 		}

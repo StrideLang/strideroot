@@ -28,31 +28,29 @@ type _FunctionTest {
     properties: [
         typeProperty Target {
             name: "target"
-            allowedTypes: [""]
+            allowedTypes: constrainedEntity { allowed: [_Any, _NoneLiteral] }
             default: none
             required: off
         }
         typeProperty Function {
             name: "function"
-            allowedTypes: [""]
+            allowedTypes: constrainedEntity { allowed: [_Any, _NoneLiteral] }
             default: none
             required: off
         }
         typeProperty Prepare {
             name: "prepare"
-            allowedTypes: [""]
-            default: none
+            allowedTypes: constrainedList { allowed: [_StreamType] }
             required: on
         }
         typeProperty Validate {
             name: "validate"
-            allowedTypes: [""]
-            default: none
+            allowedTypes: constrainedList { allowed: [_StreamType] }
             required: on
         }
         typeProperty Timeout {
             name: "timeout"
-            allowedTypes: ["real"]
+            allowedTypes: constrainedEntity { allowed: [_RealLiteral, _IntLiteral] }
             default: 0.0
             required: off
         }

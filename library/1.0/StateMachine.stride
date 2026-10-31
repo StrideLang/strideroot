@@ -3,7 +3,7 @@ type _TransitionType {
 	properties: [
 		typeProperty {
 			name: "signal"
-			allowedTypes: constrainedEntity { allowed: [_Signal, _Switch, _StringLiteral, _PortProperty, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_Signal, _Switch, _StringLiteral, _NoneLiteral] }
 			default: none
 			required: off
 			meta: "The event or signal that triggers this transition."

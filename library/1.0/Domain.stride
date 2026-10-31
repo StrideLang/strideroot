@@ -70,13 +70,13 @@ type _DomainDefinition {
 		},
 		typeProperty Inputs {
 			name: "inputs"
-			allowedTypes: constrainedList { allowed: [_Streamable, _Port, _Any] }
+			allowedTypes: constrainedList { allowed: [_Streamable] }
 			default: []
 			required: off
 		},
 		typeProperty Outputs {
 			name: "outputs"
-			allowedTypes: constrainedList { allowed: [_Streamable, _Port, _Any] }
+			allowedTypes: constrainedList { allowed: [_Streamable] }
 			default: []
 			required: off
 		},
