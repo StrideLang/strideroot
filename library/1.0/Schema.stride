@@ -65,6 +65,18 @@ type _ConstrainedInt {
 			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] }
 			default: none
 			required: off
+		},
+		typeProperty {
+			name: "allowedValues"
+			allowedTypes: constrainedList { allowed: [_IntLiteral] }
+			default: []
+			required: off
+		},
+		typeProperty {
+			name: "enum"
+			allowedTypes: constrainedList { allowed: [_IntLiteral] }
+			default: []
+			required: off
 		}
     ]
 	inherits: [_Constraint]
@@ -93,6 +105,12 @@ type _ConstrainedReal {
     typeName: "constrainedReal"
     properties: [
 		typeProperty {
+			name: "multipleOf"
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral, _NoneLiteral] }
+			default: none
+			required: off
+		},
+		typeProperty {
 			name: "maximum"
 			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral, _NoneLiteral] }
 			default: none
@@ -114,6 +132,18 @@ type _ConstrainedReal {
 			name: "exclusiveMinimum"
 			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral, _NoneLiteral] }
 			default: none
+			required: off
+		},
+		typeProperty {
+			name: "allowedValues"
+			allowedTypes: constrainedList { allowed: [_IntLiteral, _RealLiteral] }
+			default: []
+			required: off
+		},
+		typeProperty {
+			name: "enum"
+			allowedTypes: constrainedList { allowed: [_IntLiteral, _RealLiteral] }
+			default: []
 			required: off
 		}
     ]
