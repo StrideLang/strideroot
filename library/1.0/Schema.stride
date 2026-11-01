@@ -225,18 +225,19 @@ type _TypeProperty {
 			allowedTypes: _SwitchLiteral
 			required: on
 		},
-		typeProperty Public { # TODO enforce
+		typeProperty Public {
 			name: "public"
 			allowedTypes: _SwitchLiteral
 			default: on
 			required: off
+			meta: "Defines whether the property may be read via member access."
 		},
 		typeProperty Writeable {
 			name: "writeable"
 			allowedTypes: _SwitchLiteral
 			default: on
 			required: off
-			meta: "Defines whether type is publicly writeable." # TODO enforce
+			meta: "Defines whether the property may be written in declarations."
 		}
 	]
 	inherits: [_Base]
