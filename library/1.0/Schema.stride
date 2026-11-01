@@ -176,6 +176,34 @@ type _ConstrainedList {
 			allowedTypes: constrainedList { allowed: [_Any] }
 			default: []
 			required: off
+		},
+		typeProperty {
+			name: "contains"
+			allowedTypes: constrainedEntity { allowed: [_Any, _List] }
+			default: none
+			required: off
+			meta: "Defines the sub-type(s) that items in the collection must match."
+		},
+		typeProperty {
+			name: "minContains"
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "Minimum number of items that must match the contains sub-type."
+		},
+		typeProperty {
+			name: "maxContains"
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "Maximum number of items that must match the contains sub-type."
+		},
+		typeProperty {
+			name: "uniqueBy"
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "Asserts that all entity blocks in the list have unique values for the specified property."
 		}	
     ]
     inherits: [_Constraint]
