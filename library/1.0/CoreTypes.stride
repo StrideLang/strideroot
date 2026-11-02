@@ -58,13 +58,13 @@ type _Buffer {
 	properties: [
 		typeProperty TypePort {
 			name: "type"
-			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_NumericTypes, _NoneLiteral] }
 			default: none
 			required: off
 		},
 		typeProperty CapacityPort {
 			name: "capacity"
-			allowedTypes: _IntLiteral
+			allowedTypes: _IntegerTypes
 			required: on
 		},
 		typeProperty FrameSizePort {
