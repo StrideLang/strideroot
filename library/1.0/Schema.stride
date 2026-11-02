@@ -22,14 +22,7 @@ type _Constraint {
 	# Constraints get a special treatment in validation.
 	# This type serves to mark declarations as constraints for special treatment
     typeName: "_constraint"
-    properties: [
-		typeProperty {
-			name: "constraint"
-			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] }
-			default: none
-			required: off
-		}
-	]
+    properties: []
     inherits: [_Base]
 }
 
@@ -71,12 +64,7 @@ type _ConstrainedInt {
 			allowedTypes: constrainedList { allowed: [_IntLiteral] }
 			default: []
 			required: off
-		},
-		typeProperty {
-			name: "enum"
-			allowedTypes: constrainedList { allowed: [_IntLiteral] }
-			default: []
-			required: off
+			meta: "List of valid values; behaves like 'enum' in JSON Schema."
 		}
     ]
 	inherits: [_Constraint]
@@ -139,12 +127,7 @@ type _ConstrainedReal {
 			allowedTypes: constrainedList { allowed: [_IntLiteral, _RealLiteral] }
 			default: []
 			required: off
-		},
-		typeProperty {
-			name: "enum"
-			allowedTypes: constrainedList { allowed: [_IntLiteral, _RealLiteral] }
-			default: []
-			required: off
+			meta: "List of valid values; behaves like 'enum' in JSON Schema."
 		}
     ]
     inherits: [_Constraint]
@@ -182,7 +165,7 @@ type _ConstrainedList {
 			allowedTypes: constrainedEntity { allowed: [_Any, _List] }
 			default: none
 			required: off
-			meta: "Defines the sub-type(s) that items in the collection must match."
+			meta: "Defines the sub-type that at least minContains..maxContains items in the collection must match; behaves like 'contains' in JSON Schema."
 		},
 		typeProperty {
 			name: "minContains"
@@ -230,12 +213,6 @@ type _TypeProperty {
 			name: "name"
 			allowedTypes: _StringLiteral
 			required: on
-		},
-		typeProperty Direction {
-			name: "direction"
-			allowedTypes: _StringLiteral
-			default: "output"
-			required: off
 		},
 		typeProperty AllowedTypes {
 			name: "allowedTypes"
