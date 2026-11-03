@@ -13,11 +13,11 @@ module Rectify {
         }
 #		port ModeProperty {
 #			name: "mode"
-#			block: Mode
+#			entity: Mode
 #			meta: "	Possible options are 'Full' and 'Half'."
 #		}
 	]
-	blocks: [
+	entities: [
 #		signal Mode { default: "mode"}
 	]
 	streams: [

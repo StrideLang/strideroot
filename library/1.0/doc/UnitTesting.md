@@ -110,10 +110,10 @@ When testing a target:
 ```stride
 module AddTwo {
     ports: [
-        mainInputPort InputPort { block: Input },
-        mainOutputPort OutputPort { block: Output }
+        mainInputPort InputPort { entity: Input },
+        mainOutputPort OutputPort { entity: Output }
     ]
-    blocks: [
+    entities: [
         signal Input  { default: 0.0 }
         signal Output { default: 0.0 }
     ]
@@ -137,11 +137,11 @@ functionTest AddTwoTest {
 ```stride
 module Amplifier {
     ports: [
-        mainInputPort InPort { block: Input },
-        mainOutputPort OutPort { block: Output },
-        propertyInputPort FactorPort { name: 'gain' block: Gain }
+        mainInputPort InPort { entity: Input },
+        mainOutputPort OutPort { entity: Output },
+        propertyInputPort FactorPort { name: 'gain' entity: Gain }
     ]
-    blocks: [
+    entities: [
         signal Input { default: 0.0 }
         signal Output { default: 0.0 }
         propertyBlock Gain { default: 1.0 }
@@ -167,11 +167,11 @@ functionTest DynamicGainTest {
 ```stride
 module Accumulator {
     ports: [
-        mainInputPort InPort { block: Input },
-        mainOutputPort OutPort { block: Output },
-        propertyInputPort ResetPort { name: 'reset' block: Reset }
+        mainInputPort InPort { entity: Input },
+        mainOutputPort OutPort { entity: Output },
+        propertyInputPort ResetPort { name: 'reset' entity: Reset }
     ]
-    blocks: [
+    entities: [
         signal Input { default: 0.0 }
         signal Output { default: 0.0 }
         signal Total { default: 0.0 reset: Reset persistent: on }

@@ -1,5 +1,5 @@
 
-platformBlock _DigitalOut {
+platformEntity _DigitalOut {
     typeName: "_digitalOutput"
 	inputs: ['bool']
     include: ["gpio.h"]

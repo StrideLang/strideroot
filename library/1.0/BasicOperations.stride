@@ -4,15 +4,15 @@
 loop Sum {
     ports: [
         mainInputPort InputPort {
-            block: Sum_Input
+            entity: Sum_Input
             meta: "Array of signals to be summed"
         },
         mainOutputPort OutputPort {
-            block: Sum_Output
+            entity: Sum_Output
             meta: "The sum of all signals in the array"
         }
     ]
-    blocks: [
+    entities: [
         signal Sum_Input[InputPort.size] {
             rate: OutputPort.rate
             type: OutputPort.type
@@ -50,15 +50,15 @@ loop Sum {
 module Average {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Array of signals to be averaged"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Arithmetic mean of all signals in the array"
         }
     ]
-    blocks: [
+    entities: [
         signal Input[InputPort.size] {
             rate: OutputPort.rate
             type: OutputPort.type
@@ -85,25 +85,25 @@ module Average {
 module Clip {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Input signal to constrain"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Clipped output signal"
         },
         propertyInputPort MinimumPort {
             name: "minimum"
-            block: MinVal
+            entity: MinVal
             meta: "Lower bound"
         },
         propertyInputPort MaximumPort {
             name: "maximum"
-            block: MaxVal
+            entity: MaxVal
             meta: "Upper bound"
         }
     ]
-    blocks: [
+    entities: [
         signal Input  {
             rate: OutputPort.rate
             type: OutputPort.type 

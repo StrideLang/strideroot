@@ -84,7 +84,7 @@ OSCDomain::send(OSCDomain::globalTransport, buffer, packetSize);
     inherits: [_Signal]
 }
 
-platformBlock __OscIn {
+platformEntity __OscIn {
     typeName: '_oscInType'
     inputs: ["string", "string", "int"]
 	outputs: ["real"]

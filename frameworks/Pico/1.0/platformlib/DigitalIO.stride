@@ -81,7 +81,7 @@ constant _DigitalOutput_Resources[2] {
     value: [_GPIO_0, _GPIO_1]
 }
 
-platformBlock _DigitalOutput {
+platformEntity _DigitalOutput {
     typeName: '_digitalOutput'
 	inputs: ["bool"]
 	domain: PicoTimerDomain

@@ -36,7 +36,7 @@ type _PortAttributes {
 			writeable: off
 			public: on
 			required: off
-			meta: "Rate of the block connected to the port, populated by the compiler from stream connections"
+			meta: "Rate of the entity connected to the port, populated by the compiler from stream connections"
 		},
 		typeProperty Domain {
 			name: "domain"
@@ -45,7 +45,7 @@ type _PortAttributes {
 			writeable: off
 			public: on
 			required: off
-			meta: "Domain of the block connected to the port, populated by the compiler from stream connections"
+			meta: "Domain of the entity connected to the port, populated by the compiler from stream connections"
 		},
 		typeProperty Type {
 			name: "type"
@@ -54,7 +54,7 @@ type _PortAttributes {
 			writeable: off
 			public: on
 			required: off
-			meta: "Data type of the block connected to the port, populated by the compiler from stream connections"
+			meta: "Data type of the entity connected to the port, populated by the compiler from stream connections"
 		},
 		typeProperty Size {
 			name: "size"
@@ -63,11 +63,11 @@ type _PortAttributes {
 			writeable: off
 			public: on
 			required: off
-			meta: "Size of the block connected to the port, populated by the compiler from stream connections: for an input port, what feeds the call; for an output port, what the call writes to. See doc/CodeGenerators.md."
+			meta: "Size of the entity connected to the port, populated by the compiler from stream connections: for an input port, what feeds the call; for an output port, what the call writes to. See doc/CodeGenerators.md."
 		}
 	]
 	inherits: []
-	meta: "Port attributes are populated by the compiler from stream connections. They are read only (e.g. InputPort.type). Ports have no type or default: these come from the declaration of the bound block."
+	meta: "Port attributes are populated by the compiler from stream connections. They are read only (e.g. InputPort.type). Ports have no type or default: these come from the declaration of the bound entity."
 }
 
 type _Port {
@@ -79,9 +79,9 @@ type _Port {
 			default: ""
 			required: off
 		},
-		typeProperty Block {
-			name: "block"
-			allowedTypes: _Block
+		typeProperty Entity {
+			name: "entity"
+			allowedTypes: _Entity
 			required: on
 		},
 		typeProperty Type {

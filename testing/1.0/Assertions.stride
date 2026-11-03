@@ -4,11 +4,11 @@ module ExpectEqual {
 	ports: [
 		mainInputPort InputPort {
 			name: 'input'
-			block: Input
+			entity: Input
 			meta: "Two-element input list with values expected to be equal: [Actual, Expected]"
 		}
 	]
-	blocks: [
+	entities: [
 		signal Input[2] {}
 	]
 	streams: [
@@ -20,16 +20,16 @@ module ExpectNear {
 	ports: [
 		mainInputPort InputPort {
 			name: 'input'
-			block: Input
+			entity: Input
 			meta: "Two-element input list with values expected to be close: [Actual, Expected]"
 		},
 		propertyInputPort EpsilonPort {
 			name: 'epsilon'
-			block: Epsilon
+			entity: Epsilon
 			meta: "Tolerance threshold for approximate comparison"
 		}
 	]
-	blocks: [
+	entities: [
 		signal Input[2] {}
 		propertyBlock Epsilon {
 			default: 0.0001
@@ -44,11 +44,11 @@ module ExpectTrue {
 	ports: [
 		mainInputPort InputPort {
 			name: 'input'
-			block: Input
+			entity: Input
 			meta: "Condition value expected to be true (on)"
 		}
 	]
-	blocks: [
+	entities: [
 		switch Input {}
 	]
 	streams: [
@@ -60,11 +60,11 @@ module ExpectFalse {
 	ports: [
 		mainInputPort InputPort {
 			name: 'input'
-			block: Input
+			entity: Input
 			meta: "Condition value expected to be false (off)"
 		}
 	]
-	blocks: [
+	entities: [
 		switch Input {}
 	]
 	streams: [
@@ -76,11 +76,11 @@ module ExpectGt {
 	ports: [
 		mainInputPort InputPort {
 			name: 'input'
-			block: Input
+			entity: Input
 			meta: "Two-element input list for greater-than comparison: [Actual, Expected]"
 		}
 	]
-	blocks: [
+	entities: [
 		signal Input[2] {}
 	]
 	streams: [
@@ -92,11 +92,11 @@ module ExpectGe {
 	ports: [
 		mainInputPort InputPort {
 			name: 'input'
-			block: Input
+			entity: Input
 			meta: "Two-element input list for greater-than-or-equal comparison: [Actual, Expected]"
 		}
 	]
-	blocks: [
+	entities: [
 		signal Input[2] {}
 	]
 	streams: [
@@ -108,11 +108,11 @@ module ExpectLt {
 	ports: [
 		mainInputPort InputPort {
 			name: 'input'
-			block: Input
+			entity: Input
 			meta: "Two-element input list for less-than comparison: [Actual, Expected]"
 		}
 	]
-	blocks: [
+	entities: [
 		signal Input[2] {}
 	]
 	streams: [
@@ -124,11 +124,11 @@ module ExpectLe {
 	ports: [
 		mainInputPort InputPort {
 			name: 'input'
-			block: Input
+			entity: Input
 			meta: "Two-element input list for less-than-or-equal comparison: [Actual, Expected]"
 		}
 	]
-	blocks: [
+	entities: [
 		signal Input[2] {}
 	]
 	streams: [

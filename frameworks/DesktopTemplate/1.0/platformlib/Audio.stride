@@ -92,7 +92,7 @@ _domainDefinition AudioDomain {
 
 
 # Audio ---------------
-platformBlock _HwInput {
+platformEntity _HwInput {
     typeName: '_hwInput'
 #	numInputs: 0
 	outputs: ["real"]
@@ -106,7 +106,7 @@ platformBlock _HwInput {
     inherits: [_Signal]
 }
 
-platformBlock _HwOutput {
+platformEntity _HwOutput {
     typeName: '_hwOutput'
 	inputs: ["real"]
 #	numOutputs: 0

@@ -9,21 +9,21 @@ module LowPass {
         },
 		propertyInputPort FrequencyProperty {
 			name: "frequency"
-			block: CenterFrequency
+			entity: CenterFrequency
 			meta: "The frequency of the filter."
 		},
 		propertyInputPort QFactorProperty {
 			name: "qFactor"
-			block: QFactor
+			entity: QFactor
 			meta: "The Q value of the filter."
 		},
 		propertyInputPort GainProperty {
 			name: "gain"
-			block: Gain
+			entity: Gain
 			meta: ""
 		}
     ]
-    blocks: [
+    entities: [
 		signal CenterFrequency {},
 		signal QFactor {},
 		signal Gain {}

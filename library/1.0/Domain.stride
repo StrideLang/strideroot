@@ -190,10 +190,10 @@ type _DomainDefinition {
 
 module Exit {
     ports: [
-        mainInputPort MainInputPort { block: Input }
+        mainInputPort MainInputPort { entity: Input }
 		# TODO add secondary port taking return value.
     ]
-    blocks: [
+    entities: [
         switch Input {}
     ]
     streams: [

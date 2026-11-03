@@ -2,35 +2,35 @@
 module Oscillator {
     ports: [
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
         }
         propertyInputPort FrequencyPort {
             name: "frequency"
-            block: Frequency
+            entity: Frequency
             meta: "The frequency of the oscillator."
         },
         propertyInputPort AmplitudeProperty {
             name: "amplitude"
-            block: Amplitude
+            entity: Amplitude
             meta: "The amplitude of the oscillator."
         },
 #		property TypeProperty {
 #				name: "type"
-#				block: Type
+#				entity: Type
 #				meta: "Possible options are 'Sine', 'Triangle', 'Saw', 'ReverseSaw', 'Square'."
 #			},
         propertyInputPort StartPhaseProperty {
             name: "phase"
-            block: StartPhase
+            entity: StartPhase
             meta: "The starting phase of the oscillator."
         },
         propertyInputPort ResetPort {
             name: "reset"
-            block: Reset
+            entity: Reset
             meta: "Resets the oscillator to the starting phase."
         }
     ]
-    blocks: [
+    entities: [
         signal Frequency {
             default :       440.0
         }
@@ -88,20 +88,20 @@ module Oscillator {
 module Impulse {
     ports: [
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
         },
         propertyInputPort FrequencyPort {
             name: "frequency"
-            block: Frequency
+            entity: Frequency
             meta: "The frequency of the oscillator."
         },
         propertyInputPort AmplitudePort {
             name: "amplitude"
-            block: Amplitude
+            entity: Amplitude
             meta: "The amplitude of the oscillator."
         }
     ]
-	blocks: [
+	entities: [
         signal Frequency {
             default :       440.0
         }

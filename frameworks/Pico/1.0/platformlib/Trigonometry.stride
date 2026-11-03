@@ -76,10 +76,10 @@ platformModule __TanDirect {
 
 module Sin@PicoRom {
 	ports: [
-		mainInputPort InputPort { block: Input meta: "Input angle in radians" },
-		mainOutputPort OutputPort { block: Output meta: "Pico Bootrom sine" }
+		mainInputPort InputPort { entity: Input meta: "Input angle in radians" },
+		mainOutputPort OutputPort { entity: Output meta: "Pico Bootrom sine" }
 	]
-	blocks: [
+	entities: [
 		signal Input  { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
 		signal Output { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
 	]
@@ -91,10 +91,10 @@ module Sin@PicoRom {
 
 module Cos@PicoRom {
 	ports: [
-		mainInputPort InputPort { block: Input meta: "Input angle in radians" },
-		mainOutputPort OutputPort { block: Output meta: "Pico Bootrom cosine" }
+		mainInputPort InputPort { entity: Input meta: "Input angle in radians" },
+		mainOutputPort OutputPort { entity: Output meta: "Pico Bootrom cosine" }
 	]
-	blocks: [
+	entities: [
 		signal Input  { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
 		signal Output { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
 	]
@@ -106,10 +106,10 @@ module Cos@PicoRom {
 
 module Tan@PicoRom {
 	ports: [
-		mainInputPort InputPort { block: Input meta: "Input angle in radians" },
-		mainOutputPort OutputPort { block: Output meta: "Pico Bootrom tangent" }
+		mainInputPort InputPort { entity: Input meta: "Input angle in radians" },
+		mainOutputPort OutputPort { entity: Output meta: "Pico Bootrom tangent" }
 	]
-	blocks: [
+	entities: [
 		signal Input  { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
 		signal Output { rate: OutputPort.rate type: OutputPort.type domain: OutputPort.domain }
 	]

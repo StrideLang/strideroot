@@ -12,8 +12,8 @@ type _List {
 	meta: "Matches any collection (list literal or array slice/bundle)."
 }
 
-type _Block {
-	typeName: "_block"
+type _Entity {
+	typeName: "_entity"
 	properties: []
 	meta: "Matches any block entity declaration (signal, switch, buffer, table, etc., scalar or bundle)."
 }

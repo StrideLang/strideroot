@@ -203,7 +203,7 @@ _domainDefinition SerialChannelDomain {
 # Serial platform blocks ------------------------
 
 
-platformBlock _SerialOutput {
+platformEntity _SerialOutput {
     typeName: '_serialOutput'
 #	numInputs: 0
 	inputs: ["real"]
@@ -221,7 +221,7 @@ platformBlock _SerialOutput {
 }
 
 
-platformBlock _SerialInput {
+platformEntity _SerialInput {
     typeName: '_serialInput'
 #	numInputs: 0
 	outputs: ["real"]
@@ -235,7 +235,7 @@ platformBlock _SerialInput {
     inherits: [_Signal]
 }
 
-platformBlock _SerialPrintType {
+platformEntity _SerialPrintType {
     typeName: '_serialPrintType'
 	inputs: ["string", "string"]
 #	outputs: 0

@@ -2,23 +2,23 @@
 module BiQuad {
 	ports: [
         mainInputPort MainInputPort {
-			block: Input
+			entity: Input
         },
 		mainOutputPort OutputPort {
-			block: Output
+			entity: Output
         },
 		propertyInputPort CenterFrequencyProperty {
 			name: "centerFrequency"
-			block: CenterFrequency
+			entity: CenterFrequency
 			meta: "The center frequency of the filter."
 		}
 		propertyInputPort ResonanceProperty {
 			name: "resonance"
-			block: Resonance
+			entity: Resonance
 			meta: "Resonance (Q) amount. Should be greater than on equal to 1.0."
 		}
 	]
-	blocks: [
+	entities: [
 #		signal Type { default: "BandPass" },
 		signal CenterFrequency {},
 		signal Resonance { default: 50},

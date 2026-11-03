@@ -1,5 +1,5 @@
 
-platformBlock _AnalogInput {
+platformEntity _AnalogInput {
     typeName: '_analogInput'
 	domain: WiringDomain
 #	inputs: []

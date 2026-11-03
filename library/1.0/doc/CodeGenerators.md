@@ -27,11 +27,11 @@ The schema types are `_Module`, `_Reaction` and `_Loop` in
 ```stride
 module Scale {
     ports: [
-        mainInputPort InputPort { block: Input }
-        mainOutputPort OutputPort { block: Output }
-        propertyInputPort GainPort { name: "gain" block: Gain }
+        mainInputPort InputPort { entity: Input }
+        mainOutputPort OutputPort { entity: Output }
+        propertyInputPort GainPort { name: "gain" entity: Gain }
     ]
-    blocks: [
+    entities: [
         signal Input { type: Real }
         signal Output { type: Real }
         signal Gain { type: Real default: 1.0 }
@@ -88,10 +88,10 @@ the next. This is how a module accumulates:
 ```stride
 module Accumulator {
     ports: [
-        mainInputPort InputPort { block: Input }
-        mainOutputPort OutputPort { block: Output }
+        mainInputPort InputPort { entity: Input }
+        mainOutputPort OutputPort { entity: Output }
     ]
-    blocks: [
+    entities: [
         signal Input { type: Int domain: OutputPort.domain }
         signal Output { type: Int domain: OutputPort.domain }
         signal Acc { default: 10 type: Int reset: Reset domain: OutputPort.domain }
@@ -145,8 +145,8 @@ a value coming in, is a module:
 ```stride
 module EntityTypeAt {
     ports: [
-        mainInputPort LocationPort { block: Location }
-        mainOutputPort EntityTypePort { block: EntityType }
+        mainInputPort LocationPort { entity: Location }
+        mainOutputPort EntityTypePort { entity: EntityType }
     ]
     ...
 }
@@ -167,10 +167,10 @@ state between calls: every call starts again.
 ```stride
 loop Sum {
     ports: [
-        mainInputPort InputPort { block: Input }
-        mainOutputPort OutputPort { block: Output }
+        mainInputPort InputPort { entity: Input }
+        mainOutputPort OutputPort { entity: Output }
     ]
-    blocks: [
+    entities: [
         signal Input[InputPort.size] { type: Int }
         signal Output { default: 0 type: Int }
         signal Index { default: 0 type: Int reset: Reset }
@@ -232,8 +232,8 @@ table it doesn't know the size of:
 # named GridRayAheadTable_Index and so on): one entry per ray, as many as
 # the table
 loop GridRayAheadTable {
-    ports: [ mainOutputPort OutputPort { block: Output } ]
-    blocks: [
+    ports: [ mainOutputPort OutputPort { entity: Output } ]
+    entities: [
         signal Output[OutputPort.size] { type: Int }
         signal Index { default: 0 type: Int reset: Reset }
         switch Done { default: off }
@@ -266,7 +266,7 @@ to. This one stops at the output's size:
 ```stride
 loop Double {
     ...
-    blocks: [
+    entities: [
         signal Input[InputPort.size] { type: Int }
         signal Output[OutputPort.size] { type: Int }
         ...

@@ -4,30 +4,30 @@
 module Select {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Default signal flowing along the primary path"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Selected output signal"
         },
         propertyInputPort ConditionProperty {
             name: "condition"
-            block: Condition
+            entity: Condition
             meta: "Switch condition determining which value is output"
         },
         propertyInputPort WhenOnProperty {
             name: "whenOn"
-            block: WhenOn
+            entity: WhenOn
             meta: "Signal produced when Condition is on"
         },
         propertyInputPort WhenOffProperty {
             name: "whenOff"
-            block: WhenOff
+            entity: WhenOff
             meta: "Signal produced when Condition is off (defaults to Input if not specified)"
         }
     ]
-    blocks: [
+    entities: [
         signal Input     { domain: OutputPort.domain }
         signal Output    { domain: OutputPort.domain }
         switch Condition { domain: OutputPort.domain }
@@ -43,15 +43,15 @@ module Select {
 module And {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Two-element switch list: [A, B]"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Switch output of A AND B"
         }
     ]
-    blocks: [
+    entities: [
         switch Input[2] { domain: OutputPort.domain },
         switch Output   { domain: OutputPort.domain }
     ]
@@ -64,15 +64,15 @@ module And {
 module Or {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Two-element switch list: [A, B]"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Switch output of A OR B"
         }
     ]
-    blocks: [
+    entities: [
         switch Input[2] { domain: OutputPort.domain },
         switch Output   { domain: OutputPort.domain }
     ]
@@ -85,15 +85,15 @@ module Or {
 module Not {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Switch input to invert"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Inverted switch output"
         }
     ]
-    blocks: [
+    entities: [
         switch Input  { domain: OutputPort.domain },
         switch Output { domain: OutputPort.domain }
     ]
@@ -106,15 +106,15 @@ module Not {
 module Xor {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Two-element switch list: [A, B]"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Switch output of A XOR B"
         }
     ]
-    blocks: [
+    entities: [
         switch Input[2] { domain: OutputPort.domain },
         switch Output   { domain: OutputPort.domain }
     ]
@@ -127,15 +127,15 @@ module Xor {
 module Nand {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Two-element switch list: [A, B]"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Switch output of A NAND B"
         }
     ]
-    blocks: [
+    entities: [
         switch Input[2] { domain: OutputPort.domain },
         switch Output   { domain: OutputPort.domain }
     ]
@@ -148,15 +148,15 @@ module Nand {
 module Nor {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Two-element switch list: [A, B]"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Switch output of A NOR B"
         }
     ]
-    blocks: [
+    entities: [
         switch Input[2] { domain: OutputPort.domain },
         switch Output   { domain: OutputPort.domain }
     ]

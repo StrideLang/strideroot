@@ -4,15 +4,15 @@
 module Greater {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Two-element list with values to compare: [Left, Right]"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Switch indicating if Left > Right"
         }
     ]
-    blocks: [
+    entities: [
         signal Input[2] {
             rate: OutputPort.rate
             type: InputPort.type
@@ -32,15 +32,15 @@ module Greater {
 module GreaterOrEqual {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Two-element list with values to compare: [Left, Right]"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Switch indicating if Left >= Right"
         }
     ]
-    blocks: [
+    entities: [
         signal Input[2]{
             rate: OutputPort.rate
             type: InputPort.type
@@ -60,15 +60,15 @@ module GreaterOrEqual {
 module Less {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Two-element list with values to compare: [Left, Right]"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Switch indicating if Left < Right"
         }
     ]
-    blocks: [
+    entities: [
         signal Input[2] {
             rate: OutputPort.rate
             type: InputPort.type
@@ -88,15 +88,15 @@ module Less {
 module LessOrEqual {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Two-element list with values to compare: [Left, Right]"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Switch indicating if Left <= Right"
         }
     ]
-    blocks: [
+    entities: [
         signal Input[2] {
             rate: OutputPort.rate
             type: InputPort.type
@@ -116,15 +116,15 @@ module LessOrEqual {
 module Equal {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Two-element list with values to compare: [Left, Right]"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Switch indicating if Left == Right"
         }
     ]
-    blocks: [
+    entities: [
         signal Input[2] {
             rate: OutputPort.rate
             type: InputPort.type
@@ -144,15 +144,15 @@ module Equal {
 module NotEqual {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Two-element list with values to compare: [Left, Right]"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Switch indicating if Left != Right"
         }
     ]
-    blocks: [
+    entities: [
         signal Input[2] {
             rate: OutputPort.rate
             type: InputPort.type
@@ -172,15 +172,15 @@ module NotEqual {
 loop AllOn {
     ports: [
         mainInputPort InputPort {
-            block: AllOn_Input
+            entity: AllOn_Input
             meta: "Array of switches to be checked"
         },
         mainOutputPort OutputPort {
-            block: AllOn_Output
+            entity: AllOn_Output
             meta: "Switch that is on only if all input switches are on"
         }
     ]
-    blocks: [
+    entities: [
         switch AllOn_Input[InputPort.size] {
             rate: OutputPort.rate
             domain: OutputPort.domain
@@ -216,15 +216,15 @@ loop AllOn {
 loop AllOff {
     ports: [
         mainInputPort InputPort {
-            block: AllOff_Input
+            entity: AllOff_Input
             meta: "Array of switches to be checked"
         },
         mainOutputPort OutputPort {
-            block: AllOff_Output
+            entity: AllOff_Output
             meta: "Switch that is on only if all input switches are off"
         }
     ]
-    blocks: [
+    entities: [
         switch AllOff_Input[InputPort.size] {
             rate: OutputPort.rate
             domain: OutputPort.domain

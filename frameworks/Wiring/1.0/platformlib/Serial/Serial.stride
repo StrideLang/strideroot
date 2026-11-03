@@ -145,7 +145,7 @@ _domainDefinition SerialInDomain {
 }
 
 
-platformBlock _SerialOutput {
+platformEntity _SerialOutput {
     typeName: '_serialOutput'
 	inputs: ["real"]
 	outputs: []
@@ -166,7 +166,7 @@ platformBlock _SerialOutput {
     inherits: [_Signal]
 }
 
-platformBlock _SerialInput {
+platformEntity _SerialInput {
     typeName: '_serialInput'
 	outputs: ["real"]
     domain: SerialInDomain

@@ -4,15 +4,15 @@
 module OnChange {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Signal or switch being monitored for changes"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Switch that is on when Input changed from its previous tick value"
         }
     ]
-    blocks: [
+    entities: [
         signal Input {
             rate: OutputPort.rate
             type: InputPort.type
@@ -38,15 +38,15 @@ module OnChange {
 module RisingEdge {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Monitored switch signal"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Switch that is on for one tick when Input transitions from off to on"
         }
     ]
-    blocks: [
+    entities: [
         switch Input   {
             rate: OutputPort.rate
             domain: OutputPort.domain
@@ -76,15 +76,15 @@ module RisingEdge {
 module FallingEdge {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Monitored switch signal"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Switch that is on for one tick when Input transitions from on to off"
         }
     ]
-    blocks: [
+    entities: [
         switch Input  {
             rate: OutputPort.rate
             domain: OutputPort.domain
@@ -114,20 +114,20 @@ module FallingEdge {
 module Latch {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Continuous signal to be sampled and held"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Sampled and held output signal"
         },
         propertyInputPort TriggerProperty {
             name: "trigger"
-            block: Trigger
+            entity: Trigger
             meta: "Sample trigger: when on, samples Input; when off, holds previous value"
         }
     ]
-    blocks: [
+    entities: [
         signal Input   {
             rate: OutputPort.rate
             type: OutputPort.type
@@ -160,20 +160,20 @@ module Latch {
 module Smooth {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
             meta: "Signal to be smoothed"
         },
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
             meta: "Smoothed output signal"
         },
         propertyInputPort CoeffProperty {
             name: "coefficient"
-            block: Coeff
+            entity: Coeff
             meta: "Smoothing coefficient between 0.0 (no smoothing) and 1.0 (freeze)"
         }
     ]
-    blocks: [
+    entities: [
         signal Input {
             rate: OutputPort.rate
             type: OutputPort.type

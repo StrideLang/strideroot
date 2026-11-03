@@ -2,16 +2,16 @@ module BandLimitedSaw {
     ports:      [
         mainOutputPort OutputPort {
             name:       'output'
-            block:      Output
+            entity:      Output
             meta:       "The module's primary output port."
         }
         propertyInputPort FrequencyPort {
             name:       'frequency'
-            block:      Frequency
+            entity:      Frequency
             meta:       "The frequency of the oscillator in Hz."
         }
     ]
-    blocks:     [
+    entities:     [
         signal Output {
             default:    0.0
         }
@@ -45,7 +45,7 @@ module BandLimitedSaw {
         reaction CorrectPhase {
             terminateWhen:  CorrectPhase_Done
             onTermination:  ResetPhase;
-			blocks: [
+			entities: [
 				trigger CorrectPhase_Done {}
 			]
             streams:    [

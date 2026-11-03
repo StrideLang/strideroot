@@ -1,5 +1,5 @@
 
-platformBlock _DigitalOutput {
+platformEntity _DigitalOutput {
     typeName: '_digitalOutput'
 	inputs: ["bool"]
 	domain: WiringDomain

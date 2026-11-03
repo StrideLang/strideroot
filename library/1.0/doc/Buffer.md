@@ -108,10 +108,10 @@ The usual way to read a frame is to pass the buffer to a reaction through a prop
 ```stride
 reaction IncrementReaction {
     ports: [
-        propertyInputPort InBufPort { name: "buffer" block: InBuf }
-        mainOutputPort OutPort { block: OutVal }
+        propertyInputPort InBufPort { name: "buffer" entity: InBuf }
+        mainOutputPort OutPort { entity: OutVal }
     ]
-    blocks: [
+    entities: [
         signal InBuf[InBufPort.size] { type: Real }
         signal OutVal { type: Real }
     ]

@@ -2,14 +2,14 @@ module DebugPrint {
 	ports: [
 		mainInputPort ValueProperty {
 			name: "value"
-			block: Value
+			entity: Value
 		}
 		propertyInputPort TriggerPort {
 			name: "trigger"
-			block: Trigger
+			entity: Trigger
 		}
 	]
-    blocks: [
+    entities: [
 		signal Value { default: 0.0 },
 		switch Trigger { default: on },
 		reaction Print {
@@ -27,11 +27,11 @@ module DebugPrint {
 module Error {
 	ports: [
 		mainInputPort TriggerPort {
-			block: Trigger
+			entity: Trigger
 		}
 		propertyInputPort MessagePort {
 			name: "message"
-			block: Message
+			entity: Message
 		}
 	]
 	streams: [
@@ -42,21 +42,21 @@ module Probe {
 	ports: [
 		mainInputPort InputPort {
 			name: "input"
-			block: Input
+			entity: Input
 			meta: "Signal to be probed and passed through"
 		}
 		mainOutputPort OutputPort {
 			name: "output"
-			block: Output
+			entity: Output
 			meta: "Pass-through of the input signal"
 		}
 		propertyInputPort LabelPort {
 			name: "label"
-			block: Label
+			entity: Label
 			meta: "Label identifier for the probe"
 		}
 	]
-	blocks: [
+	entities: [
 		signal Input {},
 		signal Output {},
 		value Label { default: "Probe" },
@@ -77,20 +77,20 @@ module Watch {
 	ports: [
 		mainInputPort InputPort {
 			name: "input"
-			block: Input
+			entity: Input
 			meta: "Signal to be watched and passed through"
 		}
 		mainOutputPort OutputPort {
 			name: "output"
-			block: Output
+			entity: Output
 			meta: "Pass-through of the input signal"
 		}
 		propertyInputPort LabelPort {
 			name: "label"
-			block: Label
+			entity: Label
 		}
 	]
-	blocks: [
+	entities: [
 		signal Input {},
 		signal Output {},
 		value Label { default: "Watch" },

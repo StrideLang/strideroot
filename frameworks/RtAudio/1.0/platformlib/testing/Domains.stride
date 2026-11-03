@@ -137,7 +137,7 @@ int nBufferFrames = NUM_SAMPLES;
 
 
 # Audio ---------------
-platformBlock _HwInput {
+platformEntity _HwInput {
     typeName: '_hwInput'
 	outputs: ["real"]
 #    include: []
@@ -150,7 +150,7 @@ platformBlock _HwInput {
     inherits: [_Signal]
 }
 
-platformBlock _HwOutput {
+platformEntity _HwOutput {
     typeName: '_hwOutput'
 	inputs: ["real"]
 #	numOutputs: 0

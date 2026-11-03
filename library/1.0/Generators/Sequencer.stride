@@ -2,18 +2,18 @@
 module Sequencer {
     ports: [
         mainInputPort InputPort {
-            block: Input
+            entity: Input
         }
         mainOutputPort OutputPort {
-            block: Output
+            entity: Output
         }
         propertyInputPort ValuesPort {
             name: "values"
-            block: Values
+            entity: Values
             meta: "Values in the sequencer"
         }
     ]
-    blocks: [
+    entities: [
         trigger Input { domain: InputPort.domain}
         signal Output {
             domain: OutputPort.domain

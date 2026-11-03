@@ -4,7 +4,7 @@ module Mix {
             name:       'output'
             main: on
             direction:  'output'
-            block:      Output
+            entity:      Output
             rate:       OutputPortRate
             domain:     OutputPortDomain
             meta:       "The module's primary output port."
@@ -13,14 +13,14 @@ module Mix {
             name:       'input'
             main: on
             direction:  'input'
-            block:      Input
+            entity:      Input
             size:       InputPortSize
             meta:       "The module's primary output port."
         },
         port GainPort {
             name:       'gain'
             direction:  'input'
-            block:      Gain
+            entity:      Gain
             rate:       none
             domain:     none
             size:       none
@@ -29,14 +29,14 @@ module Mix {
         port BiasPort {
             name:       'bias'
             direction:  'input'
-            block:      Bias
+            entity:      Bias
             rate:       none
             domain:     none
             size:       none
             meta:       "Bias applied to channel."
         }
     ]
-    blocks:         [
+    entities:         [
         signal Output {
 #            type:       [ 'Stream Real', 'Stream Integer' ]
 #            default:    [ 0.0, 0 ]
@@ -71,7 +71,7 @@ module Mix {
         trigger Reset {}
         reaction ComputeMix {
             ports:          none
-            blocks:         [
+            entities:         [
                 signal ComputeMix_Index {
                     default:    1
                     rate:       none

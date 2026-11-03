@@ -3,20 +3,20 @@ module Pan {
 	ports: [
 		mainOutputPort OutputPort {
 			name:       'output'
-			block: Output
+			entity: Output
 		},
 		mainInputPort InputPort {
 			name:       'input'
-			block: Input
+			entity: Input
 			},
 		propertyInputPort PositionPort {
 			name: "position"
-			block: Position
+			entity: Position
 			meta: "Sets the panning position with range [-1, 1]."
 		}
 
 	]
-	blocks: [
+	entities: [
 		signal Output[2] {},
         signal Input {},
 		signal GainLeft {domain: PositionPort.domain},

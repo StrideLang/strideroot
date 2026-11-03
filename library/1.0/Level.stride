@@ -1,28 +1,28 @@
 module Level {
 	ports: [
 		mainInputPort InputPort {
-			block: Input
+			entity: Input
 		}
 		mainOutputPort OutputPort {
-			block: Output
+			entity: Output
 		},
 #		propertyInputPort GainTypeProperty {
 #			name: "gainType"
-#			block: GainType
+#			entity: GainType
 #			meta: "Sets the gain type to linear or decibel scaling. Possible values are 'Linear' and 'Decibel'."
 #		},
 		propertyInputPort GainPort {
 			name: "gain"
-			block: Gain
+			entity: Gain
 			meta: "Amplifies or attenuates the signal."
 		},
 		propertyInputPort OffsetPort {
 			name: "offset"
-			block: Offset
+			entity: Offset
 			meta: "Adds an offset to the signal after applying the gain."
 		}
 	]
-	blocks: [
+	entities: [
         signal Gain {
             default:    1.0
             type:       GainPort.type

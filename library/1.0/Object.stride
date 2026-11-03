@@ -86,7 +86,7 @@ type _CodeGenerator {
 	typeName: "codeGenerator"
 	properties: [
 		typeProperty {
-			name: "blocks"
+			name: "entities"
 			allowedTypes: constrainedList { allowed: [_Streamable, _Reaction, _Module] }
 			default: []
 			required: off

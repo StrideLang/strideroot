@@ -2,26 +2,26 @@ module AD {
     ports:      [
         mainOutputPort OutputPort {
             name:       'output'
-            block:      Output
+            entity:      Output
             meta:       "The module's primary output port."
         }
         mainInputPort InputPort {
             name:       'output'
-            block:      TriggerEnv
+            entity:      TriggerEnv
             meta:       "Triggers the envelope"
         }
         propertyInputPort AttackTimePort {
             name:       'attack'
-            block:      AttackTime
+            entity:      AttackTime
             meta:       "Attack time in seconds"
         }
         propertyInputPort DecayTimePort {
             name:       'decay'
-            block:      DecayTime
+            entity:      DecayTime
             meta:       "Decay time in seconds"
         }
     ]
-    blocks:     [
+    entities:     [
         signal AttackTime {
             default:    0.2
         }

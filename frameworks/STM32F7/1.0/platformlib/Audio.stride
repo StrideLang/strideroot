@@ -288,7 +288,7 @@ void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s)
 
 
 # Audio ---------------
-platformBlock _HwInput {
+platformEntity _HwInput {
     typeName: '_hwInput'
 #	numInputs: 0
 	outputs: ["real", "real"]
@@ -301,7 +301,7 @@ platformBlock _HwInput {
     inherits: ['signal']
 }
 
-platformBlock _HwOutput {
+platformEntity _HwOutput {
     typeName: '_hwOutput'
 	inputs: ["real", "real"]
     domain: AudioDomain

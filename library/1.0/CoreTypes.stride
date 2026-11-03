@@ -225,7 +225,7 @@ type _IteratorType {
 	properties: [
 		typeProperty Entity {
 			name: "entity"
-			allowedTypes: constrainedEntity { allowed: [_Block, _Signal, _Switch, _Buffer, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_Entity, _Signal, _Switch, _Buffer, _NoneLiteral] }
 			default: none
 			required: off
 			meta: "Target array or buffer entity to iterate over"
