@@ -223,35 +223,50 @@ type _StreamType {
 type _IteratorType {
 	typeName: "iterator"
 	properties: [
-		typeProperty Default {
-			name: "default"
-			allowedTypes: _IntLiteral
+		typeProperty Entity {
+			name: "entity"
+			allowedTypes: constrainedEntity { allowed: [_Block, _Signal, _Switch, _Buffer, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "Target array or buffer entity to iterate over"
+		},
+		typeProperty Offset {
+			name: "offset"
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _Signal, _Constant, _MemberAccess, _NoneLiteral] }
 			default: 0
 			required: off
-			meta: "Starting value for iterator"
+			meta: "Starting element offset in target entity"
+		},
+		typeProperty Stride {
+			name: "stride"
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _Signal, _Constant, _MemberAccess, _NoneLiteral] }
+			default: 1
+			required: off
+			meta: "Element step stride in target entity"
+		},
+		typeProperty Default {
+			name: "default"
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral, _Signal, _Constant, _MemberAccess, _NoneLiteral] }
+			default: 0
+			required: off
+			meta: "Starting value for index iterator"
 		},
 		typeProperty Increment {
 			name: "increment"
-			allowedTypes: _IntLiteral
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral, _Signal, _Constant, _MemberAccess, _NoneLiteral] }
 			default: 1
 			required: off
 		},
 		typeProperty Limit {
 			name: "limit"
-			allowedTypes: _IntLiteral
-			required: on
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral, _Signal, _Constant, _MemberAccess, _NoneLiteral] }
+			default: none
+			required: off
 			meta: "stop before reaching this value"
 		},
 		typeProperty Rate {
 			name: "rate"
 			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] }
-			default: none
-			required: off
-			meta: "Not supported yet, but could be of use in the future"
-		},
-		typeProperty Domain {
-			name: "domain"
-			allowedTypes: constrainedEntity { allowed: [_Domain, _NoneLiteral] }
 			default: none
 			required: off
 			meta: "Not supported yet, but could be of use in the future"
@@ -262,7 +277,7 @@ type _IteratorType {
 			default: none
 			required: off
 			meta: "This trigger will reset this iterator when triggered"
-		}
+		},
 		typeProperty Done {
 			name: "done"
 			allowedTypes: constrainedEntity { allowed: [_Trigger, _Signal, _Switch, _NoneLiteral] }
@@ -271,7 +286,62 @@ type _IteratorType {
 			meta: "This trigger will be triggered when the iterator finishes a whole run"
 		}
 	]
-	inherits: [_Base]
+	inherits: [_Streamable, _DomainMember]
+}
+
+type _SequenceType {
+	typeName: "sequence"
+	properties: [
+		typeProperty From {
+			name: "from"
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral, _Signal, _Constant, _MemberAccess, _NoneLiteral] }
+			default: 0
+			required: off
+			meta: "Starting value for sequence"
+		},
+		typeProperty Default {
+			name: "default"
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral, _Signal, _Constant, _MemberAccess, _NoneLiteral] }
+			default: 0
+			required: off
+			meta: "Starting value for sequence (alias for from)"
+		},
+		typeProperty Step {
+			name: "step"
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral, _Signal, _Constant, _MemberAccess, _NoneLiteral] }
+			default: 1
+			required: off
+			meta: "Step increment per iteration"
+		},
+		typeProperty Increment {
+			name: "increment"
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral, _Signal, _Constant, _MemberAccess, _NoneLiteral] }
+			default: 1
+			required: off
+			meta: "Step increment per iteration (alias for step)"
+		},
+		typeProperty Limit {
+			name: "limit"
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral, _Signal, _Constant, _MemberAccess, _NoneLiteral] }
+			required: on
+			meta: "Stop before reaching this value"
+		},
+		typeProperty Reset {
+			name: "reset"
+			allowedTypes: constrainedEntity { allowed: [_Trigger, _Signal, _Switch, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "This trigger will reset this sequence when triggered"
+		},
+		typeProperty Done {
+			name: "done"
+			allowedTypes: constrainedEntity { allowed: [_Trigger, _Signal, _Switch, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "This trigger will be triggered when the sequence finishes a whole run"
+		}
+	]
+	inherits: [_Streamable, _DomainMember]
 }
 
 type _GroupType {

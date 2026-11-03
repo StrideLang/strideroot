@@ -304,10 +304,7 @@ _domainDefinition PipelineDomain {
     ]
 }
 
-signal Intermediate { domain: PipelineDomain type: Real }
-
-PipeIn >> CompactScaleModule(factor: 3.0) >> Intermediate;
-Intermediate >> ClassicScaleModule(factor: 2.0) >> PipeOut;
+PipeIn >> CompactScaleModule(factor: 3.0) >> ClassicScaleModule(factor: 2.0) >> PipeOut;
 
 functionTest PipelineIntegrationTest {
     target: PipelineDomain
