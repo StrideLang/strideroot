@@ -1,0 +1,320 @@
+# CallableTest.stride
+# Unit tests for callables (reactions, modules, and loops) in Stride
+# Verifies compilation, data movement, state handling, and trigger semantics
+# using both traditional/canonical syntax and new compact callable syntax.
+
+# ------------------------------------------------------------------------------
+# 1. Modules - Old / Canonical Syntax
+# ------------------------------------------------------------------------------
+
+module ClassicScaleModule {
+    ports: [
+        mainInputPort InPort { entity: Input }
+        propertyInputPort FactorPort { name: "factor" entity: Factor }
+        mainOutputPort OutPort { entity: Output }
+    ]
+    entities: [
+        signal Input { default: 0.0 type: Real }
+        signal Factor { default: 2.0 type: Real }
+        signal Output { default: 0.0 type: Real }
+    ]
+    streams: [
+        Input * Factor >> Output;
+    ]
+}
+
+functionTest ClassicScaleModuleTest {
+    target: ClassicScaleModule
+    prepare: [
+        [ 1.0, 2.0, 3.0, 4.0 ] >> Input;
+        [ 2.0, 3.0, 0.5, -1.0 ] >> Factor;
+    ]
+    validate: [
+        [ Output, [ 2.0, 6.0, 1.5, -4.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+module ClassicAccumulatorModule {
+    ports: [
+        mainInputPort InPort { entity: Input }
+        propertyInputPort ResetPort { name: "reset" entity: Reset }
+        mainOutputPort OutPort { entity: Output }
+    ]
+    entities: [
+        signal Input { default: 0.0 type: Real }
+        switch Reset { default: off }
+        signal Output { default: 0.0 type: Real }
+        signal Total {
+            default: 0.0
+            type: Real
+            reset: Reset
+        }
+    ]
+    streams: [
+        Total + Input >> Total;
+        Total >> Output;
+    ]
+}
+
+functionTest ClassicAccumulatorModuleTest {
+    target: ClassicAccumulatorModule
+    prepare: [
+        [ 10.0, 20.0, 5.0, 15.0 ] >> Input;
+        [ off,  off,  on,  off  ] >> Reset;
+    ]
+    validate: [
+        [ Output, [ 10.0, 30.0, 5.0, 20.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# ------------------------------------------------------------------------------
+# 2. Modules - New Compact Syntax
+# ------------------------------------------------------------------------------
+
+module Input >> CompactScaleModule(factor: signal Factor { default: 2.0 type: Real }) 
+            >> signal Output { default: 0.0 type: Real } {
+    code: [
+        Input * Factor >> Output;
+    ]
+}
+
+functionTest CompactScaleModuleTest {
+    target: CompactScaleModule
+    prepare: [
+        [ 2.0, 4.0, 6.0, 8.0 ] >> Input;
+        [ 3.0, 0.5, 2.0, -1.0 ] >> Factor;
+    ]
+    validate: [
+        [ Output, [ 6.0, 2.0, 12.0, -8.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+module Input >> CompactAccumulatorModule(reset: switch Reset { default: off })
+        >> signal Output { default: 0.0 type: Real } {
+    code: [
+        signal Total {
+            default: 0.0
+            type: Real
+            reset: Reset
+        }
+        Total + Input >> Total;
+        Total >> Output;
+    ]
+}
+
+functionTest CompactAccumulatorModuleTest {
+    target: CompactAccumulatorModule
+    prepare: [
+        [ 10.0, 20.0, 5.0, 15.0 ] >> Input;
+        [ off,  off,  on,  off  ] >> Reset;
+    ]
+    validate: [
+        [ Output, [ 10.0, 30.0, 5.0, 20.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# ------------------------------------------------------------------------------
+# 3. Reactions - Old / Canonical Syntax
+# ------------------------------------------------------------------------------
+
+reaction ClassicReaction {
+    ports: [
+        propertyInputPort ValuePort { name: "value" entity: Value }
+        propertyInputPort OffsetPort { name: "offset" entity: Offset }
+        mainOutputPort OutPort { entity: Output }
+    ]
+    entities: [
+        signal Value { default: 0.0 type: Real }
+        signal Offset { default: 0.0 type: Real }
+        signal Output { default: 0.0 type: Real }
+    ]
+    streams: [
+        Value + Offset >> Output;
+    ]
+}
+
+functionTest ClassicReactionDirectTest {
+    target: ClassicReaction
+    prepare: [
+        [ 5.0, 15.0, -2.0 ] >> Value;
+        [ 1.0, 2.0,  3.0  ] >> Offset;
+    ]
+    validate: [
+        [ Output, [ 6.0, 17.0, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# ------------------------------------------------------------------------------
+# 4. Reactions - New Compact Syntax
+# ------------------------------------------------------------------------------
+
+reaction CompactReaction(value: signal Value { default: 0.0 type: Real },
+                        offset: signal Offset { default: 0.0 type: Real })
+        >> signal Output { default: 0.0 type: Real } {
+    code: [
+        Value + Offset >> Output;
+    ]
+}
+
+functionTest CompactReactionDirectTest {
+    target: CompactReaction
+    prepare: [
+        [ 10.0, 20.0, 30.0 ] >> Value;
+        [ 2.0,  5.0,  -10.0 ] >> Offset;
+    ]
+    validate: [
+        [ Output, [ 12.0, 25.0, 20.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# ------------------------------------------------------------------------------
+# 5. Reactions - Stream Integration & Conditional Trigger Execution
+# ------------------------------------------------------------------------------
+
+_domainDefinition ReactionPipelineDomain {
+    framework: _JitFramework
+    rate: -1
+    inputs: [
+        signal InVal { domain: ReactionPipelineDomain type: Real }
+        switch TriggerClassic { domain: ReactionPipelineDomain }
+        switch TriggerCompact { domain: ReactionPipelineDomain }
+    ]
+    outputs: [
+        signal OutClassic { domain: ReactionPipelineDomain type: Real default: 0.0 }
+        signal OutCompact { domain: ReactionPipelineDomain type: Real default: 0.0 }
+    ]
+}
+
+TriggerClassic >> ClassicReaction(value: InVal offset: 1.0) >> OutClassic;
+TriggerCompact >> CompactReaction(value: InVal offset: 10.0) >> OutCompact;
+
+functionTest ReactionConditionalExecutionTest {
+    target: ReactionPipelineDomain
+    prepare: [
+        [ 5.0, 10.0, 20.0, 30.0 ] >> InVal;
+        [ on,  off,  on,   off  ] >> TriggerClassic;
+        [ off, on,   off,  on   ] >> TriggerCompact;
+    ]
+    validate: [
+        [ OutClassic, [ 6.0, 6.0, 21.0, 21.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ OutCompact, [ 0.0, 20.0, 20.0, 40.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# ------------------------------------------------------------------------------
+# 6. Loops - Old / Canonical Syntax
+# ------------------------------------------------------------------------------
+
+loop ClassicSumLoop {
+    ports: [
+        mainInputPort InputPort { entity: Input }
+        mainOutputPort OutputPort { entity: Output }
+    ]
+    entities: [
+        signal Input[InputPort.size] { type: Real domain: OutputPort.domain }
+        signal Output { default: 0.0 type: Real domain: OutputPort.domain }
+        signal Index { default: 0 type: Int reset: Reset domain: OutputPort.domain }
+        switch Done { default: off domain: OutputPort.domain }
+    ]
+    terminateWhen: Done
+    streams: [
+        Input[Index] + Output >> Output;
+        Index + 1 >> Index;
+        [Index, InputPort.size] >> Equal() >> Done;
+    ]
+}
+
+functionTest ClassicSumLoopTest {
+    target: ClassicSumLoop
+    prepare: [
+        [ [ 1.0, 2.0, 3.0, 4.0 ], [ 10.0, 20.0, 30.0, 40.0 ] ] >> Input;
+    ]
+    validate: [
+        [ Output, [ 10.0, 100.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# ------------------------------------------------------------------------------
+# 7. Loops - New Compact Syntax
+# ------------------------------------------------------------------------------
+
+loop Input[] >> CompactSumLoop()
+        >> signal Output { default: 0.0 type: Real domain: OutputPort.domain } {
+    terminateWhen: Done
+    code: [
+        signal Index { default: 0 type: Int reset: Reset domain: OutputPort.domain }
+        switch Done { default: off domain: OutputPort.domain }
+
+        Input[Index] + Output >> Output;
+        Index + 1 >> Index;
+        [Index, InputPort.size] >> Equal() >> Done;
+    ]
+}
+
+functionTest CompactSumLoopTest {
+    target: CompactSumLoop
+    prepare: [
+        [ [ 5.0, 15.0, 25.0 ], [ 100.0, 200.0, 300.0 ] ] >> Input;
+    ]
+    validate: [
+        [ Output, [ 45.0, 600.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# ------------------------------------------------------------------------------
+# 8. Compact Loop with Property Input & Scaled Reduction
+# ------------------------------------------------------------------------------
+
+loop Input[] >> CompactScaleSumLoop(factor: signal Factor { default: 1.0 type: Real })
+        >> signal Output { default: 0.0 type: Real domain: OutputPort.domain } {
+    terminateWhen: Done
+    code: [
+        signal Index { default: 0 type: Int reset: Reset domain: OutputPort.domain }
+        switch Done { default: off domain: OutputPort.domain }
+
+        (Input[Index] * Factor) + Output >> Output;
+        Index + 1 >> Index;
+        [Index, InputPort.size] >> Equal() >> Done;
+    ]
+}
+
+functionTest CompactScaleSumLoopTest {
+    target: CompactScaleSumLoop
+    prepare: [
+        [ [ 1.0, 2.0, 3.0 ], [ 4.0, 5.0, 6.0 ] ] >> Input;
+        [ 2.0, 0.5 ] >> Factor;
+    ]
+    validate: [
+        [ Output, [ 12.0, 7.5 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# ------------------------------------------------------------------------------
+# 9. Pipeline Integration Test (Chaining Compact and Canonical Modules)
+# ------------------------------------------------------------------------------
+
+_domainDefinition PipelineDomain {
+    framework: _JitFramework
+    rate: -1
+    inputs: [
+        signal PipeIn { domain: PipelineDomain type: Real }
+    ]
+    outputs: [
+        signal PipeOut { domain: PipelineDomain type: Real }
+    ]
+}
+
+signal Intermediate { domain: PipelineDomain type: Real }
+
+PipeIn >> CompactScaleModule(factor: 3.0) >> Intermediate;
+Intermediate >> ClassicScaleModule(factor: 2.0) >> PipeOut;
+
+functionTest PipelineIntegrationTest {
+    target: PipelineDomain
+    prepare: [
+        [ 1.0, 2.0, 5.0, 10.0 ] >> PipeIn;
+    ]
+    validate: [
+        [ PipeOut, [ 6.0, 12.0, 30.0, 60.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
