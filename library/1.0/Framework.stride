@@ -165,6 +165,13 @@ type _PlatformModuleType {
 			default: []
 			required: off
 			meta: "This will validate constraints for property input"
+		},
+		typeProperty Pure {
+			name: "pure"
+			allowedTypes: _SwitchLiteral
+			default: off
+			required: off
+			meta: "on when the result depends only on the inputs and the program's definition (no state, no side effects), so the compiler may call it while compiling, for example to fill constants"
 		}
 	]
 	inherits: [_PlatformCodeType]
