@@ -2,11 +2,11 @@ type _TransitionType {
     typeName: "transition"
 	properties: [
 		typeProperty {
-			name: "signal"
-			allowedTypes: constrainedEntity { allowed: [_Signal, _Switch, _StringLiteral, _NoneLiteral] }
+			name: "trigger"
+			allowedTypes: constrainedEntity { allowed: [_Switch, _Trigger, _NoneLiteral] }
 			default: none
 			required: off
-			meta: "The event or signal that triggers this transition."
+			meta: "What triggers this transition: the transition is taken when the trigger fires (e.g. a switch turning on)."
 		},
 		typeProperty {
 			name: "label"
