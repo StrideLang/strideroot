@@ -268,6 +268,13 @@ type _Type {
 			default: [_Base]
 			required: off
 		},
+		typeProperty Final {
+			name: "final"
+			allowedTypes: _SwitchLiteral
+			default: off
+			required: off
+			meta: "Defines whether the type is final and cannot be inherited from."
+		},
 		typeProperty Meta {
 			name: "meta"
 			allowedTypes: _StringLiteral
