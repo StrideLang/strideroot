@@ -255,6 +255,86 @@ Stride covers semaphore-governed hand-offs at three levels:
 - **Embedded / RTOS (FreeRTOS, Zephyr, Pico)**: Lowered to `xSemaphoreCreateCounting`, `xSemaphoreTake`, and `xSemaphoreGive` (or `pw_sync::CountingSemaphore`).
 - **JIT / LLVM IR**: Lowered via external runtime helper functions (`stride_sem_acquire`, `stride_sem_release`) linked via `StrideEnvironment`, or native platform atomic futexes.
 
+### 5.4 Parameterized Connections & Configuration Schema
+
+Hardware and operating system interconnects are inherently parameterized: UARTs operate on specific ports and baud rates (e.g. `COM1`, `/dev/ttyUSB0`, `115200`), FIFOs and mailboxes have specific channel indices and capacities (e.g. `fifo: 1`, `capacity: 256`), and shared memory buffers have specific alignments and capacities.
+
+Hardcoding these parameters directly in connection blueprints (e.g. `SerialOut[0]`) forces duplication of blueprint files whenever a project requires a different physical port or channel. Stride resolves this by decoupling **generic connection blueprints** in the system repository (`strideroot/systems/`) from **concrete connection specializations** in the user application or system configuration.
+
+#### 1. Connection Blueprints (`strideroot/systems/<System>/<Ver>/System.stride`)
+Connection blueprints declare default properties alongside driver streams:
+```stride
+connection _PCToWiringSerial {
+    port: 0
+    baudRate: 115200
+    sourceFramework: _PCPlatform
+    sourceDomains: [ "DesktopDomain" ]
+    destinationFramework: _WiringPlatform
+    destinationDomains: [ "WiringDomain" ]
+    sourceImports: ["Serial"]
+    sourceStreams: [
+        _Connection_Token >> SerialOut[port];
+    ]
+    destinationImports: ["Serial"]
+    destinationStreams: [
+        Wiring::SerialIn[port] >> _Connection_Token;
+    ]
+}
+
+connection _CoreToCoreFIFO {
+    fifo: 0
+    capacity: 64
+    sourceFramework: _PicoPlatform
+    sourceDomains: [ "Core0" ]
+    destinationFramework: _PicoPlatform
+    destinationDomains: [ "Core1" ]
+    sourceStreams: [
+        _Connection_Token >> FifoPush[fifo]();
+    ]
+    destinationStreams: [
+        FifoPop[fifo]() >> _Connection_Token;
+    ]
+}
+```
+
+#### 2. Project Specialization & Parameter Overrides
+Projects specialize connection parameters declaratively without modifying `strideroot`. Specialization is supported via three ergonomic forms:
+
+- **System Connection Specialization Block**:
+  ```stride
+  system DesktopApp {
+      platforms: [_WiringPlatform, _PCPlatform]
+      connections: [
+          connection _PCToWiringSerial {
+              port: 1
+              baudRate: 57600
+          }
+      ]
+  }
+  ```
+- **Connection Invocation / Call Syntax**:
+  ```stride
+  system DesktopApp {
+      platforms: [_WiringPlatform, _PCPlatform]
+      connections: [
+          _PCToWiringSerial(port: 1 baudRate: 57600)
+      ]
+  }
+  ```
+- **Top-Level Project Specialization**:
+  ```stride
+  connection _PCToWiringSerial {
+      port: 1
+  }
+  ```
+- **Default Inheritance**: If a connection is listed without overrides (`connections: [ _PCToWiringSerial ]`), it automatically inherits all default parameter values (`port: 0`, `baudRate: 115200`).
+
+#### 3. Compiler Lowering & Property Substitution
+During lowering (`StrideSystem::generateDomainConnections`):
+1. **Effective Property Merging**: The compiler merges defaults from the blueprint with any project specializations.
+2. **AST Property Substitution**: In `sourceStreams` and `destinationStreams`, identifier occurrences corresponding to connection property names (e.g. `port`, `fifo`, `capacity`) are substituted with their effective literal values (e.g. replacing `SerialOut[port]` with `SerialOut[1]`).
+3. **Stream Splicing**: Splicing splits cross-domain streams `A >> B;` into `A >> SerialOut[1];` and `Wiring::SerialIn[1] >> B;`, cleanly bound to the configured hardware resource.
+
 ---
 
 ## 6. Packages vs. `rootNamespace` & Symbol Security
