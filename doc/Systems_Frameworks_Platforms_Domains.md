@@ -176,6 +176,85 @@ Connections describe how data and events move across boundaries, spanning all ha
    - Network transports: Ethernet, Wi-Fi, BLE, TCP/UDP sockets.
    - Structured RPC: Pigweed RPC, gRPC, Protobuf serialization.
 
+### 5.3 Asymmetric Resource Hand-off & Semaphores
+
+A critical concurrency challenge in multi-threaded systems occurs when **a resource locked or acquired by one domain must be freed or released by another domain running on a separate thread**.
+
+#### The Mutex Ownership Dilemma
+In standard POSIX (`pthread_mutex_unlock`), C++ (`std::mutex`), and RTOS environments, a mutex has **strict thread ownership**. The thread that acquires the mutex *must* be the thread that releases it. If Domain A (running on Thread A) locks a mutex and Domain B (running on Thread B) attempts to unlock it, the result is undefined behavior or a fatal runtime error (`EPERM`).
+
+#### The Semaphore Solution (No Thread Ownership)
+A **Counting or Binary Semaphore** (`std::counting_semaphore`, POSIX `sem_t`, FreeRTOS `SemaphoreHandle_t`, or Pigweed `pw_sync::CountingSemaphore`) has **no thread ownership**:
+- **Domain A** executes `acquire()` (or `wait()`) to claim a resource slot.
+- **Domain B** (or an interrupt service routine on a different thread) executes `release()` (or `post() / give()`) to return the resource.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant DomA as Domain A (Producer Thread)
+    participant Sem as Semaphore (Resource Permits: N)
+    participant Buffer as Leased Resource / Buffer Pool
+    participant DomB as Domain B (Consumer Thread)
+
+    DomA->>Sem: acquire() [Permit -1]
+    Note over DomA,Buffer: Domain A locks slot and writes data
+    DomA->>DomB: Trigger processing (Signal / Event)
+    Note over DomB: Domain B processes data independently
+    DomB->>Sem: release() [Permit +1]
+    Note over Buffer: Resource freed back to pool by Domain B!
+```
+
+#### Modeling Semaphores in Stride
+
+Stride covers semaphore-governed hand-offs at three levels:
+
+1. **Resource Definition (`resource` declaration)**:
+   A shared resource can specify semaphore synchronization and instance pooling:
+   ```stride
+   resource DmaBufferPool {
+       maxInstances: 2           # Bounded capacity (e.g. ping-pong double buffer)
+       synchronization: Semaphore # Governed by a counting semaphore
+       exclusive: on
+   }
+   ```
+   The compiler instantiates a counting semaphore initialized to `maxInstances`. Acquiring a permit is required to enter or allocate from the resource, and permits can be returned by any domain holding a lease.
+
+2. **Declarative Connection Hand-offs (`connection`)**:
+   In high-level system connections where streams cross asynchronous domains:
+   ```stride
+   connection AudioToWorker {
+       sourceDomains: [ "AudioDomain" ]
+       destinationDomains: [ "WorkerDomain" ]
+       mechanism: Handoff {
+           sync: Semaphore
+           capacity: 2
+       }
+   }
+   ```
+   The compiler automatically synthesizes:
+   - An `acquire` call in the producer domain before writing.
+   - An automated `release` call in the consumer domain upon completion of its processing tick or reaction.
+
+3. **Explicit Token Control (`Res.acquire` & `Res.release`)**:
+   For algorithms requiring fine-grained dataflow control:
+   ```stride
+   # Producer Domain: wait for an available buffer in the pool
+   BufferPool.acquire >> reaction {
+       streams: [
+           SensorIn >> BufferPool.buffer;
+           BufferPool.ready >> WorkerTrigger;
+       ]
+   };
+
+   # Consumer Domain: when reaction finishes, release the buffer permit back to the pool
+   WorkerReaction.done >> BufferPool.release;
+   ```
+
+#### Backend Lowering
+- **C++ Framework**: Lowered to C++20 `std::counting_semaphore<N>` or `std::binary_semaphore`.
+- **Embedded / RTOS (FreeRTOS, Zephyr, Pico)**: Lowered to `xSemaphoreCreateCounting`, `xSemaphoreTake`, and `xSemaphoreGive` (or `pw_sync::CountingSemaphore`).
+- **JIT / LLVM IR**: Lowered via external runtime helper functions (`stride_sem_acquire`, `stride_sem_release`) linked via `StrideEnvironment`, or native platform atomic futexes.
+
 ---
 
 ## 6. Packages vs. `rootNamespace` & Symbol Security
