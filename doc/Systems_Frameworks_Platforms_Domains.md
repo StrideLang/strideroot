@@ -118,6 +118,12 @@ A **Domain** (`_domainDefinition`) is an execution and scheduling context. It gr
    - `<Domain>_process(...)`: Continuous or event-driven execution tick (evaluates domain streams, reactions, and active state machine transitions).
    - `<Domain>_cleanup(void *state)`: Optional teardown and resource release.
 
+### 4.2 Autonomous Subdomains & Parent Resource Provisioning
+When an autonomous domain is not the root domain, its **parent domain is where autonomy is granted and resources are provided for it**:
+- **Execution Resource Ownership**: The parent domain owns and provisions the execution vehicle required by the autonomous child (e.g. allocating a `_Thread` resource, creating an OS worker thread, setting up a hardware timer interrupt, or delegating to an RTOS task).
+- **Shared Memory Context**: The parent domain hosts the shared memory resource (`_RootContext`, shared heap, or inter-thread buffer) accessible to both the parent and its subdomains.
+- **Lifecycle Coordination**: The parent domain manages the child domain's runtime life cycle: `<Parent>_init` starts the autonomous worker thread or task, and `<Parent>_cleanup` signals termination and joins the thread. Autonomy is therefore not an unmanaged free-for-all; it is an explicitly delegated capability anchored in the parent domain's resource contract.
+
 ---
 
 ## 5. Systems & Abstract Connections
@@ -152,13 +158,15 @@ system DesktopAudioApp {
 ### 5.2 Spectrum of Connection Mechanisms
 Connections describe how data and events move across boundaries, spanning all hardware and software topologies:
 
-1. **Shared Address Space (Level 1 / Intrinsic)**:
-   - Direct pointer access in unified memory (`_RootContext`).
-   - Zero-overhead pointer dereference or register passing.
-2. **Inter-Thread / Intra-Process (Level 2)**:
-   - SPSC Lock-free circular ring buffers (streaming audio / telemetry).
-   - Atomic double-buffering / pointer ping-pong (latest-wins parameter updates).
-   - Condition variables / semaphores (reactive event notifications).
+1. **Shared Address Space (Level 1 / Intrinsic - Same Process or Common Parent)**:
+   Even within a shared memory space (`_RootContext`), different access patterns require specific synchronization mechanisms:
+   - **1A. Plain Direct Memory (Level 1 POC)**: Zero-overhead direct pointer dereference or register passing without locks, mutexes, or FIFOs. Suitable for single-threaded sibling domains, lock-free scalar reads, or cooperative coroutines.
+   - **1B. Mutex-Protected Shared State**: Used when concurrent asynchronous domains concurrently read and write multi-variable bundles, structured tables, or non-atomic state blocks, guaranteeing transactional consistency and preventing race conditions or torn reads.
+   - **1C. FIFO / Lock-Free Ring Buffering (SPSC / MPMC)**: Used when streaming data or event sequences must be preserved losslessly without dropping samples across asynchronous rates (e.g. 48 kHz Audio generating samples consumed by a 60 Hz UI or ML domain, or incoming serial packets queued for a game loop).
+   - **1D. Double / Triple Buffering**: Lockless latest-wins state exchange (e.g., frame peeking, oscilloscope views, display buffers, parameter snapshots) where older unread data can be safely overwritten by newer updates without blocking the producer.
+2. **Inter-Thread / Intra-Process (Level 2 - Concurrency & Synchronization)**:
+   - Condition variables / counting semaphores (reactive event notifications, task wakeups).
+   - Thread notifications (`pw_sync`, FreeRTOS task notifications).
 3. **Hardware-Driven / On-Chip (Level 3 - MPUs / Heterogeneous Cores)**:
    - **DMA Transfers**: Automatic circular DMA buffers with half-transfer (HT) and transfer-complete (TC) interrupts.
    - **Zero-Latency Scratchpads (zpads) / Tightly-Coupled Memory (TCM)**: Physically contiguous dual-port SRAM with explicit cache invalidate/flush instructions.
