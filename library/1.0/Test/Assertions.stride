@@ -1,0 +1,61 @@
+#
+# Stride Standard Library - Test Package: Stream Assertions
+#
+
+package Test::Assertions
+
+# Asserts that a real-time signal remains within bounds [min, max]
+module AssertInRange {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "Signal stream to monitor"
+        },
+        propertyInputPort MinPort {
+            name: "min"
+            entity: MinBound
+            meta: "Minimum acceptable value"
+        },
+        propertyInputPort MaxPort {
+            name: "max"
+            entity: MaxBound
+            meta: "Maximum acceptable value"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Passthrough of input signal"
+        }
+    ]
+    entities: [
+        signal Input {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal MinBound {
+            domain: OutputPort.domain
+            default: -1.0
+        },
+        signal MaxBound {
+            domain: OutputPort.domain
+            default: 1.0
+        },
+        switch ViolationLow {
+            domain: OutputPort.domain
+        },
+        switch ViolationHigh {
+            domain: OutputPort.domain
+        },
+        signal Output {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        }
+    ]
+    streams: [
+        Input >> Output;
+        [Input, MinBound] >> Less() >> ViolationLow >> Error(message: "Assertion failed: signal dropped below minimum bound");
+        [Input, MaxBound] >> Greater() >> ViolationHigh >> Error(message: "Assertion failed: signal exceeded maximum bound");
+    ]
+    meta: "Inline runtime assertion verifying signal remains within bounds: AudioIn >> AssertInRange(min: -1.0 max: 1.0) >> CleanAudio."
+}

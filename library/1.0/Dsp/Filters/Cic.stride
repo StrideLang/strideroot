@@ -1,0 +1,65 @@
+#
+# Stride Standard DSP Package - Filters: Cascaded Integrator-Comb (CIC) Filter
+#
+
+package Dsp::Filters::Cic
+
+# 2nd-order Cascaded Integrator-Comb (CIC) decimation stage
+module Decimator2 {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "High-rate input signal stream (e.g., PDM microphone / oversampled ADC)"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Integrator-comb filtered output stream"
+        }
+    ]
+    entities: [
+        signal Input {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        # Integrator stage 1 & 2
+        signal I1 {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal I2 {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        # Comb differentiator delay memories
+        signal C1Delay {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal C1Diff {
+            domain: OutputPort.domain
+        },
+        signal C2Delay {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal Output {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        }
+    ]
+    streams: [
+        # Integrator chain
+        I1 + Input >> I1;
+        I2 + I1 >> I2;
+
+        # Comb differentiator chain (differential delay M = 1)
+        I2 - C1Delay >> C1Diff;
+        I2 >> C1Delay;
+
+        C1Diff - C2Delay >> Output;
+        C1Diff >> C2Delay;
+    ]
+    meta: "2nd-order multiplierless Cascaded Integrator-Comb (CIC) filter: HighRateIn >> Cic::Decimator2() >> Out."
+}

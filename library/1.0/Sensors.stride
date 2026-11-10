@@ -1,0 +1,8 @@
+#
+# Stride Standard Library - Sensors Package Barrel File
+#
+
+package Sensors
+
+# Re-exports sensor signal conditioning modules
+import Sensors::Conditioning as Conditioning

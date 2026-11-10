@@ -1,0 +1,105 @@
+#
+# Stride Standard Library - Estimation Package: Real-Time Peak Detector
+#
+
+package Estimation::PeakDetector
+
+# Real-time local maximum detector with amplitude threshold
+module Detector {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "Input signal stream to monitor for peaks"
+        },
+        propertyInputPort ThresholdPort {
+            name: "threshold"
+            entity: Threshold
+            meta: "Minimum peak amplitude threshold"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Binary impulse (1.0 upon peak detection, 0.0 otherwise)"
+        }
+    ]
+    entities: [
+        signal Input {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal Threshold {
+            domain: OutputPort.domain
+            default: 0.5
+        },
+        signal X0 {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal X1 {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal X2 {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        switch Rising {
+            domain: OutputPort.domain
+        },
+        switch Falling {
+            domain: OutputPort.domain
+        },
+        switch PeakShape {
+            domain: OutputPort.domain
+        },
+        switch AboveThreshold {
+            domain: OutputPort.domain
+        },
+        switch IsPeak {
+            domain: OutputPort.domain
+        },
+        signal PeakOutput {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal Output {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        reaction SetPeak {
+            ports: []
+            streams: [
+                1.0 >> PeakOutput;
+            ]
+        },
+        reaction ClearPeak {
+            ports: []
+            streams: [
+                0.0 >> PeakOutput;
+            ]
+        }
+    ]
+    streams: [
+        Input >> X0;
+
+        # Peak detection: X1 is greater than X2 (rising) and greater than X0 (falling)
+        [X1, X2] >> Greater() >> Rising;
+        [X1, X0] >> Greater() >> Falling;
+        [Rising, Falling] >> And() >> PeakShape;
+
+        # Amplitude condition
+        [X1, Threshold] >> GreaterOrEqual() >> AboveThreshold;
+        [PeakShape, AboveThreshold] >> And() >> IsPeak;
+
+        IsPeak >> SetPeak();
+        not IsPeak >> ClearPeak();
+
+        PeakOutput >> Output;
+
+        # Shift sample history
+        X1 >> X2;
+        X0 >> X1;
+    ]
+    meta: "Detects local peaks exceeding a minimum threshold: Signal >> PeakDetector::Detector(threshold: 0.5) >> Peaks."
+}

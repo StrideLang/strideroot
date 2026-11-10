@@ -1,0 +1,268 @@
+#
+# Stride Standard Library - Sensors Package: Signal Conditioning & Fusion
+#
+
+package Sensors::Conditioning
+
+# Digital switch / button debounce filter
+module Debounce {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "Raw digital or binary input signal (0 or 1)"
+        },
+        propertyInputPort SamplesPort {
+            name: "samples"
+            entity: DebounceSamples
+            meta: "Number of consecutive stable samples required to accept state change"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Debounced output signal"
+        }
+    ]
+    entities: [
+        signal Input {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal DebounceSamples {
+            domain: OutputPort.domain
+            default: 10
+        },
+        signal Count {
+            domain: OutputPort.domain
+            default: 0
+        },
+        signal Output {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+            default: 0
+        },
+        switch IsDifferent {
+            domain: OutputPort.domain
+        },
+        switch CountReached {
+            domain: OutputPort.domain
+        },
+        reaction IncCount {
+            ports: []
+            streams: [
+                Count + 1 >> Count;
+            ]
+        },
+        reaction ResetCount {
+            ports: []
+            streams: [
+                0 >> Count;
+            ]
+        },
+        reaction UpdateState {
+            ports: []
+            streams: [
+                Input >> Output;
+                0 >> Count;
+            ]
+        }
+    ]
+    streams: [
+        [Input, Output] >> NotEqual() >> IsDifferent;
+        IsDifferent >> IncCount();
+        not IsDifferent >> ResetCount();
+        [Count, DebounceSamples] >> GreaterOrEqual() >> CountReached >> UpdateState();
+    ]
+    meta: "Suppresses mechanical switch bounce: RawButton >> Debounce(samples: 10) >> CleanButton."
+}
+
+# Deadband filter with linear rescaling to prevent analog joystick/sensor jitter
+module Deadband {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "Input signal in range [-1.0, 1.0]"
+        },
+        propertyInputPort ThresholdPort {
+            name: "threshold"
+            entity: Threshold
+            meta: "Deadband half-width around zero (default 0.05)"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Deadband-filtered and rescaled output signal"
+        }
+    ]
+    entities: [
+        signal Input {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal Threshold {
+            domain: OutputPort.domain
+            default: 0.05
+        },
+        signal AbsIn {
+            domain: OutputPort.domain
+        },
+        signal Scaled {
+            domain: OutputPort.domain
+        },
+        signal ClampedScaled {
+            domain: OutputPort.domain
+        },
+        signal SignVal {
+            domain: OutputPort.domain
+        },
+        signal Output {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        }
+    ]
+    streams: [
+        Input >> Abs() >> AbsIn;
+        (AbsIn - Threshold) / (1.0 - Threshold) >> Scaled;
+        [Scaled, 0.0] >> Max() >> ClampedScaled;
+        Input >> Sign() >> SignVal;
+        ClampedScaled * SignVal >> Output;
+    ]
+    meta: "Suppresses near-zero sensor jitter with smooth linear rescaling: Joystick >> Deadband(threshold: 0.05) >> Output."
+}
+
+# Linear ADC calibration mapping [rawMin, rawMax] to physical units [calMin, calMax]
+module LinearCalibration {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "Raw sensor measurement (e.g., ADC integer counts)"
+        },
+        propertyInputPort RawMinPort {
+            name: "rawMin"
+            entity: RawMin
+            meta: "Minimum raw input value"
+        },
+        propertyInputPort RawMaxPort {
+            name: "rawMax"
+            entity: RawMax
+            meta: "Maximum raw input value"
+        },
+        propertyInputPort CalMinPort {
+            name: "calMin"
+            entity: CalMin
+            meta: "Target calibrated minimum engineering unit"
+        },
+        propertyInputPort CalMaxPort {
+            name: "calMax"
+            entity: CalMax
+            meta: "Target calibrated maximum engineering unit"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Calibrated physical signal"
+        }
+    ]
+    entities: [
+        signal Input {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal RawMin {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal RawMax {
+            domain: OutputPort.domain
+            default: 1023.0
+        },
+        signal CalMin {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal CalMax {
+            domain: OutputPort.domain
+            default: 3.3
+        },
+        signal Normalized {
+            domain: OutputPort.domain
+        },
+        signal Output {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        }
+    ]
+    streams: [
+        (Input - RawMin) / (RawMax - RawMin) >> Normalized;
+        CalMin + (Normalized * (CalMax - CalMin)) >> Output;
+    ]
+    meta: "Rescales raw ADC readings to engineering units: Adc >> LinearCalibration(rawMin: 0 rawMax: 4095 calMin: 0.0 calMax: 3.3) >> Volts."
+}
+
+# 1st-order complementary filter combining gyroscope angular velocity with accelerometer tilt
+module ComplementaryFilter {
+    ports: [
+        mainInputPort GyroPort {
+            name: "gyroRate"
+            entity: GyroRate
+            meta: "Angular velocity from gyroscope in deg/s or rad/s"
+        },
+        propertyInputPort AccelPort {
+            name: "accelAngle"
+            entity: AccelAngle
+            meta: "Static tilt angle from accelerometer"
+        },
+        propertyInputPort AlphaPort {
+            name: "alpha"
+            entity: Alpha
+            meta: "Filter blending weighting factor (default 0.98)"
+        },
+        propertyInputPort DtPort {
+            name: "dt"
+            entity: Dt
+            meta: "Sample time interval in seconds (e.g., 0.01 for 100 Hz)"
+        },
+        mainOutputPort AnglePort {
+            name: "angle"
+            entity: OutputAngle
+            meta: "Fused estimated angle"
+        }
+    ]
+    entities: [
+        signal GyroRate {
+            domain: AnglePort.domain
+            rate: AnglePort.rate
+        },
+        signal AccelAngle {
+            domain: AnglePort.domain
+            default: 0.0
+        },
+        signal Alpha {
+            domain: AnglePort.domain
+            default: 0.98
+        },
+        signal Dt {
+            domain: AnglePort.domain
+            default: 0.01
+        },
+        signal PrevAngle {
+            domain: AnglePort.domain
+            default: 0.0
+        },
+        signal GyroIntegrated {
+            domain: AnglePort.domain
+        },
+        signal OutputAngle {
+            domain: AnglePort.domain
+            rate: AnglePort.rate
+        }
+    ]
+    streams: [
+        PrevAngle + (GyroRate * Dt) >> GyroIntegrated;
+        (GyroIntegrated * Alpha) + (AccelAngle * (1.0 - Alpha)) >> OutputAngle;
+        OutputAngle >> PrevAngle;
+    ]
+    meta: "IMU sensor fusion blending gyro rate and accelerometer tilt: GyroRate >> ComplementaryFilter(accelAngle: AccelTilt alpha: 0.98 dt: 0.01) >> FusedAngle."
+}

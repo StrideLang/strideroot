@@ -1,0 +1,7 @@
+#
+# Stride Standard Library - Window Package Barrel File
+#
+
+package Window
+
+import Window::Functions as Functions

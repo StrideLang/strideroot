@@ -3,3 +3,6 @@
 #
 
 package Dsp::Filters
+
+import Dsp::Filters::Halfband as Halfband
+import Dsp::Filters::Cic as Cic

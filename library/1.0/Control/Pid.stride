@@ -1,0 +1,116 @@
+#
+# Stride Standard Library - Control Package: PID Controller
+#
+
+package Control
+
+module Pid {
+    ports: [
+        mainInputPort ErrorPort {
+            name: "input"
+            entity: Error
+            meta: "Error signal (Setpoint - ProcessVariable)"
+        },
+        propertyInputPort KpPort {
+            name: "kp"
+            entity: Kp
+            meta: "Proportional gain coefficient"
+        },
+        propertyInputPort KiPort {
+            name: "ki"
+            entity: Ki
+            meta: "Integral gain coefficient"
+        },
+        propertyInputPort KdPort {
+            name: "kd"
+            entity: Kd
+            meta: "Derivative gain coefficient"
+        },
+        propertyInputPort MinPort {
+            name: "min"
+            entity: MinLimit
+            meta: "Minimum saturation limit for integrator and output"
+        },
+        propertyInputPort MaxPort {
+            name: "max"
+            entity: MaxLimit
+            meta: "Maximum saturation limit for integrator and output"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Control variable output signal"
+        }
+    ]
+    entities: [
+        signal Error {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal Kp {
+            domain: OutputPort.domain
+            default: 1.0
+        },
+        signal Ki {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal Kd {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal MinLimit {
+            domain: OutputPort.domain
+            default: -1.0
+        },
+        signal MaxLimit {
+            domain: OutputPort.domain
+            default: 1.0
+        },
+        signal PTerm {
+            domain: OutputPort.domain
+        },
+        signal ITerm {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal ITermCandidate {
+            domain: OutputPort.domain
+        },
+        signal ITermClamped {
+            domain: OutputPort.domain
+        },
+        signal PrevError {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal DTerm {
+            domain: OutputPort.domain
+        },
+        signal TotalOutput {
+            domain: OutputPort.domain
+        },
+        signal Output {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        }
+    ]
+    streams: [
+        # Proportional term
+        Error * Kp >> PTerm;
+
+        # Integral term with anti-windup clamping
+        ITerm + (Error * Ki) >> ITermCandidate;
+        ITermCandidate >> Clamp(min: MinLimit max: MaxLimit) >> ITermClamped;
+        ITermClamped >> ITerm;
+
+        # Derivative term
+        (Error - PrevError) * Kd >> DTerm;
+        Error >> PrevError;
+
+        # Summation and output saturation clamping
+        PTerm + ITermClamped + DTerm >> TotalOutput;
+        TotalOutput >> Clamp(min: MinLimit max: MaxLimit) >> Output;
+    ]
+    meta: "Proportional-Integral-Derivative controller with anti-windup clamping: Error >> Pid(kp: 1.0 ki: 0.05 kd: 0.1) >> Output."
+}

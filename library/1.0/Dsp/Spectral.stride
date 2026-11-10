@@ -1,0 +1,7 @@
+#
+# Stride Standard DSP Package - Spectral Submodule Barrel File
+#
+
+package Dsp::Spectral
+
+import Dsp::Spectral::Goertzel as Goertzel

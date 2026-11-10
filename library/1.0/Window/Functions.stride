@@ -1,0 +1,209 @@
+#
+# Stride Standard Library - Window Package: Standard FFT & Filter Window Functions
+#
+
+package Window::Functions
+
+# Hann (Hanning) Window
+module Hann {
+    ports: [
+        mainInputPort IndexPort {
+            name: "index"
+            entity: Index
+            meta: "Sample index n (0 to size - 1)"
+        },
+        propertyInputPort SizePort {
+            name: "size"
+            entity: Size
+            meta: "Window size / length N"
+        },
+        mainOutputPort WeightPort {
+            name: "weight"
+            entity: Weight
+            meta: "Window coefficient w[n]"
+        }
+    ]
+    entities: [
+        signal Index {
+            domain: WeightPort.domain
+            rate: WeightPort.rate
+        },
+        signal Size {
+            domain: WeightPort.domain
+            default: 512.0
+        },
+        signal Theta {
+            domain: WeightPort.domain
+        },
+        signal CosTheta {
+            domain: WeightPort.domain
+        },
+        signal Weight {
+            domain: WeightPort.domain
+            rate: WeightPort.rate
+        }
+    ]
+    streams: [
+        (Math::TwoPi * Index) / (Size - 1.0) >> Theta;
+        Theta >> Cos() >> CosTheta;
+        0.5 * (1.0 - CosTheta) >> Weight;
+    ]
+    meta: "Hann window function: Index >> Hann(size: 512) >> Weight."
+}
+
+# Hamming Window
+module Hamming {
+    ports: [
+        mainInputPort IndexPort {
+            name: "index"
+            entity: Index
+            meta: "Sample index n (0 to size - 1)"
+        },
+        propertyInputPort SizePort {
+            name: "size"
+            entity: Size
+            meta: "Window size / length N"
+        },
+        mainOutputPort WeightPort {
+            name: "weight"
+            entity: Weight
+            meta: "Window coefficient w[n]"
+        }
+    ]
+    entities: [
+        signal Index {
+            domain: WeightPort.domain
+            rate: WeightPort.rate
+        },
+        signal Size {
+            domain: WeightPort.domain
+            default: 512.0
+        },
+        signal Theta {
+            domain: WeightPort.domain
+        },
+        signal CosTheta {
+            domain: WeightPort.domain
+        },
+        signal Weight {
+            domain: WeightPort.domain
+            rate: WeightPort.rate
+        }
+    ]
+    streams: [
+        (Math::TwoPi * Index) / (Size - 1.0) >> Theta;
+        Theta >> Cos() >> CosTheta;
+        0.54 - (0.46 * CosTheta) >> Weight;
+    ]
+    meta: "Hamming window function: Index >> Hamming(size: 512) >> Weight."
+}
+
+# Blackman Window
+module Blackman {
+    ports: [
+        mainInputPort IndexPort {
+            name: "index"
+            entity: Index
+            meta: "Sample index n (0 to size - 1)"
+        },
+        propertyInputPort SizePort {
+            name: "size"
+            entity: Size
+            meta: "Window size / length N"
+        },
+        mainOutputPort WeightPort {
+            name: "weight"
+            entity: Weight
+            meta: "Window coefficient w[n]"
+        }
+    ]
+    entities: [
+        signal Index {
+            domain: WeightPort.domain
+            rate: WeightPort.rate
+        },
+        signal Size {
+            domain: WeightPort.domain
+            default: 512.0
+        },
+        signal Theta {
+            domain: WeightPort.domain
+        },
+        signal CosTheta {
+            domain: WeightPort.domain
+        },
+        signal Cos2Theta {
+            domain: WeightPort.domain
+        },
+        signal Weight {
+            domain: WeightPort.domain
+            rate: WeightPort.rate
+        }
+    ]
+    streams: [
+        (Math::TwoPi * Index) / (Size - 1.0) >> Theta;
+        Theta >> Cos() >> CosTheta;
+        Theta * 2.0 >> Cos() >> Cos2Theta;
+        0.42 - (0.5 * CosTheta) + (0.08 * Cos2Theta) >> Weight;
+    ]
+    meta: "Blackman window function: Index >> Blackman(size: 512) >> Weight."
+}
+
+# Flat-Top Window (optimal for precision amplitude measurement)
+module FlatTop {
+    ports: [
+        mainInputPort IndexPort {
+            name: "index"
+            entity: Index
+            meta: "Sample index n (0 to size - 1)"
+        },
+        propertyInputPort SizePort {
+            name: "size"
+            entity: Size
+            meta: "Window size / length N"
+        },
+        mainOutputPort WeightPort {
+            name: "weight"
+            entity: Weight
+            meta: "Window coefficient w[n]"
+        }
+    ]
+    entities: [
+        signal Index {
+            domain: WeightPort.domain
+            rate: WeightPort.rate
+        },
+        signal Size {
+            domain: WeightPort.domain
+            default: 512.0
+        },
+        signal Theta {
+            domain: WeightPort.domain
+        },
+        signal Cos1 {
+            domain: WeightPort.domain
+        },
+        signal Cos2 {
+            domain: WeightPort.domain
+        },
+        signal Cos3 {
+            domain: WeightPort.domain
+        },
+        signal Cos4 {
+            domain: WeightPort.domain
+        },
+        signal Weight {
+            domain: WeightPort.domain
+            rate: WeightPort.rate
+        }
+    ]
+    streams: [
+        (Math::TwoPi * Index) / (Size - 1.0) >> Theta;
+        Theta >> Cos() >> Cos1;
+        Theta * 2.0 >> Cos() >> Cos2;
+        Theta * 3.0 >> Cos() >> Cos3;
+        Theta * 4.0 >> Cos() >> Cos4;
+        0.21557895 - (0.41663158 * Cos1) + (0.277263158 * Cos2) - (0.083578947 * Cos3) + (0.006947368 * Cos4) >> Weight;
+    ]
+    meta: "Flat-top measurement window function: Index >> FlatTop(size: 512) >> Weight."
+}

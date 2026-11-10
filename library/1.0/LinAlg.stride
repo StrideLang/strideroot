@@ -1,0 +1,9 @@
+#
+# Stride Standard Library - Linear Algebra Package Barrel File
+#
+
+package LinAlg
+
+import LinAlg::Vectors as Vectors
+import LinAlg::Matrices as Matrices
+import LinAlg::Quaternion as Quaternion

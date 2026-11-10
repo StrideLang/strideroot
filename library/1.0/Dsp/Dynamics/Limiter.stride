@@ -1,0 +1,44 @@
+#
+# Stride Standard DSP Package - Dynamics: Peak Limiter
+#
+
+package Dsp::Dynamics::Limiter
+
+# Fast peak clamping limiter
+module Fast {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "Input audio signal stream"
+        },
+        propertyInputPort ThresholdPort {
+            name: "threshold"
+            entity: Limit
+            meta: "Maximum peak ceiling amplitude (default 0.95)"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Peak-limited audio signal stream"
+        }
+    ]
+    entities: [
+        signal Input {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal Limit {
+            domain: OutputPort.domain
+            default: 0.95
+        },
+        signal Output {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        }
+    ]
+    streams: [
+        Input >> Clamp(min: -Limit max: Limit) >> Output;
+    ]
+    meta: "Hard peak clamping limiter: AudioIn >> Limiter::Fast(threshold: 0.95) >> Out."
+}

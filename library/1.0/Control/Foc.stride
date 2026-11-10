@@ -1,0 +1,164 @@
+#
+# Stride Standard Library - Control Package: Field-Oriented Control (FOC) Transforms
+#
+
+package Control
+
+# Clarke Transform: Converts 3-phase currents [Ia, Ib, Ic] into 2-phase stationary frame [Ialpha, Ibeta]
+module Clarke {
+    ports: [
+        mainInputPort IabcPort {
+            name: "iabc"
+            entity: Iabc
+            meta: "3-phase input currents [Ia, Ib, Ic]"
+        },
+        mainOutputPort IalphabetaPort {
+            name: "ialphabeta"
+            entity: Ialphabeta
+            meta: "2-phase stationary frame currents [Ialpha, Ibeta]"
+        }
+    ]
+    entities: [
+        signal Iabc[3] {
+            domain: IalphabetaPort.domain
+            rate: IalphabetaPort.rate
+        },
+        signal Ialphabeta[2] {
+            domain: IalphabetaPort.domain
+            rate: IalphabetaPort.rate
+        }
+    ]
+    streams: [
+        Iabc[0] >> Ialphabeta[0];
+        (Iabc[0] + (2.0 * Iabc[1])) * 0.5773502691896257 >> Ialphabeta[1];
+    ]
+    meta: "Clarke transform: 3-phase currents [Ia, Ib, Ic] >> Clarke() >> [Ialpha, Ibeta]."
+}
+
+# Park Transform: Converts 2-phase stationary frame [Ialpha, Ibeta] into rotating frame [Id, Iq]
+module Park {
+    ports: [
+        mainInputPort IalphabetaPort {
+            name: "ialphabeta"
+            entity: Ialphabeta
+            meta: "2-phase stationary frame currents [Ialpha, Ibeta]"
+        },
+        propertyInputPort AnglePort {
+            name: "angle"
+            entity: Theta
+            meta: "Electrical rotor angle in radians"
+        },
+        mainOutputPort IdqPort {
+            name: "idq"
+            entity: Idq
+            meta: "Rotating direct-quadrature frame currents [Id, Iq]"
+        }
+    ]
+    entities: [
+        signal Ialphabeta[2] {
+            domain: IdqPort.domain
+            rate: IdqPort.rate
+        },
+        signal Theta {
+            domain: IdqPort.domain
+            default: 0.0
+        },
+        signal Idq[2] {
+            domain: IdqPort.domain
+            rate: IdqPort.rate
+        },
+        signal SinTheta {
+            domain: IdqPort.domain
+        },
+        signal CosTheta {
+            domain: IdqPort.domain
+        }
+    ]
+    streams: [
+        Theta >> Sin() >> SinTheta;
+        Theta >> Cos() >> CosTheta;
+        (Ialphabeta[0] * CosTheta) + (Ialphabeta[1] * SinTheta) >> Idq[0];
+        (-Ialphabeta[0] * SinTheta) + (Ialphabeta[1] * CosTheta) >> Idq[1];
+    ]
+    meta: "Park transform: [Ialpha, Ibeta] >> Park(angle: Theta) >> [Id, Iq]."
+}
+
+# Inverse Park Transform: Converts rotating frame [Vd, Vq] into stationary frame [Valpha, Vbeta]
+module InversePark {
+    ports: [
+        mainInputPort VdqPort {
+            name: "vdq"
+            entity: Vdq
+            meta: "Rotating direct-quadrature frame voltages [Vd, Vq]"
+        },
+        propertyInputPort AnglePort {
+            name: "angle"
+            entity: Theta
+            meta: "Electrical rotor angle in radians"
+        },
+        mainOutputPort ValphabetaPort {
+            name: "valphabeta"
+            entity: Valphabeta
+            meta: "Stationary frame voltages [Valpha, Vbeta]"
+        }
+    ]
+    entities: [
+        signal Vdq[2] {
+            domain: ValphabetaPort.domain
+            rate: ValphabetaPort.rate
+        },
+        signal Theta {
+            domain: ValphabetaPort.domain
+            default: 0.0
+        },
+        signal Valphabeta[2] {
+            domain: ValphabetaPort.domain
+            rate: ValphabetaPort.rate
+        },
+        signal SinTheta {
+            domain: ValphabetaPort.domain
+        },
+        signal CosTheta {
+            domain: ValphabetaPort.domain
+        }
+    ]
+    streams: [
+        Theta >> Sin() >> SinTheta;
+        Theta >> Cos() >> CosTheta;
+        (Vdq[0] * CosTheta) - (Vdq[1] * SinTheta) >> Valphabeta[0];
+        (Vdq[0] * SinTheta) + (Vdq[1] * CosTheta) >> Valphabeta[1];
+    ]
+    meta: "Inverse Park transform: [Vd, Vq] >> InversePark(angle: Theta) >> [Valpha, Vbeta]."
+}
+
+# Inverse Clarke Transform: Converts 2-phase stationary frame [Valpha, Vbeta] into 3-phase voltages [Va, Vb, Vc]
+module InverseClarke {
+    ports: [
+        mainInputPort ValphabetaPort {
+            name: "valphabeta"
+            entity: Valphabeta
+            meta: "Stationary frame voltages [Valpha, Vbeta]"
+        },
+        mainOutputPort VabcPort {
+            name: "vabc"
+            entity: Vabc
+            meta: "3-phase voltages [Va, Vb, Vc]"
+        }
+    ]
+    entities: [
+        signal Valphabeta[2] {
+            domain: VabcPort.domain
+            rate: VabcPort.rate
+        },
+        signal Vabc[3] {
+            domain: VabcPort.domain
+            rate: VabcPort.rate
+        }
+    ]
+    streams: [
+        Valphabeta[0] >> Vabc[0];
+        (-0.5 * Valphabeta[0]) + (0.8660254037844386 * Valphabeta[1]) >> Vabc[1];
+        (-0.5 * Valphabeta[0]) - (0.8660254037844386 * Valphabeta[1]) >> Vabc[2];
+    ]
+    meta: "Inverse Clarke transform: [Valpha, Vbeta] >> InverseClarke() >> [Va, Vb, Vc]."
+}

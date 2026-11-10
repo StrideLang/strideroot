@@ -1,0 +1,128 @@
+#
+# Stride Standard Library - LinAlg Package: Matrix Operations
+#
+
+package LinAlg::Matrices
+
+# 2D Matrix-Vector Linear Transformation: y = M * v (M is 2x2 row-major, v is 2x1)
+module Transform2D {
+    ports: [
+        mainInputPort VectorPort {
+            name: "vector"
+            entity: Vector
+            meta: "2D vector [x, y]"
+        },
+        propertyInputPort MatrixPort {
+            name: "matrix"
+            entity: Matrix
+            meta: "2x2 matrix row-major [m00, m01, m10, m11]"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Transformed 2D vector [x, y]"
+        }
+    ]
+    entities: [
+        signal Vector[2] { domain: OutputPort.domain rate: OutputPort.rate },
+        signal Matrix[4] { domain: OutputPort.domain },
+        signal Output[2] { domain: OutputPort.domain rate: OutputPort.rate }
+    ]
+    streams: [
+        (Matrix[0] * Vector[0]) + (Matrix[1] * Vector[1]) >> Output[0];
+        (Matrix[2] * Vector[0]) + (Matrix[3] * Vector[1]) >> Output[1];
+    ]
+    meta: "Applies 2x2 matrix transformation: Vec2D >> Transform2D(matrix: Mat2x2) >> Out2D."
+}
+
+# 3D Matrix-Vector Linear Transformation: y = M * v (M is 3x3 row-major, v is 3x1)
+module Transform3D {
+    ports: [
+        mainInputPort VectorPort {
+            name: "vector"
+            entity: Vector
+            meta: "3D vector [x, y, z]"
+        },
+        propertyInputPort MatrixPort {
+            name: "matrix"
+            entity: Matrix
+            meta: "3x3 matrix row-major array of 9 elements"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Transformed 3D vector [x, y, z]"
+        }
+    ]
+    entities: [
+        signal Vector[3] { domain: OutputPort.domain rate: OutputPort.rate },
+        signal Matrix[9] { domain: OutputPort.domain },
+        signal Output[3] { domain: OutputPort.domain rate: OutputPort.rate }
+    ]
+    streams: [
+        (Matrix[0] * Vector[0]) + (Matrix[1] * Vector[1]) + (Matrix[2] * Vector[2]) >> Output[0];
+        (Matrix[3] * Vector[0]) + (Matrix[4] * Vector[1]) + (Matrix[5] * Vector[2]) >> Output[1];
+        (Matrix[6] * Vector[0]) + (Matrix[7] * Vector[1]) + (Matrix[8] * Vector[2]) >> Output[2];
+    ]
+    meta: "Applies 3x3 matrix transformation: Vec3D >> Transform3D(matrix: Mat3x3) >> Out3D."
+}
+
+# 2x2 Matrix Multiplication: C = A * B
+module MatMul2x2 {
+    ports: [
+        mainInputPort MatrixAPort {
+            name: "a"
+            entity: MatrixA
+            meta: "First 2x2 matrix [a00, a01, a10, a11]"
+        },
+        propertyInputPort MatrixBPort {
+            name: "with"
+            entity: MatrixB
+            meta: "Second 2x2 matrix [b00, b01, b10, b11]"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Result 2x2 matrix [c00, c01, c10, c11]"
+        }
+    ]
+    entities: [
+        signal MatrixA[4] { domain: OutputPort.domain rate: OutputPort.rate },
+        signal MatrixB[4] { domain: OutputPort.domain },
+        signal Output[4] { domain: OutputPort.domain rate: OutputPort.rate }
+    ]
+    streams: [
+        (MatrixA[0] * MatrixB[0]) + (MatrixA[1] * MatrixB[2]) >> Output[0];
+        (MatrixA[0] * MatrixB[1]) + (MatrixA[1] * MatrixB[3]) >> Output[1];
+        (MatrixA[2] * MatrixB[0]) + (MatrixA[3] * MatrixB[2]) >> Output[2];
+        (MatrixA[2] * MatrixB[1]) + (MatrixA[3] * MatrixB[3]) >> Output[3];
+    ]
+    meta: "Multiplies two 2x2 matrices: MatA >> MatMul2x2(with: MatB) >> Result."
+}
+
+# 2x2 Matrix Transposition
+module Transpose2x2 {
+    ports: [
+        mainInputPort MatrixPort {
+            name: "matrix"
+            entity: Matrix
+            meta: "2x2 input matrix [m00, m01, m10, m11]"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Transposed 2x2 matrix [m00, m10, m01, m11]"
+        }
+    ]
+    entities: [
+        signal Matrix[4] { domain: OutputPort.domain rate: OutputPort.rate },
+        signal Output[4] { domain: OutputPort.domain rate: OutputPort.rate }
+    ]
+    streams: [
+        Matrix[0] >> Output[0];
+        Matrix[2] >> Output[1];
+        Matrix[1] >> Output[2];
+        Matrix[3] >> Output[3];
+    ]
+    meta: "Transposes a 2x2 matrix: Mat2x2 >> Transpose2x2() >> Transposed."
+}

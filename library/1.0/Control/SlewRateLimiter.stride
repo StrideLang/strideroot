@@ -1,0 +1,65 @@
+#
+# Stride Standard Library - Control Package: Slew Rate Limiter
+#
+
+package Control
+
+module SlewRateLimiter {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "Input signal to limit in slope"
+        },
+        propertyInputPort UpPort {
+            name: "up"
+            entity: MaxUp
+            meta: "Maximum positive change per sample step"
+        },
+        propertyInputPort DownPort {
+            name: "down"
+            entity: MaxDown
+            meta: "Maximum negative change per sample step (positive value)"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Slew-limited output signal"
+        }
+    ]
+    entities: [
+        signal Input {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal MaxUp {
+            domain: OutputPort.domain
+            default: 0.01
+        },
+        signal MaxDown {
+            domain: OutputPort.domain
+            default: 0.01
+        },
+        signal Prev {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal Delta {
+            domain: OutputPort.domain
+        },
+        signal ClampedDelta {
+            domain: OutputPort.domain
+        },
+        signal Output {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        }
+    ]
+    streams: [
+        Input - Prev >> Delta;
+        Delta >> Clamp(min: -MaxDown max: MaxUp) >> ClampedDelta;
+        Prev + ClampedDelta >> Output;
+        Output >> Prev;
+    ]
+    meta: "Limits the maximum rate of change (slope) per sample step: Input >> SlewRateLimiter(up: 0.01 down: 0.01) >> Output."
+}

@@ -1,0 +1,7 @@
+#
+# Stride Standard DSP Package - Delay Submodule Barrel File
+#
+
+package Dsp::Delay
+
+import Dsp::Delay::FractionalDelay as FractionalDelay

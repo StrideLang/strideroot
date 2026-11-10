@@ -1,0 +1,90 @@
+#
+# Stride Standard DSP Package - Delay: Fractional Delay Line
+#
+
+package Dsp::Delay::FractionalDelay
+
+# Linear interpolated fractional delay line
+module Line {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "Input audio signal stream"
+        },
+        propertyInputPort DelayPort {
+            name: "delay"
+            entity: DelaySamples
+            meta: "Delay length in samples (floating point fractional support)"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Delayed audio signal stream"
+        }
+    ]
+    entities: [
+        signal Input {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal DelaySamples {
+            domain: OutputPort.domain
+            default: 100.0
+        },
+        constant MaxBufferSize {
+            value: 4096
+        },
+        table DelayTable {
+            size: MaxBufferSize
+            rate: MaxBufferSize
+            domain: OutputPort.domain
+        },
+        signal WriteIndex {
+            domain: OutputPort.domain
+            default: 0
+        },
+        signal ReadPos {
+            domain: OutputPort.domain
+        },
+        signal ReadIndex {
+            domain: OutputPort.domain
+        },
+        signal ReadIndexNext {
+            domain: OutputPort.domain
+        },
+        signal Frac {
+            domain: OutputPort.domain
+        },
+        signal SampleA {
+            domain: OutputPort.domain
+        },
+        signal SampleB {
+            domain: OutputPort.domain
+        },
+        signal Output {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        }
+    ]
+    streams: [
+        # Write incoming sample to ring buffer
+        Input >> DelayTable[WriteIndex];
+
+        # Calculate fractional read position
+        WriteIndex - DelaySamples >> ReadPos;
+        ReadPos >> Wrap(min: 0.0 max: 4096.0) >> ReadPos;
+        ReadPos >> Floor() >> ReadIndex;
+        ReadPos - ReadIndex >> Frac;
+        ReadIndex + 1 >> Wrap(min: 0.0 max: 4096.0) >> ReadIndexNext;
+
+        # Read samples and linear interpolate
+        DelayTable[ReadIndex] >> SampleA;
+        DelayTable[ReadIndexNext] >> SampleB;
+        (SampleA * (1.0 - Frac)) + (SampleB * Frac) >> Output;
+
+        # Advance write pointer
+        WriteIndex + 1 >> Wrap(min: 0 max: 4096) >> WriteIndex;
+    ]
+    meta: "Ring-buffer fractional delay line with linear interpolation: AudioIn >> FractionalDelay::Line(delay: 120.5) >> DelayedOut."
+}

@@ -1,0 +1,98 @@
+#
+# Stride Standard DSP Package - Dynamics: Dynamic Range Compressor
+#
+
+package Dsp::Dynamics::Compressor
+
+import Dsp::Dynamics::EnvelopeFollower as EnvelopeFollower
+
+# Feedforward dynamic range compressor
+module Device {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "Input audio signal stream"
+        },
+        propertyInputPort ThresholdPort {
+            name: "threshold"
+            entity: Threshold
+            meta: "Compression threshold in linear amplitude (default 0.5)"
+        },
+        propertyInputPort RatioPort {
+            name: "ratio"
+            entity: Ratio
+            meta: "Compression slope ratio (e.g., 4.0 for 4:1)"
+        },
+        propertyInputPort MakeupPort {
+            name: "makeup"
+            entity: MakeupGain
+            meta: "Post-compression makeup gain multiplier"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Compressed audio signal stream"
+        }
+    ]
+    entities: [
+        signal Input {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal Threshold {
+            domain: OutputPort.domain
+            default: 0.5
+        },
+        signal Ratio {
+            domain: OutputPort.domain
+            default: 4.0
+        },
+        signal MakeupGain {
+            domain: OutputPort.domain
+            default: 1.0
+        },
+        signal EnvLevel {
+            domain: OutputPort.domain
+        },
+        signal Excess {
+            domain: OutputPort.domain
+        },
+        signal TargetLevel {
+            domain: OutputPort.domain
+        },
+        signal GainReduction {
+            domain: OutputPort.domain
+            default: 1.0
+        },
+        switch OverThreshold {
+            domain: OutputPort.domain
+        },
+        signal Output {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        reaction ApplyCompression {
+            ports: []
+            streams: [
+                EnvLevel - Threshold >> Excess;
+                Threshold + (Excess / Ratio) >> TargetLevel;
+                TargetLevel / EnvLevel >> GainReduction;
+            ]
+        },
+        reaction PassUnityGain {
+            ports: []
+            streams: [
+                1.0 >> GainReduction;
+            ]
+        }
+    ]
+    streams: [
+        Input >> EnvelopeFollower::Follower(attack: 0.1 release: 0.01) >> EnvLevel;
+        [EnvLevel, Threshold] >> Greater() >> OverThreshold;
+        OverThreshold >> ApplyCompression();
+        not OverThreshold >> PassUnityGain();
+        Input * GainReduction * MakeupGain >> Output;
+    ]
+    meta: "Feedforward dynamic range compressor: AudioIn >> Compressor::Device(threshold: 0.5 ratio: 4.0 makeup: 1.2) >> Out."
+}

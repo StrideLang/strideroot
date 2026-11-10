@@ -1,0 +1,7 @@
+#
+# Stride Standard DSP Package - Nonlinear Submodule Barrel File
+#
+
+package Dsp::Nonlinear
+
+import Dsp::Nonlinear::Saturate as Saturate

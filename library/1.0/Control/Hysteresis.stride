@@ -1,0 +1,76 @@
+#
+# Stride Standard Library - Control Package: Hysteresis (Schmitt Trigger)
+#
+
+package Control
+
+module Hysteresis {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "Input signal to evaluate"
+        },
+        propertyInputPort LowPort {
+            name: "low"
+            entity: LowThreshold
+            meta: "Lower switching threshold"
+        },
+        propertyInputPort HighPort {
+            name: "high"
+            entity: HighThreshold
+            meta: "Upper switching threshold"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Binary output state (0.0 or 1.0)"
+        }
+    ]
+    entities: [
+        signal Input {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal LowThreshold {
+            domain: OutputPort.domain
+            default: 0.2
+        },
+        signal HighThreshold {
+            domain: OutputPort.domain
+            default: 0.8
+        },
+        signal State {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal Output {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        switch TurnOn {
+            domain: OutputPort.domain
+        },
+        switch TurnOff {
+            domain: OutputPort.domain
+        },
+        reaction SetHigh {
+            ports: []
+            streams: [
+                1.0 >> State;
+            ]
+        },
+        reaction SetLow {
+            ports: []
+            streams: [
+                0.0 >> State;
+            ]
+        }
+    ]
+    streams: [
+        [Input, HighThreshold] >> GreaterOrEqual() >> TurnOn >> SetHigh();
+        [Input, LowThreshold] >> LessOrEqual() >> TurnOff >> SetLow();
+        State >> Output;
+    ]
+    meta: "Dual-threshold hysteresis comparator (Schmitt trigger): Input >> Hysteresis(low: 0.2 high: 0.8) >> Output."
+}

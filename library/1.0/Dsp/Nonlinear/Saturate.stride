@@ -1,0 +1,89 @@
+#
+# Stride Standard DSP Package - Nonlinear: Waveshaping & Saturation
+#
+
+package Dsp::Nonlinear::Saturate
+
+# Cubic polynomial soft clipper: f(x) = 1.5 * (x - x^3 / 3)
+module SoftClip {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "Input audio signal stream"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Soft-saturated output signal stream"
+        }
+    ]
+    entities: [
+        signal Input {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal ClampedIn {
+            domain: OutputPort.domain
+        },
+        signal Cubed {
+            domain: OutputPort.domain
+        },
+        signal Output {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        }
+    ]
+    streams: [
+        Input >> Clamp(min: -1.0 max: 1.0) >> ClampedIn;
+        ClampedIn * ClampedIn * ClampedIn >> Cubed;
+        1.5 * (ClampedIn - (Cubed / 3.0)) >> Output;
+    ]
+    meta: "Cubic polynomial soft saturator: AudioIn >> Saturate::SoftClip() >> Out."
+}
+
+# Rational Padé [3/2] approximation for hyperbolic tangent tanh(x)
+module Tanh {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "Input audio signal stream"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Tanh-saturated output signal stream in [-1.0, 1.0]"
+        }
+    ]
+    entities: [
+        signal Input {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal X {
+            domain: OutputPort.domain
+        },
+        signal X2 {
+            domain: OutputPort.domain
+        },
+        signal Num {
+            domain: OutputPort.domain
+        },
+        signal Den {
+            domain: OutputPort.domain
+        },
+        signal Output {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        }
+    ]
+    streams: [
+        Input >> Clamp(min: -3.0 max: 3.0) >> X;
+        X * X >> X2;
+        X * (27.0 + X2) >> Num;
+        27.0 + (9.0 * X2) >> Den;
+        Num / Den >> Output;
+    ]
+    meta: "Padé rational approximation of tanh(x) soft saturation: AudioIn >> Saturate::Tanh() >> Out."
+}

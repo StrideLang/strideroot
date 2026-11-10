@@ -1,0 +1,8 @@
+#
+# Stride Standard Library - Estimation Package Barrel File
+#
+
+package Estimation
+
+import Estimation::Kalman as Kalman
+import Estimation::PeakDetector as PeakDetector

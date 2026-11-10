@@ -1,0 +1,9 @@
+#
+# Stride Standard DSP Package - Dynamics Submodule Barrel File
+#
+
+package Dsp::Dynamics
+
+import Dsp::Dynamics::EnvelopeFollower as EnvelopeFollower
+import Dsp::Dynamics::Compressor as Compressor
+import Dsp::Dynamics::Limiter as Limiter

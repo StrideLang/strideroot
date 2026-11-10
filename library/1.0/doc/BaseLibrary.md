@@ -18,8 +18,14 @@ The Stride standard library and runtime ecosystem is structured across four arch
    - Diagnostics: `DebugPrint()`, `Probe()`, `Error()`
 3. **Layer 3: Standard Library Packages (Explicitly Imported):** Cohesive, domain-specific modules organized under namespaced packages:
    - **`package IO`:** Input/output, serial communications, OSC networking, MIDI events, and packet framing (`IO.stride`, `IO/`).
-   - **`package Dsp`:** Digital signal processing, synthesis generators, audio filters, filter design, routing, and musical unit conversions (`Dsp.stride`, `Dsp/`).
+   - **`package Dsp`:** Digital signal processing, audio filters, filter design, synthesis generators, spectral tone detection, delay lines, dynamics, waveshaping, and musical units (`Dsp.stride`, `Dsp/`).
    - **`package Math`:** Standard mathematical constants (`Math::Pi`, `Math::TwoPi`, `Math::E`) and modular mathematical utilities (`Math/`).
+   - **`package Control`:** Industrial & embedded control systems: PID controllers, Schmitt triggers, slew rate limiters, and motor control Clarke/Park transforms (`Control/`).
+   - **`package Sensors`:** Signal conditioning & IMU fusion: debouncing, deadband scaling, linear ADC calibration, and complementary filters (`Sensors.stride`, `Sensors/`).
+   - **`package Estimation`:** Real-time state estimation: 1D recursive Kalman filters and local peak detection (`Estimation.stride`, `Estimation/`).
+   - **`package Window`:** Standard spectral & FIR window functions: Hann, Hamming, Blackman, and Flat-Top (`Window.stride`, `Window/`).
+   - **`package LinAlg`:** Embedded linear algebra: 2D/3D vectors (dot, cross, norm, normalize), matrix transforms (2x2, 3x3), matrix multiplication, and unit quaternions (`LinAlg.stride`, `LinAlg/`).
+   - **`package Test`:** Real-time stream assertions and boundary guards (`Test.stride`, `Test/`).
 4. **Layer 4: Platform & Framework Layer:** Concrete target drivers and hardware intrinsics (`__SerialOut`, `__SerialIn`, `__OscOut`, `__OscIn`, `__Sin`, `__Cos`).
 
 ---
@@ -107,6 +113,25 @@ Robert Bristow-Johnson (RBJ) Audio EQ Cookbook normalized biquad coefficient cal
 * **`DbToLinear()`**: Converts decibels to linear amplitude:
   $$A = 10^{dB / 20}$$
 
+### 3.6 `Dsp::Spectral`
+* **`Goertzel::Detector(frequency: 440.0 sampleRate: 44100.0)`**: Computes instantaneous power and tone presence at a target frequency using a 2nd-order IIR recursion ($O(N)$ efficiency vs $O(N \log N)$ FFT).
+
+### 3.7 `Dsp::Delay`
+* **`FractionalDelay::Line(delay: 100.0)`**: Circular ring-buffer fractional delay line with linear interpolation for variable-delay effects (chorus, flanger, physical modeling).
+
+### 3.8 `Dsp::Dynamics`
+* **`EnvelopeFollower::Follower(attack: 0.1 release: 0.01)`**: Peak envelope detector with decoupled attack and release rates.
+* **`Compressor::Device(threshold: 0.5 ratio: 4.0 makeup: 1.0)`**: Feedforward dynamic range compressor.
+* **`Limiter::Fast(threshold: 0.95)`**: Hard peak clamping ceiling limiter.
+
+### 3.9 `Dsp::Nonlinear`
+* **`Saturate::SoftClip()`**: Cubic polynomial soft clipper ($1.5(x - x^3 / 3)$) constrained to $[-1.0, 1.0]$.
+* **`Saturate::Tanh()`**: Padé rational [3/2] approximation of hyperbolic tangent saturation with zero transcendentals.
+
+### 3.10 Multi-Rate Filters (`Dsp::Filters`)
+* **`Halfband::Fir7()`**: 7-tap symmetric halfband anti-aliasing FIR filter (50% zero taps for optimal decimation/interpolation).
+* **`Cic::Decimator2()`**: 2nd-order multiplierless Cascaded Integrator-Comb decimation filter stage.
+
 ---
 
 ## 4. Package `Math` (`package Math`)
@@ -129,9 +154,118 @@ import Math::Constants as MathConstants
 
 ---
 
-## 5. Global Prelude Reference
+## 5. Package `Control` (`package Control`)
 
-### 5.1 Elementary & Scalar Math (`Math.stride`)
+Imported via `import Control`:
+
+```stride
+import Control as Control
+```
+
+### 5.1 Modules
+* **`Pid(kp: 1.0 ki: 0.0 kd: 0.0 min: -1.0 max: 1.0)`**: Proportional-Integral-Derivative controller with anti-windup clamping on the integrator and output saturation.
+* **`Hysteresis(low: 0.2 high: 0.8)`**: Dual-threshold Schmitt trigger comparator preventing chatter on noisy analog thresholds.
+* **`SlewRateLimiter(up: 0.01 down: 0.01)`**: Limits maximum rate of change ($dx/dt$) per sample step.
+* **`Clarke()`**: Transforms 3-phase currents $[I_a, I_b, I_c]$ to stationary frame $[I_\alpha, I_\beta]$.
+* **`Park(angle: Theta)`**: Transforms stationary $[I_\alpha, I_\beta]$ to rotating direct-quadrature $[I_d, I_q]$.
+* **`InversePark(angle: Theta)`**: Converts rotating $[V_d, V_q]$ back to stationary $[V_\alpha, V_\beta]$.
+* **`InverseClarke()`**: Converts stationary $[V_\alpha, V_\beta]$ back to 3-phase voltages $[V_a, V_b, V_c]$.
+
+---
+
+## 6. Package `Sensors` (`package Sensors`)
+
+Imported via `import Sensors` or `import Sensors::Conditioning`:
+
+```stride
+import Sensors::Conditioning as Sensors
+```
+
+### 6.1 Modules
+* **`Debounce(samples: 10)`**: Digital switch bounce suppression requiring $N$ consecutive stable samples before accepting state transitions.
+* **`Deadband(threshold: 0.05)`**: Zeroes sensor drift around origin and rescales remaining range smoothly to $[-1.0, 1.0]$.
+* **`LinearCalibration(rawMin: 0 rawMax: 1023 calMin: 0.0 calMax: 3.3)`**: Rescales raw ADC integer counts into physical engineering units.
+* **`ComplementaryFilter(accelAngle: ... alpha: 0.98 dt: 0.01)`**: Low-overhead sensor fusion blending high-rate gyro integration with accelerometer tilt.
+
+---
+
+## 7. Package `Estimation` (`package Estimation`)
+
+Imported via `import Estimation`:
+
+```stride
+import Estimation::Kalman as Kalman
+import Estimation::PeakDetector as PeakDetector
+```
+
+### 7.1 Modules
+* **`Kalman::Filter(q: 0.01 r: 0.1)`**: 1-dimensional recursive discrete Kalman filter providing optimal state estimation from noisy measurements.
+* **`PeakDetector::Detector(threshold: 0.5)`**: Real-time local maximum peak detector with amplitude thresholding and sample history evaluation.
+
+---
+
+## 8. Package `Window` (`package Window`)
+
+Imported via `import Window::Functions`:
+
+```stride
+import Window::Functions as Window
+```
+
+### 8.1 Modules
+* **`Hann(size: 512)`**: $w[n] = 0.5 \cdot (1 - \cos(\frac{2\pi n}{N-1}))$
+* **`Hamming(size: 512)`**: $w[n] = 0.54 - 0.46 \cos(\frac{2\pi n}{N-1})$
+* **`Blackman(size: 512)`**: $w[n] = 0.42 - 0.5 \cos(\frac{2\pi n}{N-1}) + 0.08 \cos(\frac{4\pi n}{N-1})$
+* **`FlatTop(size: 512)`**: Precision calibration window for accurate amplitude metering.
+
+---
+
+## 9. Package `LinAlg` (`package LinAlg`)
+
+Imported via `import LinAlg`:
+
+```stride
+import LinAlg::Vectors as Vec
+import LinAlg::Matrices as Mat
+import LinAlg::Quaternion as Quat
+```
+
+### 9.1 Vectors (`LinAlg::Vectors`)
+* **`Dot2D(with: ...)`**, **`Dot3D(with: ...)`**: Inner scalar product.
+* **`Cross3D(with: ...)`**: Orthogonal 3D vector cross product.
+* **`Norm2D()`**, **`Norm3D()`**: Euclidean vector magnitude.
+* **`Normalize2D()`**, **`Normalize3D()`**: Unit vector normalization ($v / \|v\|$).
+
+### 9.2 Matrices (`LinAlg::Matrices`)
+* **`Transform2D(matrix: ...)`**: $2\times 2$ matrix-vector multiplication.
+* **`Transform3D(matrix: ...)`**: $3\times 3$ matrix-vector multiplication.
+* **`MatMul2x2(with: ...)`**: $2\times 2$ matrix multiplication ($C = A \cdot B$).
+* **`Transpose2x2()`**: Matrix transposition.
+
+### 9.3 Quaternions (`LinAlg::Quaternion`)
+* **`Multiply(with: ...)`**: Hamilton product ($q_1 \cdot q_2$) for orientation concatenation.
+* **`Conjugate()`**: Inverse orientation for unit quaternions ($[w, -x, -y, -z]$).
+* **`Norm()`**: Quaternion Euclidean magnitude.
+* **`RotateVector3D(rotation: ...)`**: Rotates a 3D vector by unit orientation quaternion.
+
+---
+
+## 10. Package `Test` (`package Test`)
+
+Imported via `import Test::Assertions`:
+
+```stride
+import Test::Assertions as Assert
+```
+
+### 10.1 Modules
+* **`AssertInRange(min: -1.0 max: 1.0)`**: Passthrough signal guard triggering a runtime error reaction if signal values breach specified limits.
+
+---
+
+## 11. Global Prelude Reference
+
+### 11.1 Elementary & Scalar Math (`Math.stride`)
 * `Abs()`, `Sign()`, `Inverse()`, `Floor()`, `Sin()`, `Cos()`, `Tan()`, `Exp()`
 * `Pow()`: `[ Base, Exponent ] >> Pow() >> Result;`
 * `Multiply()`, `Divide()`
@@ -140,11 +274,11 @@ import Math::Constants as MathConstants
 * `Lerp(target: ... factor: ...)`
 * `Map(inMin: ... inMax: ... outMin: ... outMax: ...)`
 
-### 5.2 Relational Comparisons (`Comparisons.stride`)
+### 11.2 Relational Comparisons (`Comparisons.stride`)
 `Greater()`, `GreaterOrEqual()`, `Less()`, `LessOrEqual()`, `Equal()`, `NotEqual()`.
 
-### 5.3 Logic & Multiplexing (`Logic.stride`)
+### 11.3 Logic & Multiplexing (`Logic.stride`)
 `Select()`, `And()`, `Or()`, `Not()`, `Xor()`, `Nand()`, `Nor()`.
 
-### 5.4 Stream Adapters (`Control.stride`, `Counter.stride`)
+### 11.4 Stream Adapters (`Control.stride`, `Counter.stride`)
 `OnChange()`, `RisingEdge()`, `FallingEdge()`, `Latch()`, `Smooth()`, `Counter()`.

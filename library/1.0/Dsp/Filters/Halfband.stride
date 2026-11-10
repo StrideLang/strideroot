@@ -1,0 +1,74 @@
+#
+# Stride Standard DSP Package - Filters: Halfband FIR Filter
+#
+
+package Dsp::Filters::Halfband
+
+# 7-tap symmetric Halfband FIR anti-aliasing filter (every second tap is 0)
+module Fir7 {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "Input audio signal stream"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Filtered halfband audio signal stream"
+        }
+    ]
+    entities: [
+        signal Input {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal X0 {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal X1 {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal X2 {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal X3 {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal X4 {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal X5 {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal X6 {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal Output {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        }
+    ]
+    streams: [
+        Input >> X0;
+
+        # Halfband impulse response taps: h = [-0.03125, 0, 0.28125, 0.5, 0.28125, 0, -0.03125]
+        (0.5 * X3) + (0.28125 * (X2 + X4)) - (0.03125 * (X0 + X6)) >> Output;
+
+        # Delay chain shift
+        X5 >> X6;
+        X4 >> X5;
+        X3 >> X4;
+        X2 >> X3;
+        X1 >> X2;
+        X0 >> X1;
+    ]
+    meta: "Efficient 7-tap halfband FIR filter with 50% zero-tap reduction: AudioIn >> Halfband::Fir7() >> Out."
+}

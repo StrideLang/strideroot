@@ -1,0 +1,85 @@
+#
+# Stride Standard DSP Package - Spectral: Goertzel Single-Tone Detector
+#
+
+package Dsp::Spectral::Goertzel
+
+module Detector {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "Audio or sensor input stream"
+        },
+        propertyInputPort FreqPort {
+            name: "frequency"
+            entity: TargetFreq
+            meta: "Target tone frequency in Hz to detect"
+        },
+        propertyInputPort RatePort {
+            name: "sampleRate"
+            entity: SampleRate
+            meta: "Sample rate in Hz (default 44100.0)"
+        },
+        mainOutputPort PowerPort {
+            name: "power"
+            entity: Power
+            meta: "Instantaneous signal power at target frequency"
+        }
+    ]
+    entities: [
+        signal Input {
+            domain: PowerPort.domain
+            rate: PowerPort.rate
+        },
+        signal TargetFreq {
+            domain: PowerPort.domain
+            default: 440.0
+        },
+        signal SampleRate {
+            domain: PowerPort.domain
+            default: 44100.0
+        },
+        signal Omega {
+            domain: PowerPort.domain
+        },
+        signal CosOmega {
+            domain: PowerPort.domain
+        },
+        signal Coeff {
+            domain: PowerPort.domain
+        },
+        signal S0 {
+            domain: PowerPort.domain
+        },
+        signal S1 {
+            domain: PowerPort.domain
+            default: 0.0
+        },
+        signal S2 {
+            domain: PowerPort.domain
+            default: 0.0
+        },
+        signal Power {
+            domain: PowerPort.domain
+            rate: PowerPort.rate
+        }
+    ]
+    streams: [
+        # Normalized target frequency and 2nd-order IIR recursion coefficient
+        (Math::TwoPi * TargetFreq) / SampleRate >> Omega;
+        Omega >> Cos() >> CosOmega;
+        2.0 * CosOmega >> Coeff;
+
+        # Goertzel 2nd-order difference equation: s[n] = x[n] + 2*cos(w)*s[n-1] - s[n-2]
+        Input + (Coeff * S1) - S2 >> S0;
+
+        # Power estimate: P = s1^2 + s2^2 - 2*cos(w)*s1*s2
+        (S1 * S1) + (S2 * S2) - (Coeff * S1 * S2) >> Power;
+
+        # State updates
+        S1 >> S2;
+        S0 >> S1;
+    ]
+    meta: "Goertzel single-frequency power detector: AudioIn >> Goertzel::Detector(frequency: 440.0) >> TonePower."
+}

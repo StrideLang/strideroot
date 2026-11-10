@@ -1,0 +1,84 @@
+#
+# Stride Standard DSP Package - Dynamics: Envelope Follower
+#
+
+package Dsp::Dynamics::EnvelopeFollower
+
+# Peak envelope follower with independent attack and release time constants
+module Follower {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "Input audio signal stream"
+        },
+        propertyInputPort AttackPort {
+            name: "attack"
+            entity: AttackCoeff
+            meta: "Attack coefficient (0.0 to 1.0, higher = faster response)"
+        },
+        propertyInputPort ReleasePort {
+            name: "release"
+            entity: ReleaseCoeff
+            meta: "Release coefficient (0.0 to 1.0, higher = faster decay)"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Extracted unipolar envelope signal"
+        }
+    ]
+    entities: [
+        signal Input {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal AttackCoeff {
+            domain: OutputPort.domain
+            default: 0.1
+        },
+        signal ReleaseCoeff {
+            domain: OutputPort.domain
+            default: 0.01
+        },
+        signal Rectified {
+            domain: OutputPort.domain
+        },
+        signal PrevEnv {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal Env {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        switch IsAttack {
+            domain: OutputPort.domain
+        },
+        signal Output {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        reaction ApplyAttack {
+            ports: []
+            streams: [
+                PrevEnv + (AttackCoeff * (Rectified - PrevEnv)) >> Env;
+            ]
+        },
+        reaction ApplyRelease {
+            ports: []
+            streams: [
+                PrevEnv + (ReleaseCoeff * (Rectified - PrevEnv)) >> Env;
+            ]
+        }
+    ]
+    streams: [
+        Input >> Abs() >> Rectified;
+        [Rectified, PrevEnv] >> Greater() >> IsAttack;
+        IsAttack >> ApplyAttack();
+        not IsAttack >> ApplyRelease();
+        Env >> Output;
+        Env >> PrevEnv;
+    ]
+    meta: "Peak envelope follower: AudioIn >> EnvelopeFollower::Follower(attack: 0.1 release: 0.01) >> Envelope."
+}

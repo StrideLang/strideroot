@@ -1,0 +1,136 @@
+#
+# Stride Standard Library - LinAlg Package: Quaternion Operations
+# Quaternions are represented as 4-element arrays [w, x, y, z] with scalar w
+#
+
+package LinAlg::Quaternion
+
+# Quaternion Hamilton Product: q = q1 * q2
+module Multiply {
+    ports: [
+        mainInputPort Q1Port {
+            name: "q1"
+            entity: Q1
+            meta: "First quaternion [w1, x1, y1, z1]"
+        },
+        propertyInputPort Q2Port {
+            name: "with"
+            entity: Q2
+            meta: "Second quaternion [w2, x2, y2, z2]"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Product quaternion [w, x, y, z]"
+        }
+    ]
+    entities: [
+        signal Q1[4] { domain: OutputPort.domain rate: OutputPort.rate },
+        signal Q2[4] { domain: OutputPort.domain },
+        signal Output[4] { domain: OutputPort.domain rate: OutputPort.rate }
+    ]
+    streams: [
+        (Q1[0] * Q2[0]) - (Q1[1] * Q2[1]) - (Q1[2] * Q2[2]) - (Q1[3] * Q2[3]) >> Output[0];
+        (Q1[0] * Q2[1]) + (Q1[1] * Q2[0]) + (Q1[2] * Q2[3]) - (Q1[3] * Q2[2]) >> Output[1];
+        (Q1[0] * Q2[2]) - (Q1[1] * Q2[3]) + (Q1[2] * Q2[0]) + (Q1[3] * Q2[1]) >> Output[2];
+        (Q1[0] * Q2[3]) + (Q1[1] * Q2[2]) - (Q1[2] * Q2[1]) + (Q1[3] * Q2[0]) >> Output[3];
+    ]
+    meta: "Quaternion Hamilton product: Q1 >> Multiply(with: Q2) >> QProduct."
+}
+
+# Quaternion Conjugate: q* = [w, -x, -y, -z]
+module Conjugate {
+    ports: [
+        mainInputPort QPort {
+            name: "q"
+            entity: Q
+            meta: "Input quaternion [w, x, y, z]"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Conjugated quaternion [w, -x, -y, -z]"
+        }
+    ]
+    entities: [
+        signal Q[4] { domain: OutputPort.domain rate: OutputPort.rate },
+        signal Output[4] { domain: OutputPort.domain rate: OutputPort.rate }
+    ]
+    streams: [
+        Q[0] >> Output[0];
+        -Q[1] >> Output[1];
+        -Q[2] >> Output[2];
+        -Q[3] >> Output[3];
+    ]
+    meta: "Quaternion conjugate: Q >> Conjugate() >> QConjugate."
+}
+
+# Quaternion Euclidean Norm (Magnitude)
+module Norm {
+    ports: [
+        mainInputPort QPort {
+            name: "q"
+            entity: Q
+            meta: "Input quaternion [w, x, y, z]"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Scalar norm (length) of quaternion"
+        }
+    ]
+    entities: [
+        signal Q[4] { domain: OutputPort.domain rate: OutputPort.rate },
+        signal SumSq { domain: OutputPort.domain },
+        signal Output { domain: OutputPort.domain rate: OutputPort.rate }
+    ]
+    streams: [
+        (Q[0] * Q[0]) + (Q[1] * Q[1]) + (Q[2] * Q[2]) + (Q[3] * Q[3]) >> SumSq;
+        [SumSq, 0.5] >> Pow() >> Output;
+    ]
+    meta: "Quaternion norm: Q >> Norm() >> Magnitude."
+}
+
+# Rotates a 3D vector v by unit quaternion q: v' = q * [0, v] * q*
+module RotateVector3D {
+    ports: [
+        mainInputPort VectorPort {
+            name: "vector"
+            entity: V
+            meta: "3D vector to rotate [x, y, z]"
+        },
+        propertyInputPort QPort {
+            name: "rotation"
+            entity: Q
+            meta: "Unit orientation quaternion [w, x, y, z]"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Rotated 3D vector [x, y, z]"
+        }
+    ]
+    entities: [
+        signal V[3] { domain: OutputPort.domain rate: OutputPort.rate },
+        signal Q[4] { domain: OutputPort.domain },
+        # t = 2 * cross(q.xyz, v)
+        signal T[3] { domain: OutputPort.domain },
+        # cross(q.xyz, t)
+        signal QCrossT[3] { domain: OutputPort.domain },
+        signal Output[3] { domain: OutputPort.domain rate: OutputPort.rate }
+    ]
+    streams: [
+        2.0 * ((Q[2] * V[2]) - (Q[3] * V[1])) >> T[0];
+        2.0 * ((Q[3] * V[0]) - (Q[1] * V[2])) >> T[1];
+        2.0 * ((Q[1] * V[1]) - (Q[2] * V[0])) >> T[2];
+
+        (Q[2] * T[2]) - (Q[3] * T[1]) >> QCrossT[0];
+        (Q[3] * T[0]) - (Q[1] * T[2]) >> QCrossT[1];
+        (Q[1] * T[1]) - (Q[2] * T[0]) >> QCrossT[2];
+
+        V[0] + (Q[0] * T[0]) + QCrossT[0] >> Output[0];
+        V[1] + (Q[0] * T[1]) + QCrossT[1] >> Output[1];
+        V[2] + (Q[0] * T[2]) + QCrossT[2] >> Output[2];
+    ]
+    meta: "Rotates a 3D vector by orientation quaternion: Vec3D >> RotateVector3D(rotation: Quat) >> RotatedVec."
+}

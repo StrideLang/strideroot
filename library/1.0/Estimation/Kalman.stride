@@ -1,0 +1,106 @@
+#
+# Stride Standard Library - Estimation Package: 1D Discrete Kalman Filter
+#
+
+package Estimation::Kalman
+
+# 1-Dimensional Recursive Discrete Kalman Filter
+module Filter {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "Noisy sensor measurement stream"
+        },
+        propertyInputPort QPort {
+            name: "q"
+            entity: Q
+            meta: "Process noise covariance (variance)"
+        },
+        propertyInputPort RPort {
+            name: "r"
+            entity: R
+            meta: "Measurement noise covariance (variance)"
+        },
+        propertyInputPort InitialXPort {
+            name: "initialX"
+            entity: InitialX
+            meta: "Initial state estimate"
+        },
+        propertyInputPort InitialPPort {
+            name: "initialP"
+            entity: InitialP
+            meta: "Initial estimation error covariance"
+        },
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "Optimal filtered state estimate"
+        }
+    ]
+    entities: [
+        signal Input {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal Q {
+            domain: OutputPort.domain
+            default: 0.01
+        },
+        signal R {
+            domain: OutputPort.domain
+            default: 0.1
+        },
+        signal InitialX {
+            domain: OutputPort.domain
+            default: 0.0
+        },
+        signal InitialP {
+            domain: OutputPort.domain
+            default: 1.0
+        },
+        signal X {
+            domain: OutputPort.domain
+            default: InitialX
+        },
+        signal P {
+            domain: OutputPort.domain
+            default: InitialP
+        },
+        signal PP {
+            domain: OutputPort.domain
+        },
+        signal K {
+            domain: OutputPort.domain
+        },
+        signal NewX {
+            domain: OutputPort.domain
+        },
+        signal NewP {
+            domain: OutputPort.domain
+        },
+        signal Output {
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        }
+    ]
+    streams: [
+        # Prediction step
+        P + Q >> PP;
+
+        # Kalman gain computation: K = P_prior / (P_prior + R)
+        PP / (PP + R) >> K;
+
+        # State measurement update: X = X_prior + K * (Measurement - X_prior)
+        X + (K * (Input - X)) >> NewX;
+
+        # Covariance update: P = (1 - K) * P_prior
+        (1.0 - K) * PP >> NewP;
+
+        # Feedback updates for next sample
+        NewX >> Output;
+        NewX >> X;
+        NewP >> P;
+    ]
+    meta: "1D recursive Kalman filter: NoisySignal >> Kalman::Filter(q: 0.01 r: 0.1) >> FilteredSignal."
+}

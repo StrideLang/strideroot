@@ -6,6 +6,11 @@
 
 package Dsp
 
+import Dsp::Spectral as Spectral
+import Dsp::Delay as Delay
+import Dsp::Dynamics as Dynamics
+import Dsp::Nonlinear as Nonlinear
+
 module Level {
 	ports: [
 		mainInputPort InputPort {
