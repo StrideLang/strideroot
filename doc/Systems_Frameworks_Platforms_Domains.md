@@ -369,11 +369,11 @@ connection _PCToPicoUart {
 
     # Stride dataflow streams utilizing the entities and parameters
     sourceStreams: [
-        _Connection_Token >> NativeHostUartSend[port]();
+        _Connection_Token >> NativeHostUartSend(port: .port);
     ]
 
     destinationStreams: [
-        NativeMcuUartRecv[port]() >> _Connection_Token;
+        NativeMcuUartRecv(port: .port) >> _Connection_Token;
     ]
 }
 ```
