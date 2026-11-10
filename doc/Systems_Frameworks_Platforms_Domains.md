@@ -351,29 +351,30 @@ connection _PCToPicoUart {
 
     # Native entities compiled for the source framework (e.g. LLVM IR on host PC)
     sourceEntities: [
+        constant PortNumber { value: .port }
         platformModule NativeHostUartSend {
+            inputs: [ Int ]
             outputs: []
-            ports: [ Int InChar, Int PortIndex ]
-            processing: "%%outtokens:0%% = llvm::call void @host_uart_write(i32 %%intokens:0%%, i32 %%intokens:1%%)"
+            processing: "%%outtokens:0%% = llvm::call void @host_uart_write(i32 %%intokens:0%%)"
         }
     ]
 
     # Native entities compiled for the destination framework (e.g. C++ text codegen on RP2040)
     destinationEntities: [
         platformModule NativeMcuUartRecv {
-            outputs: [ Int OutChar ]
-            ports: [ Int PortIndex ]
-            processing: "uart_read_blocking(uart_get_instance(%%PortIndex%%), (uint8_t*)&%%OutChar%%, 1);"
+            inputs: []
+            outputs: [ Int ]
+            processing: "uart_read_blocking(uart_default, (uint8_t*)&%%outtokens:0%%, 1);"
         }
     ]
 
     # Stride dataflow streams utilizing the entities and parameters
     sourceStreams: [
-        _Connection_Token >> NativeHostUartSend(port: .port);
+        _Connection_Token >> NativeHostUartSend();
     ]
 
     destinationStreams: [
-        NativeMcuUartRecv(port: .port) >> _Connection_Token;
+        NativeMcuUartRecv() >> _Connection_Token;
     ]
 }
 ```
