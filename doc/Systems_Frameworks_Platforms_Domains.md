@@ -335,6 +335,59 @@ During lowering (`StrideSystem::generateDomainConnections`):
 2. **AST Property Substitution**: In `sourceStreams` and `destinationStreams`, identifier occurrences corresponding to connection property names (e.g. `port`, `fifo`, `capacity`) are substituted with their effective literal values (e.g. replacing `SerialOut[port]` with `SerialOut[1]`).
 3. **Stream Splicing**: Splicing splits cross-domain streams `A >> B;` into `A >> SerialOut[1];` and `Wiring::SerialIn[1] >> B;`, cleanly bound to the configured hardware resource.
 
+### 5.5 Native Platform Code & Symmetrical Entities in Connections
+
+Real-world cross-domain bridges frequently require hardware glue or platform-specific driver modules directly at the connection boundary. To support heterogeneous code generation targets (such as in-memory LLVM IR JIT on a PC host and C++ text generation on an embedded target) without requiring external dummy packages, `connection` provides explicit, symmetrical entity lists: **`sourceEntities`** and **`destinationEntities`**.
+
+```stride
+connection _PCToPicoUart {
+    baudRate: 115200
+    port: 0
+
+    sourceFramework: _JitFramework
+    sourceDomains: [ "DesktopDomain" ]
+    destinationFramework: _PicoSDKFramework
+    destinationDomains: [ "McuDomain" ]
+
+    # Native entities compiled for the source framework (e.g. LLVM IR on host PC)
+    sourceEntities: [
+        platformModule NativeHostUartSend {
+            outputs: []
+            ports: [ Int InChar, Int PortIndex ]
+            processing: "%%outtokens:0%% = llvm::call void @host_uart_write(i32 %%intokens:0%%, i32 %%intokens:1%%)"
+        }
+    ]
+
+    # Native entities compiled for the destination framework (e.g. C++ text codegen on RP2040)
+    destinationEntities: [
+        platformModule NativeMcuUartRecv {
+            outputs: [ Int OutChar ]
+            ports: [ Int PortIndex ]
+            processing: "uart_read_blocking(uart_get_instance(%%PortIndex%%), (uint8_t*)&%%OutChar%%, 1);"
+        }
+    ]
+
+    # Stride dataflow streams utilizing the entities and parameters
+    sourceStreams: [
+        _Connection_Token >> NativeHostUartSend[port]();
+    ]
+
+    destinationStreams: [
+        NativeMcuUartRecv[port]() >> _Connection_Token;
+    ]
+}
+```
+
+#### Invariants of Symmetrical Entities:
+1. **Unambiguous Target Assignment**:
+   - Entities in `sourceEntities: [...]` belong strictly to `sourceFramework` and are compiled exclusively by the source domain's toolchain.
+   - Entities in `destinationEntities: [...]` belong strictly to `destinationFramework` and are compiled exclusively by the destination domain's toolchain.
+2. **Parameter Substitution**:
+   - Any connection parameters (e.g. `port`, `baudRate`) are substituted into entities declared inside `sourceEntities` and `destinationEntities` identically to `sourceStreams` and `destinationStreams`.
+3. **Endpoint Resolution & Splicing**:
+   - The connection lowering pass registers `sourceEntities` and `destinationEntities` into the respective domain compilation units, allowing `sourceStreams` and `destinationStreams` to resolve and invoke them directly.
+
+
 ---
 
 ## 6. Packages vs. `rootNamespace` & Symbol Security

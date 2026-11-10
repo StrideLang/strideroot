@@ -316,6 +316,13 @@ type _ConnectionType {
 			default: []
 			required: off
 		},
+		typeProperty SourceEntities {
+			name: "sourceEntities"
+			allowedTypes: constrainedList { allowed: [_PlatformCodeType, _PlatformModuleType, _Any] }
+			default: []
+			required: off
+			meta: "Declarations and platform modules compiled for the source framework/domain"
+		},
 		typeProperty SourceStreams {
 			name: "sourceStreams"
 			allowedTypes: constrainedList { allowed: [_StreamType] }
@@ -326,6 +333,13 @@ type _ConnectionType {
 			allowedTypes: constrainedList { allowed: [_StringLiteral] }
 			default: []
 			required: off
+		},
+		typeProperty DestinationEntities {
+			name: "destinationEntities"
+			allowedTypes: constrainedList { allowed: [_PlatformCodeType, _PlatformModuleType, _Any] }
+			default: []
+			required: off
+			meta: "Declarations and platform modules compiled for the destination framework/domain"
 		},
 		typeProperty DestinationStreams {
 			name: "destinationStreams"
