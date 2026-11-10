@@ -1,0 +1,126 @@
+#
+# Stride Standard DSP Package - Filter Design Submodule
+# Robert Bristow-Johnson (RBJ) Audio EQ Cookbook Coefficient Generators
+#
+
+package Dsp::FilterDesign
+
+# Computes normalized biquad coefficients [b0, b1, b2, a1, a2] for a 2nd-order LowPass filter
+module LowPassCoefficients {
+	ports: [
+		mainInputPort FreqPort {
+			name: "frequency"
+			entity: Frequency
+			meta: "Cutoff frequency in Hz"
+		},
+		propertyInputPort QPort {
+			name: "q"
+			entity: Q
+			meta: "Quality factor Q (default 0.7071 / Butterworth)"
+		},
+		propertyInputPort RatePort {
+			name: "sampleRate"
+			entity: SampleRate
+			meta: "Sample rate in Hz (default 44100.0)"
+		},
+		mainOutputPort BCoeffsPort {
+			name: "b"
+			entity: B
+			meta: "Feedforward numerator coefficients [b0, b1, b2]"
+		},
+		mainOutputPort ACoeffsPort {
+			name: "a"
+			entity: A
+			meta: "Feedback denominator coefficients [a1, a2]"
+		}
+	]
+	entities: [
+		signal Frequency { domain: FreqPort.domain },
+		signal Q { default: 0.7071 domain: QPort.domain },
+		signal SampleRate { default: 44100.0 domain: RatePort.domain },
+		signal B[3] { domain: BCoeffsPort.domain },
+		signal A[2] { domain: ACoeffsPort.domain },
+		signal W0 {},
+		signal SinW0 {},
+		signal CosW0 {},
+		signal Alpha {},
+		signal A0 {}
+	]
+	streams: [
+		(Math::TwoPi * Frequency) / SampleRate >> W0;
+		W0 >> Sin() >> SinW0;
+		W0 >> Cos() >> CosW0;
+		SinW0 / (2.0 * Q) >> Alpha;
+		1.0 + Alpha >> A0;
+
+		# Normalized b coefficients
+		((1.0 - CosW0) / 2.0) / A0 >> B[0];
+		(1.0 - CosW0) / A0 >> B[1];
+		((1.0 - CosW0) / 2.0) / A0 >> B[2];
+
+		# Normalized a coefficients (a0 is normalized to 1.0)
+		(-2.0 * CosW0) / A0 >> A[0];
+		(1.0 - Alpha) / A0 >> A[1];
+	]
+	meta: "Designs RBJ 2nd-order lowpass filter coefficients."
+}
+
+# Computes normalized biquad coefficients [b0, b1, b2, a1, a2] for a 2nd-order HighPass filter
+module HighPassCoefficients {
+	ports: [
+		mainInputPort FreqPort {
+			name: "frequency"
+			entity: Frequency
+			meta: "Cutoff frequency in Hz"
+		},
+		propertyInputPort QPort {
+			name: "q"
+			entity: Q
+			meta: "Quality factor Q (default 0.7071 / Butterworth)"
+		},
+		propertyInputPort RatePort {
+			name: "sampleRate"
+			entity: SampleRate
+			meta: "Sample rate in Hz (default 44100.0)"
+		},
+		mainOutputPort BCoeffsPort {
+			name: "b"
+			entity: B
+			meta: "Feedforward numerator coefficients [b0, b1, b2]"
+		},
+		mainOutputPort ACoeffsPort {
+			name: "a"
+			entity: A
+			meta: "Feedback denominator coefficients [a1, a2]"
+		}
+	]
+	entities: [
+		signal Frequency { domain: FreqPort.domain },
+		signal Q { default: 0.7071 domain: QPort.domain },
+		signal SampleRate { default: 44100.0 domain: RatePort.domain },
+		signal B[3] { domain: BCoeffsPort.domain },
+		signal A[2] { domain: ACoeffsPort.domain },
+		signal W0 {},
+		signal SinW0 {},
+		signal CosW0 {},
+		signal Alpha {},
+		signal A0 {}
+	]
+	streams: [
+		(Math::TwoPi * Frequency) / SampleRate >> W0;
+		W0 >> Sin() >> SinW0;
+		W0 >> Cos() >> CosW0;
+		SinW0 / (2.0 * Q) >> Alpha;
+		1.0 + Alpha >> A0;
+
+		# Normalized b coefficients
+		((1.0 + CosW0) / 2.0) / A0 >> B[0];
+		(-(1.0 + CosW0)) / A0 >> B[1];
+		((1.0 + CosW0) / 2.0) / A0 >> B[2];
+
+		# Normalized a coefficients
+		(-2.0 * CosW0) / A0 >> A[0];
+		(1.0 - Alpha) / A0 >> A[1];
+	]
+	meta: "Designs RBJ 2nd-order highpass filter coefficients."
+}

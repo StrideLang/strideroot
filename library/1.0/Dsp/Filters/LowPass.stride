@@ -1,0 +1,46 @@
+#
+# Stride Standard DSP Package - Filters
+#
+
+package Dsp::Filters
+
+module LowPass {
+	ports: [
+		mainInputPort InputPort {
+			name: "input"
+			entity: Input
+			meta: "Input signal"
+		},
+		mainOutputPort OutputPort {
+			name: "output"
+			entity: Output
+			meta: "Filtered output signal"
+		},
+		propertyInputPort FrequencyProperty {
+			name: "frequency"
+			entity: CenterFrequency
+			meta: "The cutoff frequency of the filter."
+		},
+		propertyInputPort QFactorProperty {
+			name: "qFactor"
+			entity: QFactor
+			meta: "The Q value of the filter."
+		},
+		propertyInputPort GainProperty {
+			name: "gain"
+			entity: Gain
+			meta: "Filter passband gain."
+		}
+	]
+	entities: [
+		signal Input { domain: InputPort.domain },
+		signal Output { domain: OutputPort.domain },
+		signal CenterFrequency { default: 1000.0 },
+		signal QFactor { default: 0.7071 },
+		signal Gain { default: 1.0 }
+	]
+	streams: [
+		Input * Gain >> Output;
+	]
+	meta: "Lowpass filter."
+}

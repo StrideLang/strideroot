@@ -1,0 +1,56 @@
+#
+# Stride Standard DSP Package - Generators
+#
+
+package Dsp::Generators
+
+module AD {
+    ports: [
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "The module's primary output port."
+        },
+        mainInputPort InputPort {
+            name: "input"
+            entity: TriggerEnv
+            meta: "Triggers the envelope"
+        },
+        propertyInputPort AttackTimePort {
+            name: "attack"
+            entity: AttackTime
+            meta: "Attack time in seconds"
+        },
+        propertyInputPort DecayTimePort {
+            name: "decay"
+            entity: DecayTime
+            meta: "Decay time in seconds"
+        }
+    ]
+    entities: [
+        signal AttackTime {
+            default: 0.2
+        },
+        signal DecayTime {
+            default: 3.0
+        },
+        signal Output {
+            default: 0.0
+        },
+        signal StageIncrements[2] {
+            default: 0.0
+        },
+        trigger TriggerEnv { domain: OutputPort.domain },
+        signal Stage { default: -1 domain: OutputPort.domain }
+    ]
+    streams: [
+        1.0 / (AttackTime * OutputPort.rate) >> StageIncrements[0];
+        1.0 / (-DecayTime * OutputPort.rate) >> StageIncrements[1];
+
+        TriggerEnv >> reaction { 0 >> Stage; };
+        [Stage, 0] >> GreaterOrEqual() >> reaction { Output + StageIncrements[Stage] >> Output; };
+        [Output, 1.0] >> GreaterOrEqual() >> reaction { 1 >> Stage; };
+        [Output, 0.0] >> Less() >> reaction { -1 >> Stage; };
+    ]
+    meta: "Attack-Decay envelope generator."
+}

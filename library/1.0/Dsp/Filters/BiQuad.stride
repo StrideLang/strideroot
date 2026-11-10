@@ -1,0 +1,54 @@
+#
+# Stride Standard DSP Package - Filters
+#
+
+package Dsp::Filters
+
+module BiQuad {
+	ports: [
+		mainInputPort MainInputPort {
+			name: "input"
+			entity: Input
+		},
+		mainOutputPort OutputPort {
+			name: "output"
+			entity: Output
+		},
+		propertyInputPort CenterFrequencyProperty {
+			name: "centerFrequency"
+			entity: CenterFrequency
+			meta: "The center frequency of the filter."
+		},
+		propertyInputPort ResonanceProperty {
+			name: "resonance"
+			entity: Resonance
+			meta: "Resonance (Q) amount. Should be greater than or equal to 1.0."
+		}
+	]
+	entities: [
+		signal CenterFrequency {},
+		signal Resonance { default: 50 },
+		signal Input { domain: MainInputPort.domain },
+		signal Output { domain: OutputPort.domain },
+		signal Xn[2] {},
+		signal Yn[2] {},
+		signal A[3] {},
+		signal B[3] {},
+		signal Temp {},
+		signal W0 {},
+		signal Alpha {},
+		signal W0Cos {}
+	]
+	streams: [
+		2.0 * 3.141592653589793 * CenterFrequency / 44100.0 >> W0 >> Sin() >> Temp;
+		Temp / (2.0 * Resonance) >> Alpha >> B[1];
+		-Alpha >> B[2];
+		1.0 + Alpha >> A[0];
+		W0 >> Cos() >> W0Cos;
+		[W0Cos, 2.0] >> Multiply() >> A[1];
+		1.0 - Alpha >> A[2];
+
+		(Input * B[0] + Xn[0] * B[1] + Xn[1] * B[2] - Yn[0] * A[1] - Yn[1] * A[2]) / A[0] >> Output;
+	]
+	meta: "Direct Form II Transposed 2nd-order IIR BiQuad filter."
+}

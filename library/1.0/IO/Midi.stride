@@ -1,0 +1,133 @@
+#
+# Stride Standard IO Package - MIDI Submodule
+#
+
+package IO::Midi
+
+module NoteIn {
+	ports: [
+		mainOutputPort FrequencyPort {
+			name: "frequency"
+			entity: Frequency
+			meta: "Note pitch converted to frequency in Hz"
+		},
+		mainOutputPort VelocityPort {
+			name: "velocity"
+			entity: Velocity
+			meta: "Note velocity normalized to [0.0, 1.0]"
+		},
+		mainOutputPort GatePort {
+			name: "gate"
+			entity: Gate
+			meta: "Gate switch on while note is held down"
+		},
+		propertyInputPort ChannelPort {
+			name: "channel"
+			entity: Channel
+			meta: "MIDI channel (1-16, 0 for all channels)"
+		}
+	]
+	entities: [
+		signal Frequency { default: 440.0 },
+		signal Velocity { default: 0.0 },
+		switch Gate { default: off },
+		signal Channel { default: 0 }
+	]
+	streams: [
+		Channel >> __MidiNoteIn() >> [Frequency, Velocity, Gate];
+	]
+	meta: "Receives MIDI note on/off events."
+}
+
+module NoteOut {
+	ports: [
+		mainInputPort TriggerPort {
+			name: "trigger"
+			entity: Trigger
+			meta: "Trigger for note on"
+		},
+		propertyInputPort PitchPort {
+			name: "pitch"
+			entity: Pitch
+			meta: "MIDI note number [0-127]"
+		},
+		propertyInputPort VelocityPort {
+			name: "velocity"
+			entity: Velocity
+			meta: "MIDI note velocity [0-127]"
+		},
+		propertyInputPort ChannelPort {
+			name: "channel"
+			entity: Channel
+			meta: "MIDI channel (1-16)"
+		}
+	]
+	entities: [
+		trigger Trigger {},
+		signal Pitch { default: 60 },
+		signal Velocity { default: 100 },
+		signal Channel { default: 1 }
+	]
+	streams: [
+		[Trigger, Pitch, Velocity, Channel] >> __MidiNoteOut();
+	]
+	meta: "Sends MIDI note on events."
+}
+
+module CcIn {
+	ports: [
+		mainOutputPort ValuePort {
+			name: "value"
+			entity: Value
+			meta: "Continuous controller value normalized to [0.0, 1.0]"
+		},
+		propertyInputPort ControllerPort {
+			name: "controller"
+			entity: Controller
+			meta: "MIDI CC number [0-127]"
+		},
+		propertyInputPort ChannelPort {
+			name: "channel"
+			entity: Channel
+			meta: "MIDI channel (1-16, 0 for all channels)"
+		}
+	]
+	entities: [
+		signal Value { default: 0.0 },
+		signal Controller { default: 1 },
+		signal Channel { default: 0 }
+	]
+	streams: [
+		[Controller, Channel] >> __MidiCcIn() >> Value;
+	]
+	meta: "Receives MIDI Continuous Controller (CC) messages."
+}
+
+module CcOut {
+	ports: [
+		mainInputPort ValuePort {
+			name: "value"
+			entity: Value
+			meta: "Continuous controller value to send [0.0, 1.0]"
+		},
+		propertyInputPort ControllerPort {
+			name: "controller"
+			entity: Controller
+			meta: "MIDI CC number [0-127]"
+		},
+		propertyInputPort ChannelPort {
+			name: "channel"
+			entity: Channel
+			meta: "MIDI channel (1-16)"
+		}
+	]
+	entities: [
+		signal Value { default: 0.0 },
+		signal Controller { default: 1 },
+		signal Channel { default: 1 }
+	]
+	streams: [
+		[Value, Controller, Channel] >> __MidiCcOut();
+	]
+	meta: "Transmits MIDI Continuous Controller (CC) messages."
+}

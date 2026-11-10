@@ -1,0 +1,70 @@
+#
+# Stride Standard DSP Package - Generators
+#
+
+package Dsp::Generators
+
+module BandLimitedSaw {
+    ports: [
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "The module's primary output port."
+        },
+        propertyInputPort FrequencyPort {
+            name: "frequency"
+            entity: Frequency
+            meta: "The frequency of the oscillator in Hz."
+        }
+    ]
+    entities: [
+        signal Output {
+            default: 0.0
+        },
+        signal Frequency {
+            default: 220.0
+            rate: FrequencyPort.rate
+            domain: FrequencyPort.domain
+        },
+        signal Osc {
+            default: 0.0
+            rate: OutputPort.rate
+            domain: OutputPort.domain
+        },
+        signal History {
+            default: 0.0
+            rate: OutputPort.rate
+            domain: OutputPort.domain
+        },
+        signal PhaseResidue {
+            default: 0.0
+            rate: OutputPort.rate
+            domain: OutputPort.domain
+        },
+        signal Phase {
+            default: 0.0
+            rate: OutputPort.rate
+            domain: OutputPort.domain
+            reset: ResetPhase
+        },
+        trigger ResetPhase {},
+        reaction CorrectPhase {
+            terminateWhen: CorrectPhase_Done
+            onTermination: ResetPhase
+            entities: [
+                trigger CorrectPhase_Done {}
+            ]
+            streams: [
+                Phase - 1.0 >> PhaseResidue;
+                on >> CorrectPhase_Done;
+            ]
+        }
+    ]
+    streams: [
+        Phase + (Frequency / OutputPort.rate) >> Phase;
+        [Phase, 1.0] >> GreaterOrEqual() >> CorrectPhase();
+        (Phase * 2.0) - 1.0 >> Osc;
+        (Osc * Osc) >> Output;
+    ]
+    meta: "Band-limited sawtooth wave generator."
+}

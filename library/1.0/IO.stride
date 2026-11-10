@@ -1,0 +1,7 @@
+#
+# Stride Standard IO Package Root
+#
+# Provides Console, Serial, Osc, Midi, and Packet Framing.
+#
+
+package IO

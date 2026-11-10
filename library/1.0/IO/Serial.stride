@@ -1,0 +1,71 @@
+#
+# Stride Standard IO Package - Serial Submodule
+#
+
+package IO::Serial
+
+module Print {
+	ports: [
+		mainInputPort ValuePort {
+			name: "value"
+			entity: Value
+			meta: "Value to write to serial"
+		}
+	]
+	entities: [
+		signal Value {
+			default: 0
+			domain: ValuePort.domain
+		}
+	]
+	streams: [
+		Value >> _SerialPrintModule();
+	]
+	meta: "Writes values formatted to the serial port."
+}
+
+module Out {
+	ports: [
+		mainInputPort InputPort {
+			name: "input"
+			entity: Input
+			meta: "Input signal to write to serial output stream"
+		},
+		propertyInputPort ChannelPort {
+			name: "channel"
+			entity: Channel
+			meta: "Serial channel index (default 0)"
+		}
+	]
+	entities: [
+		signal Input { domain: InputPort.domain }
+		signal Channel { default: 0 }
+	]
+	streams: [
+		[Input, Channel] >> __SerialOut();
+	]
+	meta: "Writes signal values to platform serial output stream."
+}
+
+module In {
+	ports: [
+		mainOutputPort OutputPort {
+			name: "output"
+			entity: Output
+			meta: "Serial input signal stream"
+		},
+		propertyInputPort ChannelPort {
+			name: "channel"
+			entity: Channel
+			meta: "Serial channel index (default 0)"
+		}
+	]
+	entities: [
+		signal Output { domain: OutputPort.domain }
+		signal Channel { default: 0 }
+	]
+	streams: [
+		Channel >> __SerialIn() >> Output;
+	]
+	meta: "Reads signal values from platform serial input stream."
+}

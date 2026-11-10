@@ -1,0 +1,71 @@
+#
+# Stride Standard IO Package - Console Submodule
+#
+
+package IO::Console
+
+module Print {
+	ports: [
+		mainInputPort ValuePort {
+			name: "value"
+			entity: Value
+			meta: "Input value to print to console"
+		}
+	]
+	entities: [
+		signal Value {
+			default: 0
+			domain: ValuePort.domain
+		}
+	]
+	streams: [
+		Value >> __ConsolePrint();
+	]
+	meta: "Prints the value of a stream to standard console output."
+}
+
+module Println {
+	ports: [
+		mainInputPort ValuePort {
+			name: "value"
+			entity: Value
+			meta: "Input value to print to console followed by a newline"
+		}
+	]
+	entities: [
+		signal Value {
+			default: 0
+			domain: ValuePort.domain
+		}
+	]
+	streams: [
+		Value >> __ConsolePrintln();
+	]
+	meta: "Prints the value of a stream to standard console output with a trailing newline."
+}
+
+module Log {
+	ports: [
+		mainInputPort ValuePort {
+			name: "value"
+			entity: Value
+			meta: "Value to log with structured telemetry timestamp"
+		},
+		propertyInputPort TagPort {
+			name: "tag"
+			entity: Tag
+			meta: "Log category tag"
+		}
+	]
+	entities: [
+		signal Value {
+			default: 0
+			domain: ValuePort.domain
+		},
+		signal Tag { default: "INFO" }
+	]
+	streams: [
+		[Tag, Value] >> __ConsoleLog();
+	]
+	meta: "Logs structured timestamped telemetry messages."
+}

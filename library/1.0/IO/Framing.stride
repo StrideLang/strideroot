@@ -1,0 +1,14 @@
+#
+# Stride Standard IO Package - Framing Submodule
+#
+
+package IO::Framing
+
+# SLIP (Serial Line Internet Protocol) Framing constants (RFC 1055)
+constant SlipEnd    { value: 192 meta: "SLIP END marker (0xC0)" }
+constant SlipEsc    { value: 219 meta: "SLIP ESC marker (0xDB)" }
+constant SlipEscEnd { value: 220 meta: "SLIP ESC_END byte (0xDC)" }
+constant SlipEscEsc { value: 221 meta: "SLIP ESC_ESC byte (0xDD)" }
+
+# COBS (Consistent Overhead Byte Stuffing)
+constant CobsDelimiter { value: 0 meta: "COBS packet zero delimiter" }

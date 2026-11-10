@@ -1,0 +1,96 @@
+#
+# Stride Standard DSP & Audio Synthesis Package Root
+#
+# Provides Filters, FilterDesign, Generators, Routing, and Units.
+#
+
+package Dsp
+
+module Level {
+	ports: [
+		mainInputPort InputPort {
+			name: "input"
+			entity: Input
+			meta: "Input signal"
+		},
+		mainOutputPort OutputPort {
+			name: "output"
+			entity: Output
+			meta: "Scaled output signal"
+		},
+		propertyInputPort GainPort {
+			name: "gain"
+			entity: Gain
+			meta: "Amplifies or attenuates the signal."
+		},
+		propertyInputPort OffsetPort {
+			name: "offset"
+			entity: Offset
+			meta: "Adds an offset to the signal after applying the gain."
+		}
+	]
+	entities: [
+		signal Input {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Output {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Gain {
+			default: 1.0
+			type: GainPort.type
+			rate: GainPort.rate
+			domain: GainPort.domain
+		},
+		signal Offset {
+			default: 0.0
+			type: OffsetPort.type
+			rate: OffsetPort.rate
+			domain: OffsetPort.domain
+		}
+	]
+	streams: [
+		(Input * Gain) + Offset >> Output;
+	]
+	meta: "Scales the input signal and applies an offset to it.
+Formula: output = input * gain + offset
+"
+}
+
+module Pan {
+	ports: [
+		mainInputPort InputPort {
+			name: "input"
+			entity: Input
+			meta: "Mono input signal"
+		},
+		mainOutputPort OutputPort {
+			name: "output"
+			entity: Output
+			meta: "Stereo output signal bundle [left, right]"
+		},
+		propertyInputPort PositionPort {
+			name: "position"
+			entity: Position
+			meta: "Sets the stereo panning position in range [-1.0, 1.0]."
+		}
+	]
+	entities: [
+		signal Input {},
+		signal Output[2] {},
+		signal Position { default: 0.0 domain: PositionPort.domain },
+		signal GainLeft { domain: PositionPort.domain },
+		signal GainRight { domain: PositionPort.domain }
+	]
+	streams: [
+		(Position + 1.0) / 2.0 >> GainRight;
+		1.0 - GainRight >> GainLeft;
+		Input * GainLeft >> Output[0];
+		Input * GainRight >> Output[1];
+	]
+	meta: "Stereo panner splitting a mono signal into stereo left [0] and right [1]."
+}

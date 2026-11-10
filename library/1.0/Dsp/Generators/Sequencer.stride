@@ -1,12 +1,17 @@
+#
+# Stride Standard DSP Package - Generators
+#
+
+package Dsp::Generators
 
 module Sequencer {
     ports: [
         mainInputPort InputPort {
             entity: Input
-        }
+        },
         mainOutputPort OutputPort {
             entity: Output
-        }
+        },
         propertyInputPort ValuesPort {
             name: "values"
             entity: Values
@@ -14,39 +19,33 @@ module Sequencer {
         }
     ]
     entities: [
-        trigger Input { domain: InputPort.domain}
+        trigger Input { domain: InputPort.domain },
         signal Output {
             domain: OutputPort.domain
-        }
+        },
         signal Counter {
             default: 0
             domain: InputPort.domain
             type: Size
             reset: CounterReset
-        }
+        },
         constant Values[ValuesPort.size] {
             value: 0
-        }
+        },
         trigger CounterReset {
             domain: InputPort.domain
-        }
+        },
         reaction NextStep {
             streams: [
                 Counter + 1 >> Counter;
-                #[Counter , ValuesPort.size ] >> Equal() >> CounterReset;
             ]
             domain: InputPort.domain
-            }
+        }
     ]
     streams: [
         Values[Counter] >> Output;
         Input >> NextStep();
-        [Counter , ValuesPort.size ] >> Equal() >> CounterReset;
-        
+        [Counter, ValuesPort.size] >> Equal() >> CounterReset;
     ]
-    constraints: [
-        
-    ]
-    meta: "Sequencer"
+    meta: "Step sequencer module."
 }
-

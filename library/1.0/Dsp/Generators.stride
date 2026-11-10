@@ -1,0 +1,5 @@
+#
+# Stride Standard DSP Package - Generators Sub-namespace Root
+#
+
+package Dsp::Generators

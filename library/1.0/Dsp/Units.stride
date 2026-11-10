@@ -1,0 +1,112 @@
+#
+# Stride Standard DSP Package - Units & Musical Scales
+#
+
+package Dsp::Units
+
+# Standard Pitch Note Frequencies in Hertz (A4 = 440 Hz, equal temperament)
+constant C0 { value: 16.3516 meta: "Note C0 frequency in Hz" }
+constant D0 { value: 18.3540 meta: "Note D0 frequency in Hz" }
+constant E0 { value: 20.6017 meta: "Note E0 frequency in Hz" }
+constant F0 { value: 21.8268 meta: "Note F0 frequency in Hz" }
+constant G0 { value: 24.4997 meta: "Note G0 frequency in Hz" }
+constant A0 { value: 27.5000 meta: "Note A0 frequency in Hz" }
+constant B0 { value: 30.8677 meta: "Note B0 frequency in Hz" }
+
+constant C1 { value: 32.7032 meta: "Note C1 frequency in Hz" }
+constant D1 { value: 36.7081 meta: "Note D1 frequency in Hz" }
+constant E1 { value: 41.2034 meta: "Note E1 frequency in Hz" }
+constant F1 { value: 43.6535 meta: "Note F1 frequency in Hz" }
+constant G1 { value: 48.9994 meta: "Note G1 frequency in Hz" }
+constant A1 { value: 55.0000 meta: "Note A1 frequency in Hz" }
+constant B1 { value: 61.7354 meta: "Note B1 frequency in Hz" }
+
+constant C2 { value: 65.4064 meta: "Note C2 frequency in Hz" }
+constant D2 { value: 73.4162 meta: "Note D2 frequency in Hz" }
+constant E2 { value: 82.4069 meta: "Note E2 frequency in Hz" }
+constant F2 { value: 87.3071 meta: "Note F2 frequency in Hz" }
+constant G2 { value: 97.9989 meta: "Note G2 frequency in Hz" }
+constant A2 { value: 110.000 meta: "Note A2 frequency in Hz" }
+constant B2 { value: 123.471 meta: "Note B2 frequency in Hz" }
+
+constant C3 { value: 130.813 meta: "Note C3 frequency in Hz" }
+constant D3 { value: 146.832 meta: "Note D3 frequency in Hz" }
+constant E3 { value: 164.814 meta: "Note E3 frequency in Hz" }
+constant F3 { value: 174.614 meta: "Note F3 frequency in Hz" }
+constant G3 { value: 195.998 meta: "Note G3 frequency in Hz" }
+constant A3 { value: 220.000 meta: "Note A3 frequency in Hz" }
+constant B3 { value: 246.942 meta: "Note B3 frequency in Hz" }
+
+constant C4 { value: 261.6256 meta: "Note C4 (Middle C) frequency in Hz" }
+constant D4 { value: 293.6648 meta: "Note D4 frequency in Hz" }
+constant E4 { value: 329.6276 meta: "Note E4 frequency in Hz" }
+constant F4 { value: 349.2282 meta: "Note F4 frequency in Hz" }
+constant G4 { value: 391.9954 meta: "Note G4 frequency in Hz" }
+constant A4 { value: 440.0000 meta: "Concert Pitch A4 frequency in Hz" }
+constant B4 { value: 493.8833 meta: "Note B4 frequency in Hz" }
+
+constant C5 { value: 523.2511 meta: "Note C5 frequency in Hz" }
+constant D5 { value: 587.3295 meta: "Note D5 frequency in Hz" }
+constant E5 { value: 659.2551 meta: "Note E5 frequency in Hz" }
+constant F5 { value: 698.4565 meta: "Note F5 frequency in Hz" }
+constant G5 { value: 783.9909 meta: "Note G5 frequency in Hz" }
+constant A5 { value: 880.0000 meta: "Note A5 frequency in Hz" }
+constant B5 { value: 987.7666 meta: "Note B5 frequency in Hz" }
+
+constant C6 { value: 1046.502 meta: "Note C6 frequency in Hz" }
+constant D6 { value: 1174.659 meta: "Note D6 frequency in Hz" }
+constant E6 { value: 1318.510 meta: "Note E6 frequency in Hz" }
+constant F6 { value: 1396.913 meta: "Note F6 frequency in Hz" }
+constant G6 { value: 1567.982 meta: "Note G6 frequency in Hz" }
+constant A6 { value: 1760.000 meta: "Note A6 frequency in Hz" }
+constant B6 { value: 1975.533 meta: "Note B6 frequency in Hz" }
+
+# Unit Conversions
+
+module MidiToFreq {
+	ports: [
+		mainInputPort NotePort {
+			name: "note"
+			entity: Note
+			meta: "MIDI note number [0-127] where 69 = A4 (440Hz)"
+		},
+		mainOutputPort FrequencyPort {
+			name: "frequency"
+			entity: Frequency
+			meta: "Frequency in Hertz"
+		}
+	]
+	entities: [
+		signal Note { domain: NotePort.domain },
+		signal Ratio {},
+		signal Frequency { domain: FrequencyPort.domain }
+	]
+	streams: [
+		[2.0, (Note - 69.0) / 12.0] >> Pow() >> Ratio;
+		440.0 * Ratio >> Frequency;
+	]
+	meta: "Converts MIDI note number to frequency in Hertz."
+}
+
+module DbToLinear {
+	ports: [
+		mainInputPort DbPort {
+			name: "db"
+			entity: Db
+			meta: "Amplitude in decibels (dB)"
+		},
+		mainOutputPort LinearPort {
+			name: "linear"
+			entity: Linear
+			meta: "Linear amplitude ratio"
+		}
+	]
+	entities: [
+		signal Db { domain: DbPort.domain },
+		signal Linear { domain: LinearPort.domain }
+	]
+	streams: [
+		[10.0, Db / 20.0] >> Pow() >> Linear;
+	]
+	meta: "Converts decibels (dB) to linear amplitude ratio."
+}

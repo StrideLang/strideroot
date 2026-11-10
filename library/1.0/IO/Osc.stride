@@ -1,0 +1,75 @@
+#
+# Stride Standard IO Package - OSC Submodule
+#
+
+package IO::Osc
+
+module Out {
+	ports: [
+		mainInputPort InputPort {
+			name: "input"
+			entity: Input
+			meta: "Signal data to send via OSC"
+		},
+		propertyInputPort AddressProperty {
+			name: "address"
+			entity: Address
+			meta: "The OSC address string (default /Stride)"
+		},
+		propertyInputPort HostProperty {
+			name: "host"
+			entity: Host
+			meta: "Destination hostname or IP address"
+		},
+		propertyInputPort PortProperty {
+			name: "port"
+			entity: Port
+			meta: "Destination UDP network port number"
+		}
+	]
+	entities: [
+		signal Address { default: "/Stride" },
+		signal Host { default: "127.0.0.1" },
+		signal Port { default: 9010 },
+		signal Input { domain: InputPort.domain }
+	]
+	streams: [
+		[Input, Address, Host, Port] >> __OscOut();
+	]
+	meta: "Transmits OSC messages over UDP to a network host."
+}
+
+module In {
+	ports: [
+		mainOutputPort OutputPort {
+			name: "output"
+			entity: Output
+			meta: "Received OSC signal values"
+		},
+		propertyInputPort AddressProperty {
+			name: "address"
+			entity: Address
+			meta: "The OSC address filter"
+		},
+		propertyInputPort HostProperty {
+			name: "host"
+			entity: Host
+			meta: "Network interface or IP to listen on"
+		},
+		propertyInputPort PortProperty {
+			name: "port"
+			entity: Port
+			meta: "Local UDP network port number to bind"
+		}
+	]
+	entities: [
+		signal Address { default: "/Stride" },
+		signal Host { default: "127.0.0.1" },
+		signal Port { default: 9011 },
+		_oscInType OscInNode {}
+	]
+	streams: [
+		[Address, Host, Port] >> OscInNode >> Output;
+	]
+	meta: "Receives OSC messages from a UDP network port."
+}
