@@ -1,0 +1,11 @@
+# Random numbers, from the StrideRuntime (strideruntime_random.h). A host
+# such as a game engine can supply its own generator, so that it can save and
+# restore its state. Not pure: never folded or run while compiling.
+
+platformModule _RandomInt {
+    meta: "A random number from min to max, both included: [Min, Max] >> _RandomInt() >> Value."
+    inputs: [Int32, Int32] # Min, Max
+    outputs: [Int32]
+    processing: "%%outtokens:0%% = call i32 @__stride_jit_random_int(i32 %%intokens:0%%, i32 %%intokens:1%%)"
+    inherits: [_Signal]
+}

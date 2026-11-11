@@ -1,0 +1,37 @@
+# Random.stride
+# Random numbers. Each call draws a new number, so call them where the code
+# runs once (a step taken once, a setup), not in code that runs every tick.
+
+reaction RandomInt {
+    ports: [
+        propertyInputPort MinPort { name: "min" entity: RandomInt_Min }
+        propertyInputPort MaxPort { name: "max" entity: RandomInt_Max }
+        mainOutputPort ValuePort { entity: RandomInt_Value }
+    ]
+    entities: [
+        signal RandomInt_Min { type: Int default: 0 }
+        signal RandomInt_Max { type: Int default: 1 }
+        signal RandomInt_Value { type: Int }
+    ]
+    streams: [
+        [RandomInt_Min, RandomInt_Max] >> _RandomInt() >> RandomInt_Value;
+    ]
+    meta: "A random whole number from min to max, both included: RandomInt(min: 1 max: 6) >> Die;"
+}
+
+reaction RandomChance {
+    ports: [
+        propertyInputPort PercentPort { name: "percent" entity: RandomChance_Percent }
+        mainOutputPort ResultPort { entity: RandomChance_Result }
+    ]
+    entities: [
+        signal RandomChance_Percent { type: Int default: 50 }
+        signal RandomChance_Roll { type: Int }
+        switch RandomChance_Result { }
+    ]
+    streams: [
+        [1, 100] >> _RandomInt() >> RandomChance_Roll;
+        [RandomChance_Roll, RandomChance_Percent] >> LessOrEqual() >> RandomChance_Result;
+    ]
+    meta: "on with the given chance, in percent: RandomChance(percent: 25) >> Lucky;"
+}
