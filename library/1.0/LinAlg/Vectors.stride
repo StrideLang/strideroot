@@ -1,108 +1,142 @@
 #
 # Stride Standard Library - LinAlg Package: Vector Operations
 #
+# Vectors are plain arrays. Every operation takes its dimension from the size
+# of the port it is connected to (InputPort.size, OutputPort.size), so the same
+# Dot, Norm, Normalize and Scale work for 2, 3, 4 or any other number of
+# components. Wedge, the generalisation of the cross product, takes its
+# dimension from the input and produces n * (n - 1) / 2 components.
+#
+# The data type of every signal is the type of the output port.
+#
+# Loops keep their entities in the scope of the domain, so entity names are
+# prefixed with the name of the loop (Dot_VectorA, ...), as in Sum.
+#
 
 package LinAlg::Vectors
 
-# 2D Dot Product
-module Dot2D {
+# Dot (inner) product of two vectors of any dimension
+loop Dot {
     ports: [
         mainInputPort VectorAPort {
             name: "a"
-            entity: VectorA
-            meta: "First 2D vector [x, y]"
+            entity: Dot_VectorA
+            meta: "First vector, of any size"
         },
         propertyInputPort VectorBPort {
             name: "with"
-            entity: VectorB
-            meta: "Second 2D vector [x, y]"
+            entity: Dot_VectorB
+            meta: "Second vector, with the same size as the first"
         },
         mainOutputPort OutputPort {
             name: "output"
-            entity: Output
+            entity: Dot_Output
             meta: "Scalar dot product result"
         }
     ]
     entities: [
-        signal VectorA[2] { domain: OutputPort.domain rate: OutputPort.rate },
-        signal VectorB[2] { domain: OutputPort.domain },
-        signal Output { domain: OutputPort.domain rate: OutputPort.rate }
+        signal Dot_VectorA[VectorAPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal Dot_VectorB[VectorAPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal Dot_Output {
+            default: 0.0
+            type: OutputPort.type
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+            reset: Dot_Reset
+        },
+        signal Dot_Index {
+            default: 0
+            rate: none
+            type: Int
+            domain: OutputPort.domain
+            reset: Dot_Reset
+        },
+        switch Dot_Done {
+            domain: OutputPort.domain
+        },
+        trigger Dot_Reset {}
     ]
+    onExecution: Dot_Reset
+    terminateWhen: Dot_Done
     streams: [
-        (VectorA[0] * VectorB[0]) + (VectorA[1] * VectorB[1]) >> Output;
+        (Dot_VectorA[Dot_Index] * Dot_VectorB[Dot_Index]) + Dot_Output >> Dot_Output;
+        Dot_Index + 1 >> Dot_Index;
+        [Dot_Index, VectorAPort.size] >> Equal() >> Dot_Done;
     ]
-    meta: "2D Vector dot product: VecA >> Dot2D(with: VecB) >> Result."
+    meta: "Dot product of two vectors of any dimension: VecA >> Dot(with: VecB) >> Result. The dimension is the size of the input."
 }
 
-# 3D Dot Product
-module Dot3D {
+# Multiplies every component of a vector by a scalar
+loop Scale {
     ports: [
-        mainInputPort VectorAPort {
-            name: "a"
-            entity: VectorA
-            meta: "First 3D vector [x, y, z]"
+        mainInputPort VectorPort {
+            name: "vector"
+            entity: Scale_Vector
+            meta: "Vector of any size"
         },
-        propertyInputPort VectorBPort {
-            name: "with"
-            entity: VectorB
-            meta: "Second 3D vector [x, y, z]"
+        propertyInputPort FactorPort {
+            name: "factor"
+            entity: Scale_Factor
+            meta: "Scalar factor (default 1.0)"
         },
         mainOutputPort OutputPort {
             name: "output"
-            entity: Output
-            meta: "Scalar dot product result"
+            entity: Scale_Output
+            meta: "Scaled vector, with the same size as the input"
         }
     ]
     entities: [
-        signal VectorA[3] { domain: OutputPort.domain rate: OutputPort.rate },
-        signal VectorB[3] { domain: OutputPort.domain },
-        signal Output { domain: OutputPort.domain rate: OutputPort.rate }
+        signal Scale_Vector[VectorPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal Scale_Factor {
+            default: 1.0
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal Scale_Output[OutputPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal Scale_Index {
+            default: 0
+            rate: none
+            type: Int
+            domain: OutputPort.domain
+            reset: Scale_Reset
+        },
+        switch Scale_Done {
+            domain: OutputPort.domain
+        },
+        trigger Scale_Reset {}
     ]
+    onExecution: Scale_Reset
+    terminateWhen: Scale_Done
     streams: [
-        (VectorA[0] * VectorB[0]) + (VectorA[1] * VectorB[1]) + (VectorA[2] * VectorB[2]) >> Output;
+        Scale_Vector[Scale_Index] * Scale_Factor >> Scale_Output[Scale_Index];
+        Scale_Index + 1 >> Scale_Index;
+        [Scale_Index, VectorPort.size] >> Equal() >> Scale_Done;
     ]
-    meta: "3D Vector dot product: VecA >> Dot3D(with: VecB) >> Result."
+    meta: "Scales a vector of any dimension: Vec >> Scale(factor: 2.0) >> Scaled."
 }
 
-# 3D Cross Product
-module Cross3D {
-    ports: [
-        mainInputPort VectorAPort {
-            name: "a"
-            entity: VectorA
-            meta: "First 3D vector [x, y, z]"
-        },
-        propertyInputPort VectorBPort {
-            name: "with"
-            entity: VectorB
-            meta: "Second 3D vector [x, y, z]"
-        },
-        mainOutputPort OutputPort {
-            name: "output"
-            entity: Output
-            meta: "Orthogonal cross product 3D vector [x, y, z]"
-        }
-    ]
-    entities: [
-        signal VectorA[3] { domain: OutputPort.domain rate: OutputPort.rate },
-        signal VectorB[3] { domain: OutputPort.domain },
-        signal Output[3] { domain: OutputPort.domain rate: OutputPort.rate }
-    ]
-    streams: [
-        (VectorA[1] * VectorB[2]) - (VectorA[2] * VectorB[1]) >> Output[0];
-        (VectorA[2] * VectorB[0]) - (VectorA[0] * VectorB[2]) >> Output[1];
-        (VectorA[0] * VectorB[1]) - (VectorA[1] * VectorB[0]) >> Output[2];
-    ]
-    meta: "3D Vector cross product: VecA >> Cross3D(with: VecB) >> OrthoVec."
-}
-
-# 2D Euclidean Norm (Length)
-module Norm2D {
+# Euclidean norm (length) of a vector of any dimension
+module Norm {
     ports: [
         mainInputPort VectorPort {
             name: "vector"
             entity: Vector
-            meta: "2D vector [x, y]"
+            meta: "Vector of any size"
         },
         mainOutputPort OutputPort {
             name: "output"
@@ -111,94 +145,155 @@ module Norm2D {
         }
     ]
     entities: [
-        signal Vector[2] { domain: OutputPort.domain rate: OutputPort.rate },
-        signal SumSq { domain: OutputPort.domain },
-        signal Output { domain: OutputPort.domain rate: OutputPort.rate }
+        signal Vector[VectorPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal SumSq {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal Output {
+            type: OutputPort.type
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        }
     ]
     streams: [
-        (Vector[0] * Vector[0]) + (Vector[1] * Vector[1]) >> SumSq;
+        Vector >> Dot(with: Vector) >> SumSq;
         [SumSq, 0.5] >> Pow() >> Output;
     ]
-    meta: "2D Vector Euclidean norm: Vec >> Norm2D() >> Length."
+    meta: "Euclidean norm of a vector of any dimension: Vec >> Norm() >> Length. This is also the norm of a quaternion."
 }
 
-# 3D Euclidean Norm (Length)
-module Norm3D {
+# Vector normalization (unit vector) for any dimension
+module Normalize {
     ports: [
         mainInputPort VectorPort {
             name: "vector"
             entity: Vector
-            meta: "3D vector [x, y, z]"
+            meta: "Vector of any size"
         },
         mainOutputPort OutputPort {
             name: "output"
             entity: Output
-            meta: "Euclidean vector magnitude / norm"
+            meta: "Unit vector with the same size as the input. The zero vector stays zero"
         }
     ]
     entities: [
-        signal Vector[3] { domain: OutputPort.domain rate: OutputPort.rate },
-        signal SumSq { domain: OutputPort.domain },
-        signal Output { domain: OutputPort.domain rate: OutputPort.rate }
+        signal Vector[VectorPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal Len {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal SafeLen {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal InverseLen {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal Output[OutputPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        }
     ]
     streams: [
-        (Vector[0] * Vector[0]) + (Vector[1] * Vector[1]) + (Vector[2] * Vector[2]) >> SumSq;
-        [SumSq, 0.5] >> Pow() >> Output;
+        Vector >> Norm() >> Len;
+        [Len, 0.000000001] >> Max() >> SafeLen;
+        1.0 / SafeLen >> InverseLen;
+        Vector >> Scale(factor: InverseLen) >> Output;
     ]
-    meta: "3D Vector Euclidean norm: Vec >> Norm3D() >> Length."
+    meta: "Normalizes a vector of any dimension to unit length: Vec >> Normalize() >> UnitVec."
 }
 
-# 2D Vector Normalization (Unit Vector)
-module Normalize2D {
+# Wedge (exterior) product of two vectors of any dimension
+loop Wedge {
     ports: [
-        mainInputPort VectorPort {
-            name: "vector"
-            entity: Vector
-            meta: "2D vector [x, y]"
+        mainInputPort VectorAPort {
+            name: "a"
+            entity: Wedge_A
+            meta: "First vector with n components. n is the size of this port"
+        },
+        propertyInputPort VectorBPort {
+            name: "with"
+            entity: Wedge_B
+            meta: "Second vector, with the same size as the first"
         },
         mainOutputPort OutputPort {
             name: "output"
-            entity: Output
-            meta: "Normalized unit 2D vector [x, y]"
+            entity: Wedge_Output
+            meta: "The n * (n - 1) / 2 components a[i] * b[j] - a[j] * b[i], one for each pair of axes i < j, in lexicographic order: (0,1), (0,2), ..., (1,2), ... The size of this port must be n * (n - 1) / 2"
         }
     ]
     entities: [
-        signal Vector[2] { domain: OutputPort.domain rate: OutputPort.rate },
-        signal Len { domain: OutputPort.domain },
-        signal Output[2] { domain: OutputPort.domain rate: OutputPort.rate }
+        signal Wedge_A[VectorAPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal Wedge_B[VectorAPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal Wedge_Output[OutputPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal Wedge_I {
+            default: 0
+            rate: none
+            type: Int
+            domain: OutputPort.domain
+            reset: Wedge_Reset
+        },
+        signal Wedge_J {
+            default: 1
+            rate: none
+            type: Int
+            domain: OutputPort.domain
+            reset: Wedge_Reset
+        },
+        signal Wedge_K {
+            default: 0
+            rate: none
+            type: Int
+            domain: OutputPort.domain
+            reset: Wedge_Reset
+        },
+        switch Wedge_JLast {
+            domain: OutputPort.domain
+        },
+        switch Wedge_Done {
+            domain: OutputPort.domain
+        },
+        trigger Wedge_Reset {}
     ]
+    onExecution: Wedge_Reset
+    terminateWhen: Wedge_Done
     streams: [
-        Vector >> Norm2D() >> Len;
-        Vector[0] / Len >> Output[0];
-        Vector[1] / Len >> Output[1];
-    ]
-    meta: "Normalizes 2D vector to unit length: Vec >> Normalize2D() >> UnitVec."
-}
+        # One iteration per pair (i, j) with i < j
+        (Wedge_A[Wedge_I] * Wedge_B[Wedge_J]) - (Wedge_A[Wedge_J] * Wedge_B[Wedge_I]) >> Wedge_Output[Wedge_K];
 
-# 3D Vector Normalization (Unit Vector)
-module Normalize3D {
-    ports: [
-        mainInputPort VectorPort {
-            name: "vector"
-            entity: Vector
-            meta: "3D vector [x, y, z]"
-        },
-        mainOutputPort OutputPort {
-            name: "output"
-            entity: Output
-            meta: "Normalized unit 3D vector [x, y, z]"
-        }
+        # Next pair: j moves on; after the last j, i moves on and j restarts at i + 1.
+        # j is updated first, with the old i.
+        [Wedge_J + 1, VectorAPort.size] >> Equal() >> Wedge_JLast;
+        [Wedge_JLast, Wedge_I + 2, Wedge_J + 1] >> __Select() >> Wedge_J;
+        [Wedge_JLast, Wedge_I + 1, Wedge_I] >> __Select() >> Wedge_I;
+
+        Wedge_K + 1 >> Wedge_K;
+        [Wedge_K, OutputPort.size] >> Equal() >> Wedge_Done;
     ]
-    entities: [
-        signal Vector[3] { domain: OutputPort.domain rate: OutputPort.rate },
-        signal Len { domain: OutputPort.domain },
-        signal Output[3] { domain: OutputPort.domain rate: OutputPort.rate }
+    constraints: [
+        [VectorAPort.size * (VectorAPort.size - 1), OutputPort.size * 2] >> NotEqual() >> Error(message: "LinAlg::Vectors::Wedge: the output needs n * (n - 1) / 2 components for vectors of n components.");
     ]
-    streams: [
-        Vector >> Norm3D() >> Len;
-        Vector[0] / Len >> Output[0];
-        Vector[1] / Len >> Output[1];
-        Vector[2] / Len >> Output[2];
-    ]
-    meta: "Normalizes 3D vector to unit length: Vec >> Normalize3D() >> UnitVec."
+    meta: "Wedge (exterior) product of two vectors of any dimension: VecA >> Wedge(with: VecB) >> Bivector. For 2 components the output is the scalar a0 b1 - a1 b0 (the 2D cross product); for 3 components it holds the cross product components [x y z] = [w(1,2), -w(0,2), w(0,1)] of the output w; for n components it has n (n - 1) / 2 components."
 }

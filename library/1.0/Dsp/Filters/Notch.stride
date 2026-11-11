@@ -1,0 +1,60 @@
+#
+# Stride Standard DSP Package - Filters: Notch
+#
+
+package Dsp::Filters
+
+import Dsp::FilterDesign as FilterDesign
+
+# Second-order notch (band-reject) filter
+module Notch {
+	ports: [
+		mainInputPort InputPort {
+			name: "input"
+			entity: Input
+			meta: "Input signal"
+		},
+		mainOutputPort OutputPort {
+			name: "output"
+			entity: Output
+			meta: "Filtered output signal"
+		},
+		propertyInputPort FrequencyPort {
+			name: "frequency"
+			entity: Frequency
+			meta: "Centre frequency of the rejected band in Hz (default 1000.0)"
+		},
+		propertyInputPort QPort {
+			name: "q"
+			entity: Q
+			meta: "Quality factor (default 1.0). Higher values give a narrower notch"
+		}
+	]
+	entities: [
+		signal Input {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Output {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Frequency {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+			default: 1000.0
+		},
+		signal Q {
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 1.0
+		}
+	]
+	streams: [
+		Input >> BiQuad(mode: FilterDesign::ModeNotch frequency: Frequency q: Q) >> Output;
+	]
+	meta: "Second-order notch filter: Input >> Notch(frequency: 50.0 q: 10.0) >> Output (e.g. mains hum removal). A BiQuad with FilterDesign::ModeNotch. The frequency is in Hz and is converted against the rate of the output. The data type must be floating point."
+}

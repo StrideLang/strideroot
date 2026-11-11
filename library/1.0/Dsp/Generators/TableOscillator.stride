@@ -32,9 +32,11 @@ module TableOscillator {
     ]
     entities: [
         signal Frequency {
+            type: OutputPort.type
             default: 440.0
         },
         signal Amplitude {
+            type: OutputPort.type
             default: 1.0
         },
         constant TableSize {
@@ -46,11 +48,13 @@ module TableOscillator {
             domain: OutputPort.domain
         },
         signal Phase {
+            type: OutputPort.type
             default: 0.0
             reset: Reset
             domain: OutputPort.domain
         },
         signal PhaseInc {
+            type: OutputPort.type
             default: 0.0
             domain: FrequencyPort.domain
         },

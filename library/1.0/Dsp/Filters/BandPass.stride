@@ -1,9 +1,12 @@
 #
-# Stride Standard DSP Package - Filters
+# Stride Standard DSP Package - Filters: BandPass
 #
 
 package Dsp::Filters
 
+import Dsp::FilterDesign as FilterDesign
+
+# Second-order band-pass filter with constant 0 dB peak gain
 module BandPass {
 	ports: [
 		mainInputPort InputPort {
@@ -14,33 +17,44 @@ module BandPass {
 		mainOutputPort OutputPort {
 			name: "output"
 			entity: Output
-			meta: "Bandpass filtered output"
+			meta: "Filtered output signal"
 		},
-		propertyInputPort CenterFrequencyProperty {
-			name: "centerFrequency"
-			entity: CenterFrequency
-			meta: "The center frequency of the filter."
+		propertyInputPort FrequencyPort {
+			name: "frequency"
+			entity: Frequency
+			meta: "Centre frequency in Hz (default 1000.0)"
 		},
-		propertyInputPort QFactorProperty {
-			name: "qFactor"
-			entity: QFactor
-			meta: "The Q value of the filter."
-		},
-		propertyInputPort GainProperty {
-			name: "gain"
-			entity: Gain
-			meta: "Filter gain."
+		propertyInputPort QPort {
+			name: "q"
+			entity: Q
+			meta: "Quality factor (default 1.0). Bandwidth in octaves is about 1.44 / q: higher values give a narrower band"
 		}
 	]
 	entities: [
-		signal Input { domain: InputPort.domain },
-		signal Output { domain: OutputPort.domain },
-		signal CenterFrequency { default: 1000.0 },
-		signal QFactor { default: 1.0 },
-		signal Gain { default: 1.0 }
+		signal Input {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Output {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Frequency {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+			default: 1000.0
+		},
+		signal Q {
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 1.0
+		}
 	]
 	streams: [
-		Input * Gain >> Output;
+		Input >> BiQuad(mode: FilterDesign::ModeBandPass frequency: Frequency q: Q) >> Output;
 	]
-	meta: "Bandpass filter."
+	meta: "Second-order band-pass filter: Input >> BandPass(frequency: 1000.0 q: 2.0) >> Output. A BiQuad with FilterDesign::ModeBandPass. The frequency is in Hz and is converted against the rate of the output. The data type must be floating point."
 }

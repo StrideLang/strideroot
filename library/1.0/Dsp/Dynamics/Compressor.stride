@@ -22,12 +22,22 @@ module Device {
         propertyInputPort RatioPort {
             name: "ratio"
             entity: Ratio
-            meta: "Compression slope ratio (e.g., 4.0 for 4:1)"
+            meta: "Compression slope ratio (e.g., 4.0 for 4:1) (default 4.0)"
         },
         propertyInputPort MakeupPort {
             name: "makeup"
             entity: MakeupGain
-            meta: "Post-compression makeup gain multiplier"
+            meta: "Post-compression makeup gain multiplier (default 1.0)"
+        },
+        propertyInputPort AttackPort {
+            name: "attack"
+            entity: AttackTime
+            meta: "Attack time constant of the level detector in seconds (default 0.01)"
+        },
+        propertyInputPort ReleasePort {
+            name: "release"
+            entity: ReleaseTime
+            meta: "Release time constant of the level detector in seconds (default 0.1)"
         },
         mainOutputPort OutputPort {
             name: "output"
@@ -37,62 +47,80 @@ module Device {
     ]
     entities: [
         signal Input {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         },
         signal Threshold {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.5
         },
         signal Ratio {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 4.0
         },
         signal MakeupGain {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 1.0
         },
+        signal AttackTime {
+            type: OutputPort.type
+            domain: OutputPort.domain
+            default: 0.01
+        },
+        signal ReleaseTime {
+            type: OutputPort.type
+            domain: OutputPort.domain
+            default: 0.1
+        },
         signal EnvLevel {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal SafeLevel {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal Excess {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal TargetLevel {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal CompressedGain {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal GainReduction {
+            type: OutputPort.type
             domain: OutputPort.domain
-            default: 1.0
         },
         switch OverThreshold {
             domain: OutputPort.domain
         },
         signal Output {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
-        },
-        reaction ApplyCompression {
-            ports: []
-            streams: [
-                EnvLevel - Threshold >> Excess;
-                Threshold + (Excess / Ratio) >> TargetLevel;
-                TargetLevel / EnvLevel >> GainReduction;
-            ]
-        },
-        reaction PassUnityGain {
-            ports: []
-            streams: [
-                1.0 >> GainReduction;
-            ]
         }
     ]
     streams: [
-        Input >> EnvelopeFollower::Follower(attack: 0.1 release: 0.01) >> EnvLevel;
+        Input >> EnvelopeFollower::Follower(attack: AttackTime release: ReleaseTime) >> EnvLevel;
         [EnvLevel, Threshold] >> Greater() >> OverThreshold;
-        OverThreshold >> ApplyCompression();
-        not OverThreshold >> PassUnityGain();
+        [EnvLevel, 0.000001] >> Max() >> SafeLevel;
+
+        # Above the threshold the excess is reduced by the ratio; below it the gain is 1
+        EnvLevel - Threshold >> Excess;
+        Threshold + (Excess / Ratio) >> TargetLevel;
+        TargetLevel / SafeLevel >> CompressedGain;
+        [OverThreshold, CompressedGain, 1.0] >> __Select() >> GainReduction;
+
         Input * GainReduction * MakeupGain >> Output;
     ]
-    meta: "Feedforward dynamic range compressor: AudioIn >> Compressor::Device(threshold: 0.5 ratio: 4.0 makeup: 1.2) >> Out."
+    meta: "Feedforward dynamic range compressor: AudioIn >> Compressor::Device(threshold: 0.5 ratio: 4.0 makeup: 1.2 attack: 0.01 release: 0.1) >> Out. Attack and release are times in seconds, converted against the rate of the output."
 }

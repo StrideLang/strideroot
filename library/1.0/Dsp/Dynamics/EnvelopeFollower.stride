@@ -4,7 +4,7 @@
 
 package Dsp::Dynamics::EnvelopeFollower
 
-# Peak envelope follower with independent attack and release time constants
+# Peak envelope follower with independent attack and release times
 module Follower {
     ports: [
         mainInputPort InputPort {
@@ -14,13 +14,13 @@ module Follower {
         },
         propertyInputPort AttackPort {
             name: "attack"
-            entity: AttackCoeff
-            meta: "Attack coefficient (0.0 to 1.0, higher = faster response)"
+            entity: AttackTime
+            meta: "Attack time constant in seconds: how fast the envelope rises (default 0.01). 0 follows rising peaks instantly"
         },
         propertyInputPort ReleasePort {
             name: "release"
-            entity: ReleaseCoeff
-            meta: "Release coefficient (0.0 to 1.0, higher = faster decay)"
+            entity: ReleaseTime
+            meta: "Release time constant in seconds: how fast the envelope falls (default 0.1). 0 follows falling levels instantly"
         },
         mainOutputPort OutputPort {
             name: "output"
@@ -30,55 +30,93 @@ module Follower {
     ]
     entities: [
         signal Input {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         },
-        signal AttackCoeff {
-            domain: OutputPort.domain
-            default: 0.1
-        },
-        signal ReleaseCoeff {
+        signal AttackTime {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.01
         },
-        signal Rectified {
+        signal ReleaseTime {
+            type: OutputPort.type
+            domain: OutputPort.domain
+            default: 0.1
+        },
+        signal SafeAttack {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
-        signal PrevEnv {
+        signal SafeRelease {
+            type: OutputPort.type
             domain: OutputPort.domain
-            default: 0.0
+        },
+        signal AttackExp {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal ReleaseExp {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal AttackPole {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal ReleasePole {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal AttackCoeff {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal ReleaseCoeff {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal Coeff {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal Rectified {
+            type: OutputPort.type
+            domain: OutputPort.domain
         },
         signal Env {
+            type: OutputPort.type
             domain: OutputPort.domain
+            rate: OutputPort.rate
             default: 0.0
         },
         switch IsAttack {
             domain: OutputPort.domain
         },
         signal Output {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
-        },
-        reaction ApplyAttack {
-            ports: []
-            streams: [
-                PrevEnv + (AttackCoeff * (Rectified - PrevEnv)) >> Env;
-            ]
-        },
-        reaction ApplyRelease {
-            ports: []
-            streams: [
-                PrevEnv + (ReleaseCoeff * (Rectified - PrevEnv)) >> Env;
-            ]
         }
     ]
     streams: [
+        # One-pole coefficients from the time constants, converted against the
+        # rate of the output: coefficient = 1 - exp(-1 / (time * rate))
+        [AttackTime, 0.000001] >> Max() >> SafeAttack;
+        [ReleaseTime, 0.000001] >> Max() >> SafeRelease;
+        -1.0 / (SafeAttack * OutputPort.rate) >> AttackExp;
+        -1.0 / (SafeRelease * OutputPort.rate) >> ReleaseExp;
+        AttackExp >> Exp() >> AttackPole;
+        ReleaseExp >> Exp() >> ReleasePole;
+        1.0 - AttackPole >> AttackCoeff;
+        1.0 - ReleasePole >> ReleaseCoeff;
+
         Input >> Abs() >> Rectified;
-        [Rectified, PrevEnv] >> Greater() >> IsAttack;
-        IsAttack >> ApplyAttack();
-        not IsAttack >> ApplyRelease();
+        [Rectified, Env] >> Greater() >> IsAttack;
+        [IsAttack, AttackCoeff, ReleaseCoeff] >> __Select() >> Coeff;
+        # Env is read before it is written, so it keeps its value between ticks
+        Env + (Coeff * (Rectified - Env)) >> Env;
         Env >> Output;
-        Env >> PrevEnv;
     ]
-    meta: "Peak envelope follower: AudioIn >> EnvelopeFollower::Follower(attack: 0.1 release: 0.01) >> Envelope."
+    meta: "Peak envelope follower with attack and release times in seconds: AudioIn >> EnvelopeFollower::Follower(attack: 0.01 release: 0.1) >> Envelope. Times are converted against the rate of the output, so the behaviour does not depend on the sample rate."
 }

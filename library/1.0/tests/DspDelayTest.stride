@@ -1,0 +1,116 @@
+# DspDelayTest.stride
+# Unit tests for strideroot/library/1.0/Dsp/Delay and Dsp/Spectral.
+# The delay is in seconds and is converted against the rate of the output.
+
+import Dsp::Delay as Delay
+import Dsp::Spectral as Spectral
+
+_domainDefinition DelayDom {
+    framework: _JitFramework
+    rate: 1000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal DelayIn { domain: DelayDom type: Real }
+    ]
+    outputs: [
+        signal DelayOut { domain: DelayDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+DelayIn >> Delay::FractionalDelay::Line(delay: 0.003) >> DelayOut;
+
+functionTest DelayWholeSamplesTest {
+    target: DelayDom
+    prepare: [
+        [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> DelayIn;
+    ]
+    validate: [
+        [ DelayOut, [ 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition DelayFracDom {
+    framework: _JitFramework
+    rate: 1000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal DelayFracIn { domain: DelayFracDom type: Real }
+    ]
+    outputs: [
+        signal DelayFracOut { domain: DelayFracDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+DelayFracIn >> Delay::FractionalDelay::Line(delay: 0.0025) >> DelayFracOut;
+
+functionTest DelayFractionalTest {
+    target: DelayFracDom
+    prepare: [
+        [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> DelayFracIn;
+    ]
+    validate: [
+        [ DelayFracOut, [ 0.000000, 0.000000, 0.500000, 0.500000, 0.000000, 0.000000, 0.000000, 0.000000 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition DelayRateDom {
+    framework: _JitFramework
+    rate: 2000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal DelayRateIn { domain: DelayRateDom type: Real }
+    ]
+    outputs: [
+        signal DelayRateOut { domain: DelayRateDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+DelayRateIn >> Delay::FractionalDelay::Line(delay: 0.003) >> DelayRateOut;
+
+functionTest DelayTimeScalesWithRateTest {
+    target: DelayRateDom
+    prepare: [
+        [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> DelayRateIn;
+    ]
+    validate: [
+        [ DelayRateOut, [ 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition GoertzelDom {
+    framework: _JitFramework
+    rate: 1000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal GoertzelIn { domain: GoertzelDom type: Real }
+    ]
+    outputs: [
+        signal GoertzelOut { domain: GoertzelDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+GoertzelIn >> Spectral::Goertzel::Detector(frequency: 100.0) >> GoertzelOut;
+
+functionTest GoertzelOnToneTest {
+    target: GoertzelDom
+    prepare: [
+        [ 0.000000, 0.587785, 0.951057, 0.951057, 0.587785, -0.000000, -0.587785, -0.951057, -0.951057, -0.587785, 0.000000, 0.587785, 0.951057, 0.951057, 0.587785, 0.000000, -0.587785, -0.951057, -0.951057, -0.587785, 0.000000, 0.587785, 0.951057, 0.951057 ] >> GoertzelIn;
+    ]
+    validate: [
+        [ GoertzelOut, [ 0.000000, 0.000000, 0.345492, 2.154508, 4.868034, 6.250000, 6.250000, 8.322949, 14.654508, 21.890576, 25.000000, 25.000000, 28.800407, 39.654508, 51.413119, 56.250000, 56.250000, 61.777864, 77.154508, 93.435661, 100.000000, 100.000000, 107.255322, 127.154508 ] ] >> ExpectNear(epsilon: 0.001);
+    ]
+}
+
+functionTest GoertzelOffToneTest {
+    target: GoertzelDom
+    prepare: [
+        [ 0.000000, 0.951057, -0.587785, -0.587785, 0.951057, 0.000000, -0.951057, 0.587785, 0.587785, -0.951057, -0.000000, 0.951057, -0.587785, -0.587785, 0.951057, 0.000000, -0.951057, 0.587785, 0.587785, -0.951057, -0.000000, 0.951057, -0.587785, -0.587785 ] >> GoertzelIn;
+    ]
+    validate: [
+        [ GoertzelOut, [ 0.000000, 0.000000, 0.904508, 0.345492, 0.904508, 0.000000, 0.000000, 0.904508, 0.345492, 0.904508, 0.000000, 0.000000, 0.904508, 0.345492, 0.904508, 0.000000, 0.000000, 0.904508, 0.345492, 0.904508, 0.000000, 0.000000, 0.904508, 0.345492 ] ] >> ExpectNear(epsilon: 0.001);
+    ]
+}

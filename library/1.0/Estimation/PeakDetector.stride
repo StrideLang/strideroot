@@ -15,32 +15,37 @@ module Detector {
         propertyInputPort ThresholdPort {
             name: "threshold"
             entity: Threshold
-            meta: "Minimum peak amplitude threshold"
+            meta: "Minimum peak amplitude threshold (default 0.5)"
         },
         mainOutputPort OutputPort {
             name: "output"
             entity: Output
-            meta: "Binary impulse (1.0 upon peak detection, 0.0 otherwise)"
+            meta: "Switch that is on for one tick when a peak was detected. The detection is made one tick late, as a peak can only be confirmed by the sample that follows it"
         }
     ]
     entities: [
         signal Input {
+            type: InputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         },
         signal Threshold {
+            type: InputPort.type
             domain: OutputPort.domain
             default: 0.5
         },
         signal X0 {
+            type: InputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal X1 {
+            type: InputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal X2 {
+            type: InputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
@@ -59,25 +64,9 @@ module Detector {
         switch IsPeak {
             domain: OutputPort.domain
         },
-        signal PeakOutput {
-            domain: OutputPort.domain
-            default: 0.0
-        },
-        signal Output {
+        switch Output {
             domain: OutputPort.domain
             rate: OutputPort.rate
-        },
-        reaction SetPeak {
-            ports: []
-            streams: [
-                1.0 >> PeakOutput;
-            ]
-        },
-        reaction ClearPeak {
-            ports: []
-            streams: [
-                0.0 >> PeakOutput;
-            ]
         }
     ]
     streams: [
@@ -91,15 +80,11 @@ module Detector {
         # Amplitude condition
         [X1, Threshold] >> GreaterOrEqual() >> AboveThreshold;
         [PeakShape, AboveThreshold] >> And() >> IsPeak;
-
-        IsPeak >> SetPeak();
-        not IsPeak >> ClearPeak();
-
-        PeakOutput >> Output;
+        IsPeak >> Output;
 
         # Shift sample history
         X1 >> X2;
         X0 >> X1;
     ]
-    meta: "Detects local peaks exceeding a minimum threshold: Signal >> PeakDetector::Detector(threshold: 0.5) >> Peaks."
+    meta: "Real-time local maximum detector with a switch output: Input >> PeakDetector::Detector(threshold: 0.5) >> Peak."
 }

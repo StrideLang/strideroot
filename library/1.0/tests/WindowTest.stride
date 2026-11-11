@@ -1,0 +1,49 @@
+# WindowTest.stride
+# Unit tests for strideroot/library/1.0/Window (package Window::Functions)
+# Windows of N = 8 points: n = 0..7. All windows are symmetric.
+
+import Window::Functions as Window
+
+functionTest HannTest {
+    target: Window::Hann
+    prepare: [
+        [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0 ] >> Index;
+        [ 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 ] >> Size;
+    ]
+    validate: [
+        [ Weight, [ 0.0, 0.188255, 0.611260, 0.950484, 0.950484, 0.611260, 0.188255, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest HammingTest {
+    target: Window::Hamming
+    prepare: [
+        [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0 ] >> Index;
+        [ 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 ] >> Size;
+    ]
+    validate: [
+        [ Weight, [ 0.08, 0.253195, 0.642360, 0.954446, 0.954446, 0.642360, 0.253195, 0.08 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest BlackmanTest {
+    target: Window::Blackman
+    prepare: [
+        [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0 ] >> Index;
+        [ 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 ] >> Size;
+    ]
+    validate: [
+        [ Weight, [ 0.0, 0.090453, 0.459183, 0.920364, 0.920364, 0.459183, 0.090453, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest FlatTopTest {
+    target: Window::FlatTop
+    prepare: [
+        [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0 ] >> Index;
+        [ 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 ] >> Size;
+    ]
+    validate: [
+        [ Weight, [ -0.000421, -0.036841, 0.010704, 0.780874, 0.780874, 0.010704, -0.036841, -0.000421 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}

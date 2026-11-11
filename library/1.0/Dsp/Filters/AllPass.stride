@@ -1,0 +1,60 @@
+#
+# Stride Standard DSP Package - Filters: AllPass
+#
+
+package Dsp::Filters
+
+import Dsp::FilterDesign as FilterDesign
+
+# Second-order all-pass filter (unity gain, frequency dependent phase)
+module AllPass {
+	ports: [
+		mainInputPort InputPort {
+			name: "input"
+			entity: Input
+			meta: "Input signal"
+		},
+		mainOutputPort OutputPort {
+			name: "output"
+			entity: Output
+			meta: "Filtered output signal"
+		},
+		propertyInputPort FrequencyPort {
+			name: "frequency"
+			entity: Frequency
+			meta: "Frequency at which the phase shift is 180 degrees in Hz (default 1000.0)"
+		},
+		propertyInputPort QPort {
+			name: "q"
+			entity: Q
+			meta: "Quality factor (default 0.7071). Higher values give a sharper phase transition"
+		}
+	]
+	entities: [
+		signal Input {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Output {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Frequency {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+			default: 1000.0
+		},
+		signal Q {
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 0.7071
+		}
+	]
+	streams: [
+		Input >> BiQuad(mode: FilterDesign::ModeAllPass frequency: Frequency q: Q) >> Output;
+	]
+	meta: "Second-order all-pass filter: Input >> AllPass(frequency: 1000.0) >> Output. A BiQuad with FilterDesign::ModeAllPass. The frequency is in Hz and is converted against the rate of the output. The data type must be floating point."
+}

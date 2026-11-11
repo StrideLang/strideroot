@@ -1,0 +1,60 @@
+#
+# Stride Standard DSP Package - Filters: HighPass
+#
+
+package Dsp::Filters
+
+import Dsp::FilterDesign as FilterDesign
+
+# Second-order high-pass filter (-12 dB/octave below the cutoff)
+module HighPass {
+	ports: [
+		mainInputPort InputPort {
+			name: "input"
+			entity: Input
+			meta: "Input signal"
+		},
+		mainOutputPort OutputPort {
+			name: "output"
+			entity: Output
+			meta: "Filtered output signal"
+		},
+		propertyInputPort FrequencyPort {
+			name: "frequency"
+			entity: Frequency
+			meta: "Cutoff frequency in Hz (default 1000.0)"
+		},
+		propertyInputPort QPort {
+			name: "q"
+			entity: Q
+			meta: "Quality factor (default 0.7071). 0.7071 is maximally flat (Butterworth); higher values add a resonant peak at the cutoff"
+		}
+	]
+	entities: [
+		signal Input {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Output {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Frequency {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+			default: 1000.0
+		},
+		signal Q {
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 0.7071
+		}
+	]
+	streams: [
+		Input >> BiQuad(mode: FilterDesign::ModeHighPass frequency: Frequency q: Q) >> Output;
+	]
+	meta: "Second-order high-pass filter: Input >> HighPass(frequency: 80.0 q: 0.7071) >> Output. A BiQuad with FilterDesign::ModeHighPass. The frequency is in Hz and is converted against the rate of the output. The data type must be floating point."
+}

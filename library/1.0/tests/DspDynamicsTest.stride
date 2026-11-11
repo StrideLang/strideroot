@@ -1,0 +1,78 @@
+# DspDynamicsTest.stride
+# Unit tests for strideroot/library/1.0/Dsp/Dynamics.
+# Attack and release are times in seconds converted against the rate of the
+# output, so the follower and the compressor run in a domain at 1000 Hz.
+
+import Dsp::Dynamics::EnvelopeFollower as EnvelopeFollower
+import Dsp::Dynamics::Compressor as Compressor
+import Dsp::Dynamics::Limiter as Limiter
+
+_domainDefinition FollowerDom {
+    framework: _JitFramework
+    rate: 1000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal FollowerIn { domain: FollowerDom type: Real }
+    ]
+    outputs: [
+        signal FollowerOut { domain: FollowerDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+FollowerIn >> EnvelopeFollower::Follower(attack: 0.005 release: 0.02) >> FollowerOut;
+
+functionTest FollowerTest {
+    target: FollowerDom
+    prepare: [
+        [ 0.000000, 1.000000, 1.000000, 1.000000, 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> FollowerIn;
+    ]
+    validate: [
+        [ FollowerOut, [ 0.000000, 0.181269, 0.329680, 0.451188, 0.550671, 0.523814, 0.498268, 0.473967, 0.450851, 0.428863 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest FollowerRectifiesTest {
+    target: FollowerDom
+    prepare: [
+        [ -1.000000, 1.000000, -1.000000, 1.000000, 0.000000, 0.000000 ] >> FollowerIn;
+    ]
+    validate: [
+        [ FollowerOut, [ 0.181269, 0.329680, 0.451188, 0.550671, 0.523814, 0.498268 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition CompressorDom {
+    framework: _JitFramework
+    rate: 1000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal CompressorIn { domain: CompressorDom type: Real }
+    ]
+    outputs: [
+        signal CompressorOut { domain: CompressorDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+CompressorIn >> Compressor::Device(threshold: 0.5 ratio: 4.0 makeup: 1.0 attack: 0.001 release: 0.01) >> CompressorOut;
+
+functionTest CompressorTest {
+    target: CompressorDom
+    prepare: [
+        [ 0.200000, 0.200000, 0.200000, 0.200000, 0.200000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000 ] >> CompressorIn;
+    ]
+    validate: [
+        [ CompressorOut, [ 0.200000, 0.200000, 0.200000, 0.200000, 0.200000, 0.781764, 0.670616, 0.640583, 0.630586, 0.627036, 0.625746, 0.625274, 0.625101, 0.625037, 0.625014, 0.625005, 0.625002 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest LimiterTest {
+    target: Limiter::Fast
+    prepare: [
+        [ -2.0, -0.5, 0.5, 2.0 ] >> Input;
+    ]
+    validate: [
+        [ Output, [ -0.95, -0.5, 0.5, 0.95 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}

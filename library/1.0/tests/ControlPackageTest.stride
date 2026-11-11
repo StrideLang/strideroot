@@ -1,0 +1,140 @@
+# ControlPackageTest.stride
+# Unit tests for strideroot/library/1.0/Control (package Control).
+# Pid and SlewRateLimiter take times and per-second rates, converted against
+# the rate of the output, so they run in a domain at 100 Hz.
+
+import Control::Pid as Pid
+import Control::Hysteresis as Hysteresis
+import Control::SlewRateLimiter as SlewRateLimiter
+import Control::Foc as Foc
+
+_domainDefinition PidDom {
+    framework: _JitFramework
+    rate: 100
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal PidIn { domain: PidDom type: Real }
+    ]
+    outputs: [
+        signal PidOut { domain: PidDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+PidIn >> Pid::Pid(kp: 2.0 ki: 50.0 kd: 0.01) >> PidOut;
+
+functionTest PidTest {
+    target: PidDom
+    prepare: [
+        [ 0.100000, 0.100000, 0.100000, 0.100000, 0.000000, -0.100000, -0.100000, 0.000000 ] >> PidIn;
+    ]
+    validate: [
+        [ PidOut, [ 0.350000, 0.300000, 0.350000, 0.400000, 0.100000, -0.150000, -0.100000, 0.200000 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition PidSatDom {
+    framework: _JitFramework
+    rate: 100
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal PidSatIn { domain: PidSatDom type: Real }
+    ]
+    outputs: [
+        signal PidSatOut { domain: PidSatDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+PidSatIn >> Pid::Pid(kp: 0.5 ki: 100.0 min: -1.0 max: 1.0) >> PidSatOut;
+
+functionTest PidSaturationAndAntiWindupTest {
+    target: PidSatDom
+    prepare: [
+        [ 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000 ] >> PidSatIn;
+    ]
+    validate: [
+        [ PidSatOut, [ 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition SlewDom {
+    framework: _JitFramework
+    rate: 100
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal SlewIn { domain: SlewDom type: Real }
+    ]
+    outputs: [
+        signal SlewOut { domain: SlewDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+SlewIn >> SlewRateLimiter::SlewRateLimiter(up: 1.0 down: 2.0) >> SlewOut;
+
+functionTest SlewRateLimiterTest {
+    target: SlewDom
+    prepare: [
+        [ 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> SlewIn;
+    ]
+    validate: [
+        [ SlewOut, [ 0.010000, 0.020000, 0.030000, 0.040000, 0.050000, 0.030000, 0.010000, 0.000000, 0.000000, 0.000000, 0.000000 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest HysteresisTest {
+    target: Hysteresis::Hysteresis
+    prepare: [
+        [ 0.1, 0.5, 0.9, 0.5, 0.1, 0.5, 0.8, 0.2 ] >> Input;
+    ]
+    validate: [
+        [ Output, [ off, off, on, on, off, off, on, off ] ] >> ExpectEqual();
+    ]
+}
+
+# Clarke: [Ia, Ib, Ic] -> [Ialpha, Ibeta] = [Ia, (Ia + 2 Ib) / sqrt(3)]
+functionTest ClarkeTest {
+    target: Foc::Clarke
+    prepare: [
+        [ [ 1.0, -0.5, -0.5 ], [ 0.0, 0.866025, -0.866025 ] ] >> Iabc;
+    ]
+    validate: [
+        [ Ialphabeta, [ [ 1.0, 0.0 ], [ 0.0, 1.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# Park at angle 0 is the identity, at angle pi/2 it swaps and negates
+functionTest ParkTest {
+    target: Foc::Park
+    prepare: [
+        [ [ 1.0, 0.0 ], [ 1.0, 0.0 ], [ 0.0, 1.0 ] ] >> Ialphabeta;
+        [ 0.0, 1.570796, 1.570796 ] >> Theta;
+    ]
+    validate: [
+        [ Idq, [ [ 1.0, 0.0 ], [ 0.0, -1.0 ], [ 1.0, 0.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# InversePark undoes Park
+functionTest InverseParkTest {
+    target: Foc::InversePark
+    prepare: [
+        [ [ 1.0, 0.0 ], [ 0.0, -1.0 ], [ 1.0, 0.0 ] ] >> Vdq;
+        [ 0.0, 1.570796, 1.570796 ] >> Theta;
+    ]
+    validate: [
+        [ Valphabeta, [ [ 1.0, 0.0 ], [ 1.0, 0.0 ], [ 0.0, 1.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# InverseClarke undoes Clarke
+functionTest InverseClarkeTest {
+    target: Foc::InverseClarke
+    prepare: [
+        [ [ 1.0, 0.0 ], [ 0.0, 1.0 ] ] >> Valphabeta;
+    ]
+    validate: [
+        [ Vabc, [ [ 1.0, -0.5, -0.5 ], [ 0.0, 0.866025, -0.866025 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}

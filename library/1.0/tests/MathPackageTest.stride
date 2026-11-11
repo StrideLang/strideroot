@@ -1,0 +1,33 @@
+# MathPackageTest.stride
+# Unit tests for strideroot/library/1.0/Math (package Math: constants)
+
+_domainDefinition MathConstantsDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal MathConstantsIn { domain: MathConstantsDom type: Real }
+    ]
+    outputs: [
+        signal PiOut { domain: MathConstantsDom type: Real }
+        signal TwoPiOut { domain: MathConstantsDom type: Real }
+        signal EOut { domain: MathConstantsDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+MathConstantsIn * 0.0 + Math::Pi >> PiOut;
+MathConstantsIn * 0.0 + Math::TwoPi >> TwoPiOut;
+MathConstantsIn * 0.0 + Math::E >> EOut;
+
+functionTest MathConstantsTest {
+    target: MathConstantsDom
+    prepare: [
+        [ 0.0, 0.0 ] >> MathConstantsIn;
+    ]
+    validate: [
+        [ PiOut, [ 3.141593, 3.141593 ] ] >> ExpectNear(epsilon: 0.000001);
+        [ TwoPiOut, [ 6.283185, 6.283185 ] ] >> ExpectNear(epsilon: 0.000001);
+        [ EOut, [ 2.718282, 2.718282 ] ] >> ExpectNear(epsilon: 0.000001);
+    ]
+}

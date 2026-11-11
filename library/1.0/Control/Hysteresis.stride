@@ -14,37 +14,40 @@ module Hysteresis {
         propertyInputPort LowPort {
             name: "low"
             entity: LowThreshold
-            meta: "Lower switching threshold"
+            meta: "Lower switching threshold (default 0.2)"
         },
         propertyInputPort HighPort {
             name: "high"
             entity: HighThreshold
-            meta: "Upper switching threshold"
+            meta: "Upper switching threshold (default 0.8)"
         },
         mainOutputPort OutputPort {
             name: "output"
             entity: Output
-            meta: "Binary output state (0.0 or 1.0)"
+            meta: "Switch: turns on when the input reaches the high threshold and off when it falls to the low threshold"
         }
     ]
     entities: [
         signal Input {
+            type: InputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         },
         signal LowThreshold {
+            type: InputPort.type
             domain: OutputPort.domain
             default: 0.2
         },
         signal HighThreshold {
+            type: InputPort.type
             domain: OutputPort.domain
             default: 0.8
         },
-        signal State {
+        switch State {
             domain: OutputPort.domain
-            default: 0.0
+            default: off
         },
-        signal Output {
+        switch Output {
             domain: OutputPort.domain
             rate: OutputPort.rate
         },
@@ -54,23 +57,23 @@ module Hysteresis {
         switch TurnOff {
             domain: OutputPort.domain
         },
-        reaction SetHigh {
-            ports: []
-            streams: [
-                1.0 >> State;
-            ]
+        switch KeepOn {
+            domain: OutputPort.domain
         },
-        reaction SetLow {
-            ports: []
-            streams: [
-                0.0 >> State;
-            ]
+        switch Held {
+            domain: OutputPort.domain
         }
     ]
     streams: [
-        [Input, HighThreshold] >> GreaterOrEqual() >> TurnOn >> SetHigh();
-        [Input, LowThreshold] >> LessOrEqual() >> TurnOff >> SetLow();
+        [Input, HighThreshold] >> GreaterOrEqual() >> TurnOn;
+        [Input, LowThreshold] >> LessOrEqual() >> TurnOff;
+
+        # next state = TurnOn or (State and not TurnOff). State is read before it is
+        # written, so it keeps its value between ticks. If low >= high, TurnOn wins.
+        TurnOff >> Not() >> KeepOn;
+        [State, KeepOn] >> And() >> Held;
+        [TurnOn, Held] >> Or() >> State;
         State >> Output;
     ]
-    meta: "Dual-threshold hysteresis comparator (Schmitt trigger): Input >> Hysteresis(low: 0.2 high: 0.8) >> Output."
+    meta: "Dual-threshold hysteresis comparator (Schmitt trigger) with a switch output: Input >> Hysteresis(low: 0.2 high: 0.8) >> Output. The output keeps its state while the input is between the two thresholds."
 }

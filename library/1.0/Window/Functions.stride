@@ -25,20 +25,25 @@ module Hann {
     ]
     entities: [
         signal Index {
+            type: WeightPort.type
             domain: WeightPort.domain
             rate: WeightPort.rate
         },
         signal Size {
+            type: WeightPort.type
             domain: WeightPort.domain
             default: 512.0
         },
         signal Theta {
+            type: WeightPort.type
             domain: WeightPort.domain
         },
         signal CosTheta {
+            type: WeightPort.type
             domain: WeightPort.domain
         },
         signal Weight {
+            type: WeightPort.type
             domain: WeightPort.domain
             rate: WeightPort.rate
         }
@@ -72,20 +77,25 @@ module Hamming {
     ]
     entities: [
         signal Index {
+            type: WeightPort.type
             domain: WeightPort.domain
             rate: WeightPort.rate
         },
         signal Size {
+            type: WeightPort.type
             domain: WeightPort.domain
             default: 512.0
         },
         signal Theta {
+            type: WeightPort.type
             domain: WeightPort.domain
         },
         signal CosTheta {
+            type: WeightPort.type
             domain: WeightPort.domain
         },
         signal Weight {
+            type: WeightPort.type
             domain: WeightPort.domain
             rate: WeightPort.rate
         }
@@ -119,23 +129,29 @@ module Blackman {
     ]
     entities: [
         signal Index {
+            type: WeightPort.type
             domain: WeightPort.domain
             rate: WeightPort.rate
         },
         signal Size {
+            type: WeightPort.type
             domain: WeightPort.domain
             default: 512.0
         },
         signal Theta {
+            type: WeightPort.type
             domain: WeightPort.domain
         },
         signal CosTheta {
+            type: WeightPort.type
             domain: WeightPort.domain
         },
         signal Cos2Theta {
+            type: WeightPort.type
             domain: WeightPort.domain
         },
         signal Weight {
+            type: WeightPort.type
             domain: WeightPort.domain
             rate: WeightPort.rate
         }
@@ -170,29 +186,37 @@ module FlatTop {
     ]
     entities: [
         signal Index {
+            type: WeightPort.type
             domain: WeightPort.domain
             rate: WeightPort.rate
         },
         signal Size {
+            type: WeightPort.type
             domain: WeightPort.domain
             default: 512.0
         },
         signal Theta {
+            type: WeightPort.type
             domain: WeightPort.domain
         },
         signal Cos1 {
+            type: WeightPort.type
             domain: WeightPort.domain
         },
         signal Cos2 {
+            type: WeightPort.type
             domain: WeightPort.domain
         },
         signal Cos3 {
+            type: WeightPort.type
             domain: WeightPort.domain
         },
         signal Cos4 {
+            type: WeightPort.type
             domain: WeightPort.domain
         },
         signal Weight {
+            type: WeightPort.type
             domain: WeightPort.domain
             rate: WeightPort.rate
         }

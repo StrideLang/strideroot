@@ -1,126 +1,169 @@
 #
 # Stride Standard DSP Package - Filter Design Submodule
-# Robert Bristow-Johnson (RBJ) Audio EQ Cookbook Coefficient Generators
+#
+# Robert Bristow-Johnson (RBJ) "Audio EQ Cookbook" coefficient design for
+# second-order (biquad) sections.
+#
+# Conventions
+# -----------
+# * The sample rate is never a property: it is the rate of the output
+#   (OutputPort.rate), i.e. the rate of the signal the coefficients are used on.
+#   Frequencies are always in Hz and are converted against that rate.
+# * Coefficients are returned normalised by a0 as the array
+#       [ b0, b1, b2, a1, a2 ]
+#   for the difference equation
+#       y[n] = b0 x[n] + b1 x[n-1] + b2 x[n-2] - a1 y[n-1] - a2 y[n-2]
+#   (see Dsp::Filters::Section, which applies them).
+# * The data type of every signal is the type of the output (it must be a
+#   floating point type).
 #
 
 package Dsp::FilterDesign
 
-# Computes normalized biquad coefficients [b0, b1, b2, a1, a2] for a 2nd-order LowPass filter
-module LowPassCoefficients {
-	ports: [
-		mainInputPort FreqPort {
-			name: "frequency"
-			entity: Frequency
-			meta: "Cutoff frequency in Hz"
-		},
-		propertyInputPort QPort {
-			name: "q"
-			entity: Q
-			meta: "Quality factor Q (default 0.7071 / Butterworth)"
-		},
-		propertyInputPort RatePort {
-			name: "sampleRate"
-			entity: SampleRate
-			meta: "Sample rate in Hz (default 44100.0)"
-		},
-		mainOutputPort BCoeffsPort {
-			name: "b"
-			entity: B
-			meta: "Feedforward numerator coefficients [b0, b1, b2]"
-		},
-		mainOutputPort ACoeffsPort {
-			name: "a"
-			entity: A
-			meta: "Feedback denominator coefficients [a1, a2]"
-		}
-	]
-	entities: [
-		signal Frequency { domain: FreqPort.domain },
-		signal Q { default: 0.7071 domain: QPort.domain },
-		signal SampleRate { default: 44100.0 domain: RatePort.domain },
-		signal B[3] { domain: BCoeffsPort.domain },
-		signal A[2] { domain: ACoeffsPort.domain },
-		signal W0 {},
-		signal SinW0 {},
-		signal CosW0 {},
-		signal Alpha {},
-		signal A0 {}
-	]
-	streams: [
-		(Math::TwoPi * Frequency) / SampleRate >> W0;
-		W0 >> Sin() >> SinW0;
-		W0 >> Cos() >> CosW0;
-		SinW0 / (2.0 * Q) >> Alpha;
-		1.0 + Alpha >> A0;
+# Filter responses selectable with the `mode` property of Coefficients and of
+# Dsp::Filters::BiQuad. A mode is a plain integer, so it costs nothing on
+# targets without string support.
+constant ModeLowPass  { value: 0 meta: "Second order low-pass: passes frequencies below `frequency`, -12 dB/octave above" }
+constant ModeHighPass { value: 1 meta: "Second order high-pass: passes frequencies above `frequency`, -12 dB/octave below" }
+constant ModeBandPass { value: 2 meta: "Second order band-pass with constant 0 dB peak gain at `frequency`; `q` sets the narrowness" }
+constant ModeNotch    { value: 3 meta: "Notch (band-reject): removes a narrow band around `frequency`" }
+constant ModeAllPass  { value: 4 meta: "All-pass: unity magnitude at all frequencies, phase shift of 180 degrees at `frequency`" }
+constant ModePeak     { value: 5 meta: "Peaking equaliser: boosts or cuts a band around `frequency` by `gain` dB" }
 
-		# Normalized b coefficients
-		((1.0 - CosW0) / 2.0) / A0 >> B[0];
-		(1.0 - CosW0) / A0 >> B[1];
-		((1.0 - CosW0) / 2.0) / A0 >> B[2];
+# Computes normalised biquad coefficients [b0, b1, b2, a1, a2] for the chosen response
+module Coefficients {
+    ports: [
+        mainInputPort FrequencyPort {
+            name: "frequency"
+            entity: Frequency
+            meta: "Cutoff, centre or corner frequency in Hz"
+        },
+        propertyInputPort ModePort {
+            name: "mode"
+            entity: Mode
+            meta: "Filter response: ModeLowPass, ModeHighPass, ModeBandPass, ModeNotch, ModeAllPass or ModePeak (default ModeLowPass)"
+        },
+        propertyInputPort QPort {
+            name: "q"
+            entity: Q
+            meta: "Quality factor (default 0.7071, a maximally flat Butterworth response for low-pass and high-pass). Must be greater than 0"
+        },
+        propertyInputPort GainPort {
+            name: "gain"
+            entity: GainDb
+            meta: "Boost (positive) or cut (negative) in dB. Only used by ModePeak (default 0.0)"
+        },
+        mainOutputPort CoefficientsPort {
+            name: "coefficients"
+            entity: Coeffs
+            meta: "Normalised coefficients [b0, b1, b2, a1, a2]"
+        }
+    ]
+    entities: [
+        signal Frequency {
+            type: CoefficientsPort.type
+            domain: CoefficientsPort.domain
+            rate: CoefficientsPort.rate
+        },
+        signal Mode {
+            type: Int
+            domain: CoefficientsPort.domain
+            default: 0
+        },
+        signal Q {
+            type: CoefficientsPort.type
+            domain: CoefficientsPort.domain
+            default: 0.7071
+        },
+        signal GainDb {
+            type: CoefficientsPort.type
+            domain: CoefficientsPort.domain
+            default: 0.0
+        },
+        signal Coeffs[5] {
+            type: CoefficientsPort.type
+            domain: CoefficientsPort.domain
+            rate: CoefficientsPort.rate
+        },
+        switch IsLowPass  { domain: CoefficientsPort.domain },
+        switch IsHighPass { domain: CoefficientsPort.domain },
+        switch IsBandPass { domain: CoefficientsPort.domain },
+        switch IsNotch    { domain: CoefficientsPort.domain },
+        switch IsAllPass  { domain: CoefficientsPort.domain },
+        switch IsPeak     { domain: CoefficientsPort.domain },
+        signal W0         { type: CoefficientsPort.type domain: CoefficientsPort.domain },
+        signal SinW0      { type: CoefficientsPort.type domain: CoefficientsPort.domain },
+        signal CosW0      { type: CoefficientsPort.type domain: CoefficientsPort.domain },
+        signal Alpha      { type: CoefficientsPort.type domain: CoefficientsPort.domain },
+        signal Amp        { type: CoefficientsPort.type domain: CoefficientsPort.domain },
+        signal AlphaDen   { type: CoefficientsPort.type domain: CoefficientsPort.domain },
+        signal A0         { type: CoefficientsPort.type domain: CoefficientsPort.domain },
+        signal A1Raw      { type: CoefficientsPort.type domain: CoefficientsPort.domain },
+        signal A2Raw      { type: CoefficientsPort.type domain: CoefficientsPort.domain },
+        signal B0Raw      { type: CoefficientsPort.type domain: CoefficientsPort.domain },
+        signal B1Raw      { type: CoefficientsPort.type domain: CoefficientsPort.domain },
+        signal B2Raw      { type: CoefficientsPort.type domain: CoefficientsPort.domain },
+        signal B0Tmp[5]   { type: CoefficientsPort.type domain: CoefficientsPort.domain },
+        signal B1Tmp[5]   { type: CoefficientsPort.type domain: CoefficientsPort.domain },
+        signal B2Tmp[5]   { type: CoefficientsPort.type domain: CoefficientsPort.domain }
+    ]
+    streams: [
+        # Which response is selected
+        [Mode, ModeLowPass]  >> Equal() >> IsLowPass;
+        [Mode, ModeHighPass] >> Equal() >> IsHighPass;
+        [Mode, ModeBandPass] >> Equal() >> IsBandPass;
+        [Mode, ModeNotch]    >> Equal() >> IsNotch;
+        [Mode, ModeAllPass]  >> Equal() >> IsAllPass;
+        [Mode, ModePeak]     >> Equal() >> IsPeak;
 
-		# Normalized a coefficients (a0 is normalized to 1.0)
-		(-2.0 * CosW0) / A0 >> A[0];
-		(1.0 - Alpha) / A0 >> A[1];
-	]
-	meta: "Designs RBJ 2nd-order lowpass filter coefficients."
-}
+        # Normalised angular frequency, converted against the rate of the output
+        (Math::TwoPi * Frequency) / CoefficientsPort.rate >> W0;
+        W0 >> Sin() >> SinW0;
+        W0 >> Cos() >> CosW0;
+        SinW0 / (2.0 * Q) >> Alpha;
 
-# Computes normalized biquad coefficients [b0, b1, b2, a1, a2] for a 2nd-order HighPass filter
-module HighPassCoefficients {
-	ports: [
-		mainInputPort FreqPort {
-			name: "frequency"
-			entity: Frequency
-			meta: "Cutoff frequency in Hz"
-		},
-		propertyInputPort QPort {
-			name: "q"
-			entity: Q
-			meta: "Quality factor Q (default 0.7071 / Butterworth)"
-		},
-		propertyInputPort RatePort {
-			name: "sampleRate"
-			entity: SampleRate
-			meta: "Sample rate in Hz (default 44100.0)"
-		},
-		mainOutputPort BCoeffsPort {
-			name: "b"
-			entity: B
-			meta: "Feedforward numerator coefficients [b0, b1, b2]"
-		},
-		mainOutputPort ACoeffsPort {
-			name: "a"
-			entity: A
-			meta: "Feedback denominator coefficients [a1, a2]"
-		}
-	]
-	entities: [
-		signal Frequency { domain: FreqPort.domain },
-		signal Q { default: 0.7071 domain: QPort.domain },
-		signal SampleRate { default: 44100.0 domain: RatePort.domain },
-		signal B[3] { domain: BCoeffsPort.domain },
-		signal A[2] { domain: ACoeffsPort.domain },
-		signal W0 {},
-		signal SinW0 {},
-		signal CosW0 {},
-		signal Alpha {},
-		signal A0 {}
-	]
-	streams: [
-		(Math::TwoPi * Frequency) / SampleRate >> W0;
-		W0 >> Sin() >> SinW0;
-		W0 >> Cos() >> CosW0;
-		SinW0 / (2.0 * Q) >> Alpha;
-		1.0 + Alpha >> A0;
+        # Amplitude of the peaking filter: 10^(dB/40)
+        [10.0, GainDb / 40.0] >> Pow() >> Amp;
 
-		# Normalized b coefficients
-		((1.0 + CosW0) / 2.0) / A0 >> B[0];
-		(-(1.0 + CosW0)) / A0 >> B[1];
-		((1.0 + CosW0) / 2.0) / A0 >> B[2];
+        # Denominator: identical for all responses except the peaking filter
+        [IsPeak, Alpha / Amp, Alpha] >> __Select() >> AlphaDen;
+        1.0 + AlphaDen >> A0;
+        -2.0 * CosW0 >> A1Raw;
+        1.0 - AlphaDen >> A2Raw;
 
-		# Normalized a coefficients
-		(-2.0 * CosW0) / A0 >> A[0];
-		(1.0 - Alpha) / A0 >> A[1];
-	]
-	meta: "Designs RBJ 2nd-order highpass filter coefficients."
+        # b0, built as a chain of selections, from the last response to the first
+        1.0 + (Alpha * Amp) >> B0Tmp[0];
+        [IsAllPass,  1.0 - Alpha, B0Tmp[0]] >> __Select() >> B0Tmp[1];
+        [IsNotch,    1.0,         B0Tmp[1]] >> __Select() >> B0Tmp[2];
+        [IsBandPass, Alpha,       B0Tmp[2]] >> __Select() >> B0Tmp[3];
+        [IsHighPass, (1.0 + CosW0) / 2.0, B0Tmp[3]] >> __Select() >> B0Tmp[4];
+        [IsLowPass,  (1.0 - CosW0) / 2.0, B0Tmp[4]] >> __Select() >> B0Raw;
+
+        # b1
+        -2.0 * CosW0 >> B1Tmp[0];
+        [IsAllPass,  -2.0 * CosW0, B1Tmp[0]] >> __Select() >> B1Tmp[1];
+        [IsNotch,    -2.0 * CosW0, B1Tmp[1]] >> __Select() >> B1Tmp[2];
+        [IsBandPass, 0.0,          B1Tmp[2]] >> __Select() >> B1Tmp[3];
+        [IsHighPass, -(1.0 + CosW0), B1Tmp[3]] >> __Select() >> B1Tmp[4];
+        [IsLowPass,  1.0 - CosW0,    B1Tmp[4]] >> __Select() >> B1Raw;
+
+        # b2
+        1.0 - (Alpha * Amp) >> B2Tmp[0];
+        [IsAllPass,  1.0 + Alpha, B2Tmp[0]] >> __Select() >> B2Tmp[1];
+        [IsNotch,    1.0,         B2Tmp[1]] >> __Select() >> B2Tmp[2];
+        [IsBandPass, -Alpha,      B2Tmp[2]] >> __Select() >> B2Tmp[3];
+        [IsHighPass, (1.0 + CosW0) / 2.0, B2Tmp[3]] >> __Select() >> B2Tmp[4];
+        [IsLowPass,  (1.0 - CosW0) / 2.0, B2Tmp[4]] >> __Select() >> B2Raw;
+
+        # Normalise by a0 (a0 itself becomes 1.0 and is not returned)
+        B0Raw / A0 >> Coeffs[0];
+        B1Raw / A0 >> Coeffs[1];
+        B2Raw / A0 >> Coeffs[2];
+        A1Raw / A0 >> Coeffs[3];
+        A2Raw / A0 >> Coeffs[4];
+    ]
+    constraints: [
+        [CoefficientsPort.rate, 0] >> LessOrEqual() >> Error(message: "FilterDesign::Coefficients needs a positive rate: the sample rate is the rate of its output.");
+    ]
+    meta: "RBJ Audio EQ Cookbook biquad design: Frequency >> FilterDesign::Coefficients(mode: FilterDesign::ModeLowPass q: 0.7071) >> Coeffs. The sample rate is the rate of the output; Coeffs is [b0, b1, b2, a1, a2] normalised by a0."
 }

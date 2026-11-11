@@ -1,4 +1,4 @@
-# Control.stride
+# ControlPrelude.stride (global prelude; not to be confused with package Control in Control/)
 # Signal-flow control, edge detection, and sample-and-hold operations for Stride
 
 module OnChange {
@@ -167,10 +167,10 @@ module Smooth {
             entity: Output
             meta: "Smoothed output signal"
         },
-        propertyInputPort CoeffProperty {
-            name: "coefficient"
-            entity: Coeff
-            meta: "Smoothing coefficient between 0.0 (no smoothing) and 1.0 (freeze)"
+        propertyInputPort TimeProperty {
+            name: "time"
+            entity: Time
+            meta: "Time constant in seconds: the time the output takes to cover 63% of a step in the input. 0 disables smoothing."
         }
     ]
     entities: [
@@ -184,11 +184,22 @@ module Smooth {
             type: OutputPort.type
             domain: OutputPort.domain
         }
-        signal Coeff {
-            rate: OutputPort.rate
+        signal Time {
             type: OutputPort.type
             domain: OutputPort.domain
-            default: 0.95
+            default: 0.01
+        }
+        signal SafeTime {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+        signal Exponent {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        }
+        signal Coeff {
+            type: OutputPort.type
+            domain: OutputPort.domain
         }
         signal Prev {
             rate: OutputPort.rate
@@ -198,8 +209,14 @@ module Smooth {
         }
     ]
     streams: [
+        # The one-pole coefficient is derived from the time constant and the rate
+        # of the output, so the smoothing time is the same at any sample rate:
+        #   coefficient = exp(-1 / (time * rate))
+        [Time, 0.000001] >> Max() >> SafeTime;
+        -1.0 / (SafeTime * OutputPort.rate) >> Exponent;
+        Exponent >> Exp() >> Coeff;
         (Input * (1.0 - Coeff)) + (Prev * Coeff) >> Output;
         Output >> Prev;
     ]
-    meta: "Applies first-order exponential smoothing to Input: Input >> Smooth(coefficient: 0.95) >> Output."
+    meta: "Exponential (one-pole low-pass) smoothing of Input with a time constant in seconds: Input >> Smooth(time: 0.05) >> Output. The time is converted with the rate of the output, so it is independent of the sample rate. Type must be a floating point type."
 }

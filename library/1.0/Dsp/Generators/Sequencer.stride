@@ -21,6 +21,7 @@ module Sequencer {
     entities: [
         trigger Input { domain: InputPort.domain },
         signal Output {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal Counter {

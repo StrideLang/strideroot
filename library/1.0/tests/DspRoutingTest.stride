@@ -1,0 +1,52 @@
+# DspRoutingTest.stride
+# Unit tests for strideroot/library/1.0/Dsp/Routing.stride
+
+import Dsp::Routing as Routing
+
+functionTest LevelTest {
+    target: Routing::Level
+    prepare: [
+        [ 1.0, -0.5, 0.25 ] >> Input;
+        [ 2.0, 2.0, 2.0 ]   >> Gain;
+        [ 0.5, 0.5, 0.5 ]   >> Offset;
+    ]
+    validate: [
+        # input * gain + offset
+        [ Output, [ 2.5, -0.5, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest LevelDefaultsTest {
+    target: Routing::Level
+    prepare: [
+        [ 1.0, -3.0, 0.25 ] >> Input;
+    ]
+    validate: [
+        # gain 1.0 and offset 0.0 by default
+        [ Output, [ 1.0, -3.0, 0.25 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest PanTest {
+    target: Routing::Pan
+    prepare: [
+        [ 1.0, 1.0, 1.0 ]   >> Input;
+        [ -1.0, 0.0, 1.0 ]  >> Position;
+    ]
+    validate: [
+        # [left, right]: full left, centre, full right
+        [ Output, [ [ 1.0, 0.0 ], [ 0.5, 0.5 ], [ 0.0, 1.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest CrossfadeTest {
+    target: Routing::Crossfade
+    prepare: [
+        [ 1.0, 1.0, 1.0 ] >> InputA;
+        [ 3.0, 3.0, 3.0 ] >> InputB;
+        [ 0.0, 0.5, 1.0 ] >> Mix;
+    ]
+    validate: [
+        [ Output, [ 1.0, 2.0, 3.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}

@@ -32,20 +32,25 @@ module Oscillator {
     ]
     entities: [
         signal Frequency {
+            type: OutputPort.type
             default: 440.0
         },
         signal Amplitude {
+            type: OutputPort.type
             default: 1.0
         },
         signal Phase {
+            type: OutputPort.type
             default: 0.0
             reset: Reset
             domain: OutputPort.domain
         },
         signal Sine {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal PhaseInc {
+            type: OutputPort.type
             default: 0.0
             domain: FrequencyPort.domain
         },
@@ -90,16 +95,20 @@ module Impulse {
     ]
     entities: [
         signal Frequency {
+            type: OutputPort.type
             default: 440.0
         },
         signal Amplitude {
+            type: OutputPort.type
             default: 1.0
         },
         signal Phase {
+            type: OutputPort.type
             default: 1.0
             domain: OutputPort.domain
         },
         signal PhaseInc {
+            type: OutputPort.type
             default: 0.0
             domain: FrequencyPort.domain
         },

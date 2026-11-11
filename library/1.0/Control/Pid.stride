@@ -14,27 +14,27 @@ module Pid {
         propertyInputPort KpPort {
             name: "kp"
             entity: Kp
-            meta: "Proportional gain coefficient"
+            meta: "Proportional gain, in output units per error unit (default 1.0)"
         },
         propertyInputPort KiPort {
             name: "ki"
             entity: Ki
-            meta: "Integral gain coefficient"
+            meta: "Integral gain, in output units per error unit per second (default 0.0)"
         },
         propertyInputPort KdPort {
             name: "kd"
             entity: Kd
-            meta: "Derivative gain coefficient"
+            meta: "Derivative gain, in output units per error unit per second of change, i.e. kd is a time in seconds (default 0.0)"
         },
         propertyInputPort MinPort {
             name: "min"
             entity: MinLimit
-            meta: "Minimum saturation limit for integrator and output"
+            meta: "Minimum saturation limit for integrator and output (default -1.0)"
         },
         propertyInputPort MaxPort {
             name: "max"
             entity: MaxLimit
-            meta: "Maximum saturation limit for integrator and output"
+            meta: "Maximum saturation limit for integrator and output (default 1.0)"
         },
         mainOutputPort OutputPort {
             name: "output"
@@ -44,53 +44,67 @@ module Pid {
     ]
     entities: [
         signal Error {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         },
         signal Kp {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 1.0
         },
         signal Ki {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal Kd {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal MinLimit {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: -1.0
         },
         signal MaxLimit {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 1.0
         },
         signal PTerm {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal ITerm {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal ITermCandidate {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal ITermClamped {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal PrevError {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal DTerm {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal TotalOutput {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal Output {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         }
@@ -99,18 +113,19 @@ module Pid {
         # Proportional term
         Error * Kp >> PTerm;
 
-        # Integral term with anti-windup clamping
-        ITerm + (Error * Ki) >> ITermCandidate;
+        # Integral term with anti-windup clamping. The integral accumulates
+        # error * ki * dt, where dt = 1 / rate of the output.
+        ITerm + ((Error * Ki) / OutputPort.rate) >> ITermCandidate;
         ITermCandidate >> Clamp(min: MinLimit max: MaxLimit) >> ITermClamped;
         ITermClamped >> ITerm;
 
-        # Derivative term
-        (Error - PrevError) * Kd >> DTerm;
+        # Derivative term: (error - previous error) / dt * kd
+        ((Error - PrevError) * Kd) * OutputPort.rate >> DTerm;
         Error >> PrevError;
 
         # Summation and output saturation clamping
         PTerm + ITermClamped + DTerm >> TotalOutput;
         TotalOutput >> Clamp(min: MinLimit max: MaxLimit) >> Output;
     ]
-    meta: "Proportional-Integral-Derivative controller with anti-windup clamping: Error >> Pid(kp: 1.0 ki: 0.05 kd: 0.1) >> Output."
+    meta: "Proportional-Integral-Derivative controller with anti-windup clamping: Error >> Pid(kp: 1.0 ki: 0.05 kd: 0.1) >> Output. ki (per second) and kd (seconds) are converted against the rate of the output, so tuning does not change with the sample rate. Type must be floating point."
 }

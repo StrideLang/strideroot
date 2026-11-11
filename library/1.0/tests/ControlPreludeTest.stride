@@ -1,5 +1,5 @@
-# ControlTest.stride
-# Unit tests for strideroot/library/1.0/Control.stride
+# ControlPreludeTest.stride
+# Unit tests for strideroot/library/1.0/ControlPrelude.stride
 
 functionTest RisingEdgeTest {
     target: RisingEdge
@@ -32,13 +32,54 @@ functionTest LatchTest {
     ]
 }
 
+# Smooth takes a time constant in seconds, converted against the rate of the output
+
+_domainDefinition SmoothDom {
+    framework: _JitFramework
+    rate: 100
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal SmoothIn { domain: SmoothDom type: Real }
+    ]
+    outputs: [
+        signal SmoothOut { domain: SmoothDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+SmoothIn >> Smooth(time: 0.1) >> SmoothOut;
+
 functionTest SmoothTest {
-    target: Smooth
+    target: SmoothDom
     prepare: [
-        [ 1.0, 1.0, 1.0, 1.0 ] >> Input;
-        [ 0.5, 0.5, 0.5, 0.5 ] >> Coeff;
+        [ 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000 ] >> SmoothIn;
     ]
     validate: [
-        [ Output, [ 0.5, 0.75, 0.875, 0.9375 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ SmoothOut, [ 0.095163, 0.181269, 0.259182, 0.329680, 0.393469, 0.451188 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition SmoothRateDom {
+    framework: _JitFramework
+    rate: 200
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal SmoothRateIn { domain: SmoothRateDom type: Real }
+    ]
+    outputs: [
+        signal SmoothRateOut { domain: SmoothRateDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+SmoothRateIn >> Smooth(time: 0.1) >> SmoothRateOut;
+
+functionTest SmoothTimeIsIndependentOfRateTest {
+    target: SmoothRateDom
+    prepare: [
+        [ 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000 ] >> SmoothRateIn;
+    ]
+    validate: [
+        [ SmoothRateOut, [ 0.048771, 0.095163, 0.139292, 0.181269, 0.221199, 0.259182, 0.295312, 0.329680, 0.362372, 0.393469, 0.423050, 0.451188 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }

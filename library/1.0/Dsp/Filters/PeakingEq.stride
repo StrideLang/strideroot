@@ -1,0 +1,70 @@
+#
+# Stride Standard DSP Package - Filters: PeakingEq
+#
+
+package Dsp::Filters
+
+import Dsp::FilterDesign as FilterDesign
+
+# Second-order peaking equaliser (boost or cut around a frequency)
+module PeakingEq {
+	ports: [
+		mainInputPort InputPort {
+			name: "input"
+			entity: Input
+			meta: "Input signal"
+		},
+		mainOutputPort OutputPort {
+			name: "output"
+			entity: Output
+			meta: "Filtered output signal"
+		},
+		propertyInputPort FrequencyPort {
+			name: "frequency"
+			entity: Frequency
+			meta: "Centre frequency of the band in Hz (default 1000.0)"
+		},
+		propertyInputPort QPort {
+			name: "q"
+			entity: Q
+			meta: "Quality factor (default 1.0). Higher values give a narrower band"
+		},
+		propertyInputPort GainPort {
+			name: "gain"
+			entity: GainDb
+			meta: "Boost (positive) or cut (negative) in dB (default 6.0)"
+		}
+	]
+	entities: [
+		signal Input {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Output {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Frequency {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+			default: 1000.0
+		},
+		signal Q {
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 1.0
+		},
+		signal GainDb {
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 6.0
+		}
+	]
+	streams: [
+		Input >> BiQuad(mode: FilterDesign::ModePeak frequency: Frequency q: Q gain: GainDb) >> Output;
+	]
+	meta: "Second-order peaking equaliser: Input >> PeakingEq(frequency: 1000.0 q: 1.0 gain: 6.0) >> Output. A BiQuad with FilterDesign::ModePeak; gain is in dB. The frequency is in Hz and is converted against the rate of the output. The data type must be floating point."
+}

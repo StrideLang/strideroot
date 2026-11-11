@@ -1,3 +1,4 @@
+# MathPrelude.stride (global prelude; not to be confused with package Math in Math/)
 #
 # Authors:
 # Andres Cabrera mantaraya36@gmail.com
@@ -313,7 +314,7 @@ module Multiply {
 	meta: "Multiplies Input[0] by Input[1]."
 }
 
-module Inverse {
+module Negate {
 	ports: [
 		mainInputPort InputPort {
 			entity: Input
@@ -339,7 +340,7 @@ module Inverse {
 	streams: [
 		-Input >> Output;
 	]
-	meta: "Inverts (changes the sign of) an input value: -Input."
+	meta: "Negates (changes the sign of) an input value: -Input. Input >> Negate() >> Output. (For the multiplicative inverse use 1.0 / Input.)"
 }
 
 module Pow {	

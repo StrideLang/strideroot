@@ -20,38 +20,47 @@ module Fir7 {
     ]
     entities: [
         signal Input {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         },
         signal X0 {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal X1 {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal X2 {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal X3 {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal X4 {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal X5 {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal X6 {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal Output {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         }

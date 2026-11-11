@@ -25,14 +25,17 @@ module Fast {
     ]
     entities: [
         signal Input {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         },
         signal Limit {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.95
         },
         signal Output {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         }

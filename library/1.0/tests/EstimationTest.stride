@@ -1,0 +1,42 @@
+# EstimationTest.stride
+# Unit tests for strideroot/library/1.0/Estimation.
+# The Kalman filter takes its process noise per second and converts it against
+# the rate of the output, so it runs in a domain at 100 Hz.
+
+import Estimation::Kalman as Kalman
+import Estimation::PeakDetector as PeakDetector
+
+_domainDefinition KalmanDom {
+    framework: _JitFramework
+    rate: 100
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal KalmanIn { domain: KalmanDom type: Real }
+    ]
+    outputs: [
+        signal KalmanOut { domain: KalmanDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+KalmanIn >> Kalman::Filter(q: 1.0 r: 0.1) >> KalmanOut;
+
+functionTest KalmanTest {
+    target: KalmanDom
+    prepare: [
+        [ 1.000000, 1.000000, 1.000000, 1.000000, 1.200000, 0.800000, 1.000000, 1.000000 ] >> KalmanIn;
+    ]
+    validate: [
+        [ KalmanOut, [ 0.909910, 0.955177, 0.972029, 0.981049, 1.046077, 0.976147, 0.982767, 0.987490 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest PeakDetectorTest {
+    target: PeakDetector::Detector
+    prepare: [
+        [ 0.000000, 1.000000, 0.200000, 0.300000, 0.900000, 0.400000, 0.000000, 0.200000 ] >> Input;
+    ]
+    validate: [
+        [ Output, [ off, off, on, off, off, on, off, off ] ] >> ExpectEqual();
+    ]
+}

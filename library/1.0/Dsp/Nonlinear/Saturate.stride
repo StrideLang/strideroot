@@ -20,16 +20,20 @@ module SoftClip {
     ]
     entities: [
         signal Input {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         },
         signal ClampedIn {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal Cubed {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal Output {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         }
@@ -58,22 +62,28 @@ module Tanh {
     ]
     entities: [
         signal Input {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         },
         signal X {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal X2 {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal Num {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal Den {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal Output {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         }

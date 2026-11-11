@@ -1,0 +1,37 @@
+# DspGeneratorsTest.stride
+# Unit tests for strideroot/library/1.0/Dsp/Generators
+#
+# Generators derive their phase increment from the rate of the output, so they
+# run in a domain with a known rate. Only the Oscillator is covered here: the
+# envelope, sequencer and impulse generators depend on reaction/trigger timing
+# and are better tested once that timing is specified in the language
+# documentation.
+
+import Dsp::Generators as Generators
+
+_domainDefinition OscillatorDom {
+    framework: _JitFramework
+    rate: 8
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal OscillatorTick { domain: OscillatorDom type: Real }
+    ]
+    outputs: [
+        signal OscillatorOut { domain: OscillatorDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+# OscillatorTick only sets the number of ticks of the test
+Generators::Oscillator(frequency: 1.0) >> OscillatorOut;
+
+# One cycle takes 8 ticks: the output is sin(k * pi / 4)
+functionTest OscillatorOneCycleTest {
+    target: OscillatorDom
+    prepare: [
+        [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ] >> OscillatorTick;
+    ]
+    validate: [
+        [ OscillatorOut, [ 0.0, 0.707107, 1.0, 0.707107, 0.0, -0.707107, -1.0, -0.707107, 0.0, 0.707107 ] ] >> ExpectNear(epsilon: 0.001);
+    ]
+}

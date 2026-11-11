@@ -1,0 +1,394 @@
+# DspFiltersTest.stride
+# Unit tests for strideroot/library/1.0/Dsp/Filters (and FilterDesign).
+#
+# The filters convert their frequency against the rate of the output, so each
+# test runs the filter in a domain with a known rate (1000 Hz here). Expected
+# values come from the RBJ Audio EQ Cookbook difference equation evaluated
+# independently in Python (impulse and step responses).
+
+import Dsp::Filters as Filters
+import Dsp::FilterDesign as FilterDesign
+
+_domainDefinition LowPassDom {
+    framework: _JitFramework
+    rate: 1000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal LowPassIn { domain: LowPassDom type: Real }
+    ]
+    outputs: [
+        signal LowPassOut { domain: LowPassDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+LowPassIn >> Filters::LowPass(frequency: 100.0 q: 0.7071) >> LowPassOut;
+
+functionTest LowPassImpulseTest {
+    target: LowPassDom
+    prepare: [
+        [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> LowPassIn;
+    ]
+    validate: [
+        [ LowPassOut, [ 0.067455, 0.212010, 0.281932, 0.234725, 0.151904, 0.076729, 0.024994, -0.003106, -0.013868, -0.014568 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition HighPassDom {
+    framework: _JitFramework
+    rate: 1000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal HighPassIn { domain: HighPassDom type: Real }
+    ]
+    outputs: [
+        signal HighPassOut { domain: HighPassDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+HighPassIn >> Filters::HighPass(frequency: 100.0 q: 0.7071) >> HighPassOut;
+
+functionTest HighPassImpulseTest {
+    target: HighPassDom
+    prepare: [
+        [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> HighPassIn;
+    ]
+    validate: [
+        [ HighPassOut, [ 0.638944, -0.547589, -0.250693, -0.060493, 0.034344, 0.064225, 0.059231, 0.041188, 0.022626, 0.008859 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition BandPassDom {
+    framework: _JitFramework
+    rate: 1000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal BandPassIn { domain: BandPassDom type: Real }
+    ]
+    outputs: [
+        signal BandPassOut { domain: BandPassDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+BandPassIn >> Filters::BandPass(frequency: 100.0 q: 1.0) >> BandPassOut;
+
+functionTest BandPassImpulseTest {
+    target: BandPassDom
+    prepare: [
+        [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> BandPassIn;
+    ]
+    validate: [
+        [ BandPassOut, [ 0.227138, 0.284040, 0.004104, -0.149875, -0.189661, -0.155384, -0.090808, -0.028760, 0.013591, 0.032691 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition NotchDom {
+    framework: _JitFramework
+    rate: 1000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal NotchIn { domain: NotchDom type: Real }
+    ]
+    outputs: [
+        signal NotchOut { domain: NotchDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+NotchIn >> Filters::Notch(frequency: 100.0 q: 1.0) >> NotchOut;
+
+functionTest NotchImpulseTest {
+    target: NotchDom
+    prepare: [
+        [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> NotchIn;
+    ]
+    validate: [
+        [ NotchOut, [ 0.772862, -0.284040, -0.004104, 0.149875, 0.189661, 0.155384, 0.090808, 0.028760, -0.013591, -0.032691 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition AllPassDom {
+    framework: _JitFramework
+    rate: 1000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal AllPassIn { domain: AllPassDom type: Real }
+    ]
+    outputs: [
+        signal AllPassOut { domain: AllPassDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+AllPassIn >> Filters::AllPass(frequency: 100.0 q: 0.7071) >> AllPassOut;
+
+functionTest AllPassImpulseTest {
+    target: AllPassDom
+    prepare: [
+        [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> AllPassIn;
+    ]
+    validate: [
+        [ AllPassOut, [ 0.412798, -0.671159, 0.062479, 0.348465, 0.372496, 0.281909, 0.168450, 0.076163, 0.017517, -0.011418 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition PeakingEqDom {
+    framework: _JitFramework
+    rate: 1000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal PeakingEqIn { domain: PeakingEqDom type: Real }
+    ]
+    outputs: [
+        signal PeakingEqOut { domain: PeakingEqDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+PeakingEqIn >> Filters::PeakingEq(frequency: 100.0 q: 1.0 gain: 6.0) >> PeakingEqOut;
+
+functionTest PeakingEqImpulseTest {
+    target: PeakingEqDom
+    prepare: [
+        [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> PeakingEqIn;
+    ]
+    validate: [
+        [ PeakingEqOut, [ 1.171411, 0.229581, 0.023715, -0.118738, -0.174580, -0.155988, -0.094480, -0.024285, 0.029409, 0.055309 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition LowPassStepDom {
+    framework: _JitFramework
+    rate: 1000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal LowPassStepIn { domain: LowPassStepDom type: Real }
+    ]
+    outputs: [
+        signal LowPassStepOut { domain: LowPassStepDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+LowPassStepIn >> Filters::LowPass(frequency: 100.0 q: 0.7071) >> LowPassStepOut;
+
+functionTest LowPassStepTest {
+    target: LowPassStepDom
+    prepare: [
+        [ 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000 ] >> LowPassStepIn;
+    ]
+    validate: [
+        [ LowPassStepOut, [ 0.067455, 0.279465, 0.561397, 0.796122, 0.948026, 1.024756, 1.049750, 1.046644, 1.032776, 1.018208, 1.007281, 1.000806, 0.997916, 0.997285, 0.997757, 0.998557, 0.999277, 0.999769, 1.000034, 1.000135, 1.000140, 1.000104, 1.000061, 1.000027, 1.000006, 0.999995, 0.999992, 0.999993, 0.999995, 0.999997, 0.999999, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition HighPassStepDom {
+    framework: _JitFramework
+    rate: 1000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal HighPassStepIn { domain: HighPassStepDom type: Real }
+    ]
+    outputs: [
+        signal HighPassStepOut { domain: HighPassStepDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+HighPassStepIn >> Filters::HighPass(frequency: 100.0 q: 0.7071) >> HighPassStepOut;
+
+functionTest HighPassStepTest {
+    target: HighPassStepDom
+    prepare: [
+        [ 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000 ] >> HighPassStepIn;
+    ]
+    validate: [
+        [ HighPassStepOut, [ 0.638944, 0.091354, -0.159338, -0.219831, -0.185487, -0.121262, -0.062031, -0.020843, 0.001783, 0.010642, 0.011427, 0.008668, 0.005191, 0.002354, 0.000548, -0.000345, -0.000621, -0.000567, -0.000392, -0.000214, -0.000083, -0.000006, 0.000027, 0.000033, 0.000027, 0.000017, 0.000008, 0.000003, -0.000001, -0.000002, -0.000002, -0.000001, -0.000001, -0.000000, -0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition BandPassStepDom {
+    framework: _JitFramework
+    rate: 1000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal BandPassStepIn { domain: BandPassStepDom type: Real }
+    ]
+    outputs: [
+        signal BandPassStepOut { domain: BandPassStepDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+BandPassStepIn >> Filters::BandPass(frequency: 100.0 q: 1.0) >> BandPassStepOut;
+
+functionTest BandPassStepTest {
+    target: BandPassStepDom
+    prepare: [
+        [ 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000 ] >> BandPassStepIn;
+    ]
+    validate: [
+        [ BandPassStepOut, [ 0.227138, 0.511179, 0.515283, 0.365407, 0.175746, 0.020362, -0.070446, -0.099205, -0.085614, -0.052923, -0.019460, 0.004547, 0.016305, 0.017909, 0.013497, 0.007105, 0.001519, -0.001977, -0.003302, -0.003050, -0.002012, -0.000852, 0.000033, 0.000506, 0.000615, 0.000493, 0.000281, 0.000082, -0.000051, -0.000108, -0.000107, -0.000075, -0.000036, -0.000003, 0.000015, 0.000021, 0.000018, 0.000011, 0.000004, -0.000001 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition NotchStepDom {
+    framework: _JitFramework
+    rate: 1000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal NotchStepIn { domain: NotchStepDom type: Real }
+    ]
+    outputs: [
+        signal NotchStepOut { domain: NotchStepDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+NotchStepIn >> Filters::Notch(frequency: 100.0 q: 1.0) >> NotchStepOut;
+
+functionTest NotchStepTest {
+    target: NotchStepDom
+    prepare: [
+        [ 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000 ] >> NotchStepIn;
+    ]
+    validate: [
+        [ NotchStepOut, [ 0.772862, 0.488821, 0.484717, 0.634593, 0.824254, 0.979638, 1.070446, 1.099205, 1.085614, 1.052923, 1.019460, 0.995453, 0.983695, 0.982091, 0.986503, 0.992895, 0.998481, 1.001977, 1.003302, 1.003050, 1.002012, 1.000852, 0.999967, 0.999494, 0.999385, 0.999507, 0.999719, 0.999918, 1.000051, 1.000108, 1.000107, 1.000075, 1.000036, 1.000003, 0.999985, 0.999979, 0.999982, 0.999989, 0.999996, 1.000001 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition BiQuadModeDom {
+    framework: _JitFramework
+    rate: 1000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal BiQuadModeIn { domain: BiQuadModeDom type: Real }
+    ]
+    outputs: [
+        signal BiQuadModeOut { domain: BiQuadModeDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+BiQuadModeIn >> Filters::BiQuad(mode: FilterDesign::ModeHighPass frequency: 100.0 q: 0.7071) >> BiQuadModeOut;
+
+functionTest BiQuadHighPassModeTest {
+    target: BiQuadModeDom
+    prepare: [
+        [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> BiQuadModeIn;
+    ]
+    validate: [
+        [ BiQuadModeOut, [ 0.638944, -0.547589, -0.250693, -0.060493, 0.034344, 0.064225, 0.059231, 0.041188, 0.022626, 0.008859 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition BiQuadDefaultDom {
+    framework: _JitFramework
+    rate: 1000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal BiQuadDefaultIn { domain: BiQuadDefaultDom type: Real }
+    ]
+    outputs: [
+        signal BiQuadDefaultOut { domain: BiQuadDefaultDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+BiQuadDefaultIn >> Filters::BiQuad() >> BiQuadDefaultOut;
+
+functionTest BiQuadDefaultIsLowPassTest {
+    target: BiQuadDefaultDom
+    prepare: [
+        [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> BiQuadDefaultIn;
+    ]
+    validate: [
+        [ BiQuadDefaultOut, [ 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition LowPassRate2Dom {
+    framework: _JitFramework
+    rate: 2000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal LowPassRate2In { domain: LowPassRate2Dom type: Real }
+    ]
+    outputs: [
+        signal LowPassRate2Out { domain: LowPassRate2Dom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+LowPassRate2In >> Filters::LowPass(frequency: 200.0 q: 0.7071) >> LowPassRate2Out;
+
+functionTest LowPassScalesWithRateTest {
+    target: LowPassRate2Dom
+    prepare: [
+        [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> LowPassRate2In;
+    ]
+    validate: [
+        [ LowPassRate2Out, [ 0.067455, 0.212010, 0.281932, 0.234725, 0.151904, 0.076729, 0.024994, -0.003106, -0.013868, -0.014568 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition SectionDom {
+    framework: _JitFramework
+    rate: 1000
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal SectionIn { domain: SectionDom type: Real }
+    ]
+    outputs: [
+        signal SectionOut { domain: SectionDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+SectionIn >> Filters::Section(coefficients: [0.5, 0.25, 0.1, -0.3, 0.2]) >> SectionOut;
+
+functionTest SectionTest {
+    target: SectionDom
+    prepare: [
+        [ 1.000000, 0.500000, -0.250000, 2.000000, 0.000000, 0.000000, 1.000000, -1.000000 ] >> SectionIn;
+    ]
+    validate: [
+        [ SectionOut, [ 0.500000, 0.650000, 0.195000, 0.916000, 0.710800, 0.230040, 0.426852, -0.167952 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# Rectify, Halfband and Cic do not depend on the rate
+
+functionTest RectifyTest {
+    target: Filters::Rectify
+    prepare: [
+        [ -2.0, -0.5, 0.0, 0.5, 2.0 ] >> Input;
+    ]
+    validate: [
+        [ Output, [ 2.0, 0.5, 0.0, 0.5, 2.0 ] ] >> ExpectEqual();
+    ]
+}
+
+import Dsp::Filters::Halfband as Halfband
+
+functionTest HalfbandImpulseTest {
+    target: Halfband::Fir7
+    prepare: [
+        [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> Input;
+    ]
+    validate: [
+        [ Output, [ -0.031250, 0.000000, 0.281250, 0.500000, 0.281250, 0.000000, -0.031250, 0.000000, 0.000000 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest HalfbandDcGainTest {
+    target: Halfband::Fir7
+    prepare: [
+        [ 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 ] >> Input;
+    ]
+    validate: [
+        [ Output, [ -0.03125, -0.03125, 0.25, 0.75, 1.03125, 1.03125, 1.0, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}

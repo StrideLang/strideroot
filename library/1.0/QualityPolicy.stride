@@ -1,6 +1,13 @@
 #
 # Stride Quality Policy Package
 #
+# The policies a domain can select to choose between implementation variants
+# of a callable (e.g. Sin@Poly5 for Compact/Fast, Sin@Direct for Accurate).
+#
+# The schema types that bind policies to callables (_PolicyBinding) and that
+# describe devices (_DeviceType) belong to the platform schema: see
+# Framework.stride.
+#
 
 package QualityPolicy
 
@@ -18,70 +25,4 @@ constant Accurate {
 
 constant Compact {
 	meta: "Prioritizes minimal Flash/RAM memory footprint (e.g. avoids tables, uses ROM)"
-}
-
-type _PolicyBinding {
-	typeName: "policyBinding"
-	properties: [
-		typeProperty Policy {
-			name: "policy"
-			allowedTypes: _Any
-			required: on
-			meta: "The QualityPolicy entity (e.g. QualityPolicy::Optimal)"
-		},
-		typeProperty Functions {
-			name: "function"
-			allowedTypes: constrainedList { allowed: [_Any] }
-			required: on
-			meta: "List of base callable functions to bind"
-		},
-		typeProperty Targets {
-			name: "target"
-			allowedTypes: constrainedList { allowed: [_Any] }
-			required: on
-			meta: "List of specialized target callables to execute"
-		}
-	]
-	inherits: [_Base]
-}
-
-type _DeviceType {
-	typeName: "device"
-	properties: [
-		typeProperty Platform {
-			name: "platform"
-			allowedTypes: _Any
-			required: on
-			meta: "Parent platform reference (e.g. Pico)"
-		},
-		typeProperty Overlays {
-			name: "overlays"
-			allowedTypes: constrainedEntity { allowed: [_Any, _NoneLiteral] }
-			default: none
-			required: off
-			meta: "Base device for inheritance/overlay (e.g. RP2040)"
-		},
-		typeProperty Resources {
-			name: "resources"
-			allowedTypes: constrainedList { allowed: [_ResourceType, _Any] }
-			default: []
-			required: off
-			meta: "Hardware resources owned by this device"
-		},
-		typeProperty CompilerFlags {
-			name: "compilerFlags"
-			allowedTypes: _StringLiteral
-			default: ""
-			required: off
-			meta: "Device-specific C/C++ compilation flags"
-		},
-		typeProperty DevicePolicies {
-			name: "devicePolicies"
-			allowedTypes: constrainedList { allowed: [_PolicyBinding, _Any] }
-			default: []
-			required: off
-			meta: "List of policyBinding arrays specifying device-level overrides"
-		}
-	]
-	inherits: [_Base]
 }

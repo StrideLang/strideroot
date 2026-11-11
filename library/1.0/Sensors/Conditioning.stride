@@ -10,70 +10,68 @@ module Debounce {
         mainInputPort InputPort {
             name: "input"
             entity: Input
-            meta: "Raw digital or binary input signal (0 or 1)"
+            meta: "Raw digital input switch"
         },
-        propertyInputPort SamplesPort {
-            name: "samples"
-            entity: DebounceSamples
-            meta: "Number of consecutive stable samples required to accept state change"
+        propertyInputPort TimePort {
+            name: "time"
+            entity: DebounceTime
+            meta: "Time in seconds the input must stay different from the output before the output follows it (default 0.01)"
         },
         mainOutputPort OutputPort {
             name: "output"
             entity: Output
-            meta: "Debounced output signal"
+            meta: "Debounced output switch"
         }
     ]
     entities: [
-        signal Input {
+        switch Input {
             domain: OutputPort.domain
             rate: OutputPort.rate
         },
-        signal DebounceSamples {
+        signal DebounceTime {
+            type: Real
             domain: OutputPort.domain
-            default: 10
+            default: 0.01
+        },
+        signal SamplesNeeded {
+            type: Real
+            domain: OutputPort.domain
         },
         signal Count {
+            type: Real
             domain: OutputPort.domain
-            default: 0
+            default: 0.0
         },
-        signal Output {
+        signal CountNext {
+            type: Real
+            domain: OutputPort.domain
+        },
+        switch Output {
             domain: OutputPort.domain
             rate: OutputPort.rate
-            default: 0
+            default: off
         },
         switch IsDifferent {
             domain: OutputPort.domain
         },
-        switch CountReached {
+        switch Accept {
             domain: OutputPort.domain
-        },
-        reaction IncCount {
-            ports: []
-            streams: [
-                Count + 1 >> Count;
-            ]
-        },
-        reaction ResetCount {
-            ports: []
-            streams: [
-                0 >> Count;
-            ]
-        },
-        reaction UpdateState {
-            ports: []
-            streams: [
-                Input >> Output;
-                0 >> Count;
-            ]
         }
     ]
     streams: [
-        [Input, Output] >> NotEqual() >> IsDifferent;
-        IsDifferent >> IncCount();
-        not IsDifferent >> ResetCount();
-        [Count, DebounceSamples] >> GreaterOrEqual() >> CountReached >> UpdateState();
+        # The time is converted to a number of ticks with the rate of the output
+        DebounceTime * OutputPort.rate >> SamplesNeeded;
+
+        # Count consecutive ticks in which the input differs from the output.
+        # Count and Output are read before they are written, so they keep their
+        # value between ticks.
+        [Input, Output] >> Xor() >> IsDifferent;
+        [IsDifferent, Count + 1.0, 0.0] >> __Select() >> CountNext;
+        [CountNext, SamplesNeeded] >> GreaterOrEqual() >> Accept;
+        [Accept, Input, Output] >> __Select() >> Output;
+        [Accept, 0.0, CountNext] >> __Select() >> Count;
     ]
-    meta: "Suppresses mechanical switch bounce: RawButton >> Debounce(samples: 10) >> CleanButton."
+    meta: "Suppresses mechanical switch bounce: RawButton >> Debounce(time: 0.01) >> CleanButton. The output follows the input once it has been different for the given time in seconds, converted against the rate of the output."
 }
 
 # Deadband filter with linear rescaling to prevent analog joystick/sensor jitter
@@ -97,26 +95,33 @@ module Deadband {
     ]
     entities: [
         signal Input {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         },
         signal Threshold {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.05
         },
         signal AbsIn {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal Scaled {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal ClampedScaled {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal SignVal {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal Output {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         }
@@ -167,29 +172,36 @@ module LinearCalibration {
     ]
     entities: [
         signal Input {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         },
         signal RawMin {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal RawMax {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 1023.0
         },
         signal CalMin {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal CalMax {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 3.3
         },
         signal Normalized {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal Output {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         }
@@ -207,22 +219,17 @@ module ComplementaryFilter {
         mainInputPort GyroPort {
             name: "gyroRate"
             entity: GyroRate
-            meta: "Angular velocity from gyroscope in deg/s or rad/s"
+            meta: "Angular velocity from gyroscope in angle units per second (e.g. rad/s)"
         },
         propertyInputPort AccelPort {
             name: "accelAngle"
             entity: AccelAngle
-            meta: "Static tilt angle from accelerometer"
+            meta: "Static tilt angle from accelerometer, in the same angle unit"
         },
-        propertyInputPort AlphaPort {
-            name: "alpha"
-            entity: Alpha
-            meta: "Filter blending weighting factor (default 0.98)"
-        },
-        propertyInputPort DtPort {
-            name: "dt"
-            entity: Dt
-            meta: "Sample time interval in seconds (e.g., 0.01 for 100 Hz)"
+        propertyInputPort TimeConstantPort {
+            name: "timeConstant"
+            entity: TimeConstant
+            meta: "Crossover time in seconds: for changes slower than this the accelerometer is trusted, for faster changes the gyroscope (default 0.5)"
         },
         mainOutputPort AnglePort {
             name: "angle"
@@ -232,37 +239,51 @@ module ComplementaryFilter {
     ]
     entities: [
         signal GyroRate {
+            type: AnglePort.type
             domain: AnglePort.domain
             rate: AnglePort.rate
         },
         signal AccelAngle {
+            type: AnglePort.type
             domain: AnglePort.domain
             default: 0.0
         },
-        signal Alpha {
+        signal TimeConstant {
+            type: AnglePort.type
             domain: AnglePort.domain
-            default: 0.98
+            default: 0.5
         },
         signal Dt {
+            type: AnglePort.type
             domain: AnglePort.domain
-            default: 0.01
+        },
+        signal Alpha {
+            type: AnglePort.type
+            domain: AnglePort.domain
         },
         signal PrevAngle {
+            type: AnglePort.type
             domain: AnglePort.domain
             default: 0.0
         },
         signal GyroIntegrated {
+            type: AnglePort.type
             domain: AnglePort.domain
         },
         signal OutputAngle {
+            type: AnglePort.type
             domain: AnglePort.domain
             rate: AnglePort.rate
         }
     ]
     streams: [
+        # The sample interval is the period of the output rate; the blend factor
+        # follows from the crossover time: alpha = tau / (tau + dt)
+        1.0 / AnglePort.rate >> Dt;
+        TimeConstant / (TimeConstant + Dt) >> Alpha;
         PrevAngle + (GyroRate * Dt) >> GyroIntegrated;
         (GyroIntegrated * Alpha) + (AccelAngle * (1.0 - Alpha)) >> OutputAngle;
         OutputAngle >> PrevAngle;
     ]
-    meta: "IMU sensor fusion blending gyro rate and accelerometer tilt: GyroRate >> ComplementaryFilter(accelAngle: AccelTilt alpha: 0.98 dt: 0.01) >> FusedAngle."
+    meta: "IMU sensor fusion blending gyro rate and accelerometer tilt: GyroRate >> ComplementaryFilter(accelAngle: AccelTilt timeConstant: 0.5) >> FusedAngle. The sample interval and the blend factor are derived from the rate of the output; the type must be floating point."
 }

@@ -1,128 +1,368 @@
 #
 # Stride Standard Library - LinAlg Package: Matrix Operations
 #
+# Matrices are flat arrays in row-major order: element (row, column) of a
+# matrix with C columns is at index row * C + column.
+#
+# The dimensions come from the sizes of the connected ports, so there is no
+# separate version for each matrix size:
+#
+#   Transform  y = M v   rows = size of the output, columns = size of the input
+#   MatMul     C = A B   rows = size of the output / columns of B,
+#                        `inner` and `columns` describe the shape
+#   Transpose            `rows` and `columns` describe the shape
+#
+# A matrix with only a size does not say how it is split into rows and columns,
+# so MatMul and Transpose take that shape as properties. The data type of every
+# signal is the type of the output port.
+#
+# Loops keep their entities in the scope of the domain, so entity names are
+# prefixed with the name of the loop (Transform_Matrix, ...), as in Sum.
+#
 
 package LinAlg::Matrices
 
-# 2D Matrix-Vector Linear Transformation: y = M * v (M is 2x2 row-major, v is 2x1)
-module Transform2D {
+# Matrix-vector product y = M * v of any dimension
+loop Transform {
     ports: [
         mainInputPort VectorPort {
             name: "vector"
-            entity: Vector
-            meta: "2D vector [x, y]"
+            entity: Transform_Vector
+            meta: "Vector v with n components. n is the size of this port"
         },
         propertyInputPort MatrixPort {
             name: "matrix"
-            entity: Matrix
-            meta: "2x2 matrix row-major [m00, m01, m10, m11]"
+            entity: Transform_Matrix
+            meta: "Row-major matrix with m rows and n columns: m * n elements"
         },
         mainOutputPort OutputPort {
             name: "output"
-            entity: Output
-            meta: "Transformed 2D vector [x, y]"
+            entity: Transform_Output
+            meta: "Transformed vector y with m components. m is the size of this port"
         }
     ]
     entities: [
-        signal Vector[2] { domain: OutputPort.domain rate: OutputPort.rate },
-        signal Matrix[4] { domain: OutputPort.domain },
-        signal Output[2] { domain: OutputPort.domain rate: OutputPort.rate }
+        signal Transform_Vector[VectorPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal Transform_Matrix[MatrixPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal Transform_Output[OutputPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal Transform_Acc {
+            default: 0.0
+            type: OutputPort.type
+            domain: OutputPort.domain
+            reset: Transform_Reset
+        },
+        signal Transform_Next {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal Transform_Row {
+            default: 0
+            rate: none
+            type: Int
+            domain: OutputPort.domain
+            reset: Transform_Reset
+        },
+        signal Transform_Col {
+            default: 0
+            rate: none
+            type: Int
+            domain: OutputPort.domain
+            reset: Transform_Reset
+        },
+        signal Transform_Index {
+            default: 0
+            rate: none
+            type: Int
+            domain: OutputPort.domain
+            reset: Transform_Reset
+        },
+        switch Transform_RowEnd {
+            domain: OutputPort.domain
+        },
+        switch Transform_Done {
+            domain: OutputPort.domain
+        },
+        trigger Transform_Reset {}
     ]
+    onExecution: Transform_Reset
+    terminateWhen: Transform_Done
     streams: [
-        (Matrix[0] * Vector[0]) + (Matrix[1] * Vector[1]) >> Output[0];
-        (Matrix[2] * Vector[0]) + (Matrix[3] * Vector[1]) >> Output[1];
+        # The matrix is walked in storage order (row by row), one element per iteration.
+        # The running sum of the row is written to the output at every step, so
+        # the value left in the output is the complete sum of the row.
+        Transform_Acc + (Transform_Matrix[Transform_Index] * Transform_Vector[Transform_Col]) >> Transform_Next;
+        Transform_Next >> Transform_Output[Transform_Row];
+
+        [Transform_Col + 1, VectorPort.size] >> Equal() >> Transform_RowEnd;
+        [Transform_RowEnd, 0.0, Transform_Next] >> __Select() >> Transform_Acc;
+        [Transform_RowEnd, 0, Transform_Col + 1] >> __Select() >> Transform_Col;
+        [Transform_RowEnd, Transform_Row + 1, Transform_Row] >> __Select() >> Transform_Row;
+
+        Transform_Index + 1 >> Transform_Index;
+        [Transform_Index, MatrixPort.size] >> Equal() >> Transform_Done;
     ]
-    meta: "Applies 2x2 matrix transformation: Vec2D >> Transform2D(matrix: Mat2x2) >> Out2D."
+    meta: "Matrix-vector product of any dimension: Vec >> Transform(matrix: Mat) >> Out. The matrix is row-major with (size of the output) rows and (size of the input) columns."
 }
 
-# 3D Matrix-Vector Linear Transformation: y = M * v (M is 3x3 row-major, v is 3x1)
-module Transform3D {
-    ports: [
-        mainInputPort VectorPort {
-            name: "vector"
-            entity: Vector
-            meta: "3D vector [x, y, z]"
-        },
-        propertyInputPort MatrixPort {
-            name: "matrix"
-            entity: Matrix
-            meta: "3x3 matrix row-major array of 9 elements"
-        },
-        mainOutputPort OutputPort {
-            name: "output"
-            entity: Output
-            meta: "Transformed 3D vector [x, y, z]"
-        }
-    ]
-    entities: [
-        signal Vector[3] { domain: OutputPort.domain rate: OutputPort.rate },
-        signal Matrix[9] { domain: OutputPort.domain },
-        signal Output[3] { domain: OutputPort.domain rate: OutputPort.rate }
-    ]
-    streams: [
-        (Matrix[0] * Vector[0]) + (Matrix[1] * Vector[1]) + (Matrix[2] * Vector[2]) >> Output[0];
-        (Matrix[3] * Vector[0]) + (Matrix[4] * Vector[1]) + (Matrix[5] * Vector[2]) >> Output[1];
-        (Matrix[6] * Vector[0]) + (Matrix[7] * Vector[1]) + (Matrix[8] * Vector[2]) >> Output[2];
-    ]
-    meta: "Applies 3x3 matrix transformation: Vec3D >> Transform3D(matrix: Mat3x3) >> Out3D."
-}
-
-# 2x2 Matrix Multiplication: C = A * B
-module MatMul2x2 {
+# Matrix product C = A * B
+loop MatMul {
     ports: [
         mainInputPort MatrixAPort {
             name: "a"
-            entity: MatrixA
-            meta: "First 2x2 matrix [a00, a01, a10, a11]"
+            entity: MatMul_A
+            meta: "Row-major matrix A with m rows and `inner` columns"
         },
         propertyInputPort MatrixBPort {
             name: "with"
-            entity: MatrixB
-            meta: "Second 2x2 matrix [b00, b01, b10, b11]"
+            entity: MatMul_B
+            meta: "Row-major matrix B with `inner` rows and `columns` columns"
+        },
+        propertyInputPort InnerPort {
+            name: "inner"
+            entity: MatMul_Inner
+            meta: "Number of columns of A, which is the number of rows of B (default 2)"
+        },
+        propertyInputPort ColumnsPort {
+            name: "columns"
+            entity: MatMul_Columns
+            meta: "Number of columns of B, which is the number of columns of the result (default 2)"
         },
         mainOutputPort OutputPort {
             name: "output"
-            entity: Output
-            meta: "Result 2x2 matrix [c00, c01, c10, c11]"
+            entity: MatMul_Output
+            meta: "Row-major result C with m rows and `columns` columns. Its size is m * columns"
         }
     ]
     entities: [
-        signal MatrixA[4] { domain: OutputPort.domain rate: OutputPort.rate },
-        signal MatrixB[4] { domain: OutputPort.domain },
-        signal Output[4] { domain: OutputPort.domain rate: OutputPort.rate }
+        signal MatMul_A[MatrixAPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal MatMul_B[MatrixBPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal MatMul_Inner {
+            default: 2
+            type: Int
+            domain: OutputPort.domain
+        },
+        signal MatMul_Columns {
+            default: 2
+            type: Int
+            domain: OutputPort.domain
+        },
+        signal MatMul_Output[OutputPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal MatMul_Acc {
+            default: 0.0
+            type: OutputPort.type
+            domain: OutputPort.domain
+            reset: MatMul_Reset
+        },
+        signal MatMul_Next {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal MatMul_I {
+            default: 0
+            rate: none
+            type: Int
+            domain: OutputPort.domain
+            reset: MatMul_Reset
+        },
+        signal MatMul_J {
+            default: 0
+            rate: none
+            type: Int
+            domain: OutputPort.domain
+            reset: MatMul_Reset
+        },
+        signal MatMul_K {
+            default: 0
+            rate: none
+            type: Int
+            domain: OutputPort.domain
+            reset: MatMul_Reset
+        },
+        signal MatMul_Step {
+            default: 0
+            rate: none
+            type: Int
+            domain: OutputPort.domain
+            reset: MatMul_Reset
+        },
+        signal MatMul_Total {
+            type: Int
+            domain: OutputPort.domain
+        },
+        signal MatMul_AIndex {
+            type: Int
+            domain: OutputPort.domain
+        },
+        signal MatMul_BIndex {
+            type: Int
+            domain: OutputPort.domain
+        },
+        signal MatMul_OutIndex {
+            type: Int
+            domain: OutputPort.domain
+        },
+        signal MatMul_JNext {
+            type: Int
+            domain: OutputPort.domain
+        },
+        switch MatMul_KEnd {
+            domain: OutputPort.domain
+        },
+        switch MatMul_JLast {
+            domain: OutputPort.domain
+        },
+        switch MatMul_JEnd {
+            domain: OutputPort.domain
+        },
+        switch MatMul_Done {
+            domain: OutputPort.domain
+        },
+        trigger MatMul_Reset {}
     ]
+    onExecution: MatMul_Reset
+    terminateWhen: MatMul_Done
     streams: [
-        (MatrixA[0] * MatrixB[0]) + (MatrixA[1] * MatrixB[2]) >> Output[0];
-        (MatrixA[0] * MatrixB[1]) + (MatrixA[1] * MatrixB[3]) >> Output[1];
-        (MatrixA[2] * MatrixB[0]) + (MatrixA[3] * MatrixB[2]) >> Output[2];
-        (MatrixA[2] * MatrixB[1]) + (MatrixA[3] * MatrixB[3]) >> Output[3];
+        # One iteration per multiply-accumulate: i = row of A, j = column of B,
+        # k = position along the shared dimension. k runs fastest, then j, then i.
+        (MatMul_I * MatMul_Inner) + MatMul_K >> MatMul_AIndex;
+        (MatMul_K * MatMul_Columns) + MatMul_J >> MatMul_BIndex;
+        (MatMul_I * MatMul_Columns) + MatMul_J >> MatMul_OutIndex;
+
+        MatMul_Acc + (MatMul_A[MatMul_AIndex] * MatMul_B[MatMul_BIndex]) >> MatMul_Next;
+        MatMul_Next >> MatMul_Output[MatMul_OutIndex];
+
+        [MatMul_K + 1, MatMul_Inner] >> Equal() >> MatMul_KEnd;
+        [MatMul_J + 1, MatMul_Columns] >> Equal() >> MatMul_JLast;
+        [MatMul_KEnd, MatMul_JLast] >> And() >> MatMul_JEnd;
+
+        [MatMul_KEnd, 0.0, MatMul_Next] >> __Select() >> MatMul_Acc;
+        [MatMul_KEnd, 0, MatMul_K + 1] >> __Select() >> MatMul_K;
+        [MatMul_JLast, 0, MatMul_J + 1] >> __Select() >> MatMul_JNext;
+        [MatMul_KEnd, MatMul_JNext, MatMul_J] >> __Select() >> MatMul_J;
+        [MatMul_JEnd, MatMul_I + 1, MatMul_I] >> __Select() >> MatMul_I;
+
+        # Total number of multiply-accumulates: (size of the result) * inner
+        OutputPort.size * MatMul_Inner >> MatMul_Total;
+        MatMul_Step + 1 >> MatMul_Step;
+        [MatMul_Step, MatMul_Total] >> Equal() >> MatMul_Done;
     ]
-    meta: "Multiplies two 2x2 matrices: MatA >> MatMul2x2(with: MatB) >> Result."
+    meta: "Matrix product of any compatible shapes: MatA >> MatMul(with: MatB inner: 3 columns: 2) >> Result. All matrices are row-major. The number of rows of A comes from the size of the result."
 }
 
-# 2x2 Matrix Transposition
-module Transpose2x2 {
+# Matrix transposition
+loop Transpose {
     ports: [
         mainInputPort MatrixPort {
             name: "matrix"
-            entity: Matrix
-            meta: "2x2 input matrix [m00, m01, m10, m11]"
+            entity: Transpose_Matrix
+            meta: "Row-major input matrix with `rows` rows and `columns` columns"
+        },
+        propertyInputPort RowsPort {
+            name: "rows"
+            entity: Transpose_Rows
+            meta: "Number of rows of the input matrix (default 2)"
+        },
+        propertyInputPort ColumnsPort {
+            name: "columns"
+            entity: Transpose_Columns
+            meta: "Number of columns of the input matrix (default 2)"
         },
         mainOutputPort OutputPort {
             name: "output"
-            entity: Output
-            meta: "Transposed 2x2 matrix [m00, m10, m01, m11]"
+            entity: Transpose_Output
+            meta: "Row-major transposed matrix with `columns` rows and `rows` columns. Same size as the input"
         }
     ]
     entities: [
-        signal Matrix[4] { domain: OutputPort.domain rate: OutputPort.rate },
-        signal Output[4] { domain: OutputPort.domain rate: OutputPort.rate }
+        signal Transpose_Matrix[MatrixPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal Transpose_Rows {
+            default: 2
+            type: Int
+            domain: OutputPort.domain
+        },
+        signal Transpose_Columns {
+            default: 2
+            type: Int
+            domain: OutputPort.domain
+        },
+        signal Transpose_Output[OutputPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+            rate: OutputPort.rate
+        },
+        signal Transpose_Row {
+            default: 0
+            rate: none
+            type: Int
+            domain: OutputPort.domain
+            reset: Transpose_Reset
+        },
+        signal Transpose_Col {
+            default: 0
+            rate: none
+            type: Int
+            domain: OutputPort.domain
+            reset: Transpose_Reset
+        },
+        signal Transpose_Index {
+            default: 0
+            rate: none
+            type: Int
+            domain: OutputPort.domain
+            reset: Transpose_Reset
+        },
+        signal Transpose_OutIndex {
+            type: Int
+            domain: OutputPort.domain
+        },
+        switch Transpose_ColEnd {
+            domain: OutputPort.domain
+        },
+        switch Transpose_Done {
+            domain: OutputPort.domain
+        },
+        trigger Transpose_Reset {}
     ]
+    onExecution: Transpose_Reset
+    terminateWhen: Transpose_Done
     streams: [
-        Matrix[0] >> Output[0];
-        Matrix[2] >> Output[1];
-        Matrix[1] >> Output[2];
-        Matrix[3] >> Output[3];
+        # Element (row, col) of the input goes to element (col, row) of the output,
+        # which has `rows` columns
+        (Transpose_Col * Transpose_Rows) + Transpose_Row >> Transpose_OutIndex;
+        Transpose_Matrix[Transpose_Index] >> Transpose_Output[Transpose_OutIndex];
+
+        [Transpose_Col + 1, Transpose_Columns] >> Equal() >> Transpose_ColEnd;
+        [Transpose_ColEnd, 0, Transpose_Col + 1] >> __Select() >> Transpose_Col;
+        [Transpose_ColEnd, Transpose_Row + 1, Transpose_Row] >> __Select() >> Transpose_Row;
+
+        Transpose_Index + 1 >> Transpose_Index;
+        [Transpose_Index, MatrixPort.size] >> Equal() >> Transpose_Done;
     ]
-    meta: "Transposes a 2x2 matrix: Mat2x2 >> Transpose2x2() >> Transposed."
+    meta: "Transposes a matrix of any shape: Mat >> Transpose(rows: 2 columns: 3) >> Transposed."
 }

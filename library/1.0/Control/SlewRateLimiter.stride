@@ -9,57 +9,78 @@ module SlewRateLimiter {
         mainInputPort InputPort {
             name: "input"
             entity: Input
-            meta: "Input signal to limit in slope"
+            meta: "Input signal"
         },
         propertyInputPort UpPort {
             name: "up"
             entity: MaxUp
-            meta: "Maximum positive change per sample step"
+            meta: "Maximum rising rate in signal units per second (default 1.0)"
         },
         propertyInputPort DownPort {
             name: "down"
             entity: MaxDown
-            meta: "Maximum negative change per sample step (positive value)"
+            meta: "Maximum falling rate in signal units per second, given as a positive number (default 1.0)"
         },
         mainOutputPort OutputPort {
             name: "output"
             entity: Output
-            meta: "Slew-limited output signal"
+            meta: "Rate-limited output signal"
         }
     ]
     entities: [
         signal Input {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         },
         signal MaxUp {
+            type: OutputPort.type
             domain: OutputPort.domain
-            default: 0.01
+            default: 1.0
         },
         signal MaxDown {
+            type: OutputPort.type
             domain: OutputPort.domain
-            default: 0.01
+            default: 1.0
+        },
+        signal StepUp {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal StepDown {
+            type: OutputPort.type
+            domain: OutputPort.domain
         },
         signal Prev {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal Delta {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal ClampedDelta {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal Output {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         }
     ]
     streams: [
+        # Rates are per second: the largest change in one tick is rate / tick rate
+        MaxUp / OutputPort.rate >> StepUp;
+        MaxDown / OutputPort.rate >> StepDown;
         Input - Prev >> Delta;
-        Delta >> Clamp(min: -MaxDown max: MaxUp) >> ClampedDelta;
+        Delta >> Clamp(min: -StepDown max: StepUp) >> ClampedDelta;
         Prev + ClampedDelta >> Output;
         Output >> Prev;
     ]
-    meta: "Limits the maximum rate of change (slope) per sample step: Input >> SlewRateLimiter(up: 0.01 down: 0.01) >> Output."
+    constraints: [
+        [OutputPort.rate, 0] >> LessOrEqual() >> Error(message: "Control::SlewRateLimiter needs a positive rate: up and down are per second, converted against the rate of the output.");
+    ]
+    meta: "Limits the rate of change of a signal in units per second: Input >> SlewRateLimiter(up: 2.0 down: 5.0) >> Output. The limits are converted against the rate of the output, so they do not change with the sample rate."
 }

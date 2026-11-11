@@ -18,8 +18,8 @@ module Rectify {
 		}
 	]
 	entities: [
-		signal Input { domain: InputPort.domain },
-		signal Output { domain: OutputPort.domain }
+		signal Input { type: OutputPort.type domain: InputPort.domain },
+		signal Output { type: OutputPort.type domain: OutputPort.domain }
 	]
 	streams: [
 		Input >> Abs() >> Output;

@@ -14,8 +14,8 @@ module Line {
         },
         propertyInputPort DelayPort {
             name: "delay"
-            entity: DelaySamples
-            meta: "Delay length in samples (floating point fractional support)"
+            entity: DelayTime
+            meta: "Delay time in seconds, converted to samples with the rate of the output. Limited to the buffer size (4096 samples) (default 0.002)"
         },
         mainOutputPort OutputPort {
             name: "output"
@@ -25,12 +25,18 @@ module Line {
     ]
     entities: [
         signal Input {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         },
-        signal DelaySamples {
+        signal DelayTime {
+            type: OutputPort.type
             domain: OutputPort.domain
-            default: 100.0
+            default: 0.002
+        },
+        signal DelaySamples {
+            type: OutputPort.type
+            domain: OutputPort.domain
         },
         constant MaxBufferSize {
             value: 4096
@@ -45,6 +51,7 @@ module Line {
             default: 0
         },
         signal ReadPos {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal ReadIndex {
@@ -54,15 +61,19 @@ module Line {
             domain: OutputPort.domain
         },
         signal Frac {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal SampleA {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal SampleB {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal Output {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         }
@@ -70,6 +81,9 @@ module Line {
     streams: [
         # Write incoming sample to ring buffer
         Input >> DelayTable[WriteIndex];
+
+        # Convert the delay from seconds to samples against the rate of the output
+        DelayTime * OutputPort.rate >> DelaySamples;
 
         # Calculate fractional read position
         WriteIndex - DelaySamples >> ReadPos;
@@ -86,5 +100,5 @@ module Line {
         # Advance write pointer
         WriteIndex + 1 >> Wrap(min: 0 max: 4096) >> WriteIndex;
     ]
-    meta: "Ring-buffer fractional delay line with linear interpolation: AudioIn >> FractionalDelay::Line(delay: 120.5) >> DelayedOut."
+    meta: "Ring-buffer fractional delay line with linear interpolation: AudioIn >> FractionalDelay::Line(delay: 0.0025) >> DelayedOut. The delay is in seconds, converted against the rate of the output, up to 4096 samples (4096 / rate seconds)."
 }

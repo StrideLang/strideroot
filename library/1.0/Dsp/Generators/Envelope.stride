@@ -29,15 +29,19 @@ module AD {
     ]
     entities: [
         signal AttackTime {
+            type: OutputPort.type
             default: 0.2
         },
         signal DecayTime {
+            type: OutputPort.type
             default: 3.0
         },
         signal Output {
+            type: OutputPort.type
             default: 0.0
         },
         signal StageIncrements[2] {
+            type: OutputPort.type
             default: 0.0
         },
         trigger TriggerEnv { domain: OutputPort.domain },

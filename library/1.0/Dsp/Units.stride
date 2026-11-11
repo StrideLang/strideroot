@@ -77,9 +77,9 @@ module MidiToFreq {
 		}
 	]
 	entities: [
-		signal Note { domain: NotePort.domain },
-		signal Ratio {},
-		signal Frequency { domain: FrequencyPort.domain }
+		signal Note { type: FrequencyPort.type domain: NotePort.domain },
+		signal Ratio { type: FrequencyPort.type },
+		signal Frequency { type: FrequencyPort.type domain: FrequencyPort.domain }
 	]
 	streams: [
 		[2.0, (Note - 69.0) / 12.0] >> Pow() >> Ratio;
@@ -102,8 +102,8 @@ module DbToLinear {
 		}
 	]
 	entities: [
-		signal Db { domain: DbPort.domain },
-		signal Linear { domain: LinearPort.domain }
+		signal Db { type: LinearPort.type domain: DbPort.domain },
+		signal Linear { type: LinearPort.type domain: LinearPort.domain }
 	]
 	streams: [
 		[10.0, Db / 20.0] >> Pow() >> Linear;

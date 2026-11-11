@@ -1,9 +1,12 @@
 #
-# Stride Standard DSP Package - Filters
+# Stride Standard DSP Package - Filters: LowPass
 #
 
 package Dsp::Filters
 
+import Dsp::FilterDesign as FilterDesign
+
+# Second-order low-pass filter (-12 dB/octave above the cutoff)
 module LowPass {
 	ports: [
 		mainInputPort InputPort {
@@ -16,31 +19,42 @@ module LowPass {
 			entity: Output
 			meta: "Filtered output signal"
 		},
-		propertyInputPort FrequencyProperty {
+		propertyInputPort FrequencyPort {
 			name: "frequency"
-			entity: CenterFrequency
-			meta: "The cutoff frequency of the filter."
+			entity: Frequency
+			meta: "Cutoff frequency in Hz (default 1000.0)"
 		},
-		propertyInputPort QFactorProperty {
-			name: "qFactor"
-			entity: QFactor
-			meta: "The Q value of the filter."
-		},
-		propertyInputPort GainProperty {
-			name: "gain"
-			entity: Gain
-			meta: "Filter passband gain."
+		propertyInputPort QPort {
+			name: "q"
+			entity: Q
+			meta: "Quality factor (default 0.7071). 0.7071 is maximally flat (Butterworth); higher values add a resonant peak at the cutoff"
 		}
 	]
 	entities: [
-		signal Input { domain: InputPort.domain },
-		signal Output { domain: OutputPort.domain },
-		signal CenterFrequency { default: 1000.0 },
-		signal QFactor { default: 0.7071 },
-		signal Gain { default: 1.0 }
+		signal Input {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Output {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Frequency {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+			default: 1000.0
+		},
+		signal Q {
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 0.7071
+		}
 	]
 	streams: [
-		Input * Gain >> Output;
+		Input >> BiQuad(mode: FilterDesign::ModeLowPass frequency: Frequency q: Q) >> Output;
 	]
-	meta: "Lowpass filter."
+	meta: "Second-order low-pass filter: Input >> LowPass(frequency: 800.0 q: 0.7071) >> Output. A BiQuad with FilterDesign::ModeLowPass. The frequency is in Hz and is converted against the rate of the output. The data type must be floating point."
 }

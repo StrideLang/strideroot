@@ -15,6 +15,7 @@ module Print {
 	entities: [
 		signal Value {
 			default: 0
+			type: ValuePort.type
 			domain: ValuePort.domain
 		}
 	]
@@ -35,6 +36,7 @@ module Println {
 	entities: [
 		signal Value {
 			default: 0
+			type: ValuePort.type
 			domain: ValuePort.domain
 		}
 	]
@@ -60,6 +62,7 @@ module Log {
 	entities: [
 		signal Value {
 			default: 0
+			type: ValuePort.type
 			domain: ValuePort.domain
 		},
 		signal Tag { default: "INFO" }

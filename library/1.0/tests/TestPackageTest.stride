@@ -1,0 +1,19 @@
+# TestPackageTest.stride
+# Unit tests for strideroot/library/1.0/Test (package Test::Assertions)
+
+import Test::Assertions as Assertions
+
+# Inside the bounds the guard passes the signal through unchanged.
+# (A violation raises a runtime error, which is handled by the runtime and
+# cannot be expressed as a value to compare.)
+functionTest AssertInRangePassthroughTest {
+    target: Assertions::AssertInRange
+    prepare: [
+        [ 0.5, -0.5, 0.0, 1.0, -1.0 ] >> Input;
+        [ -1.0, -1.0, -1.0, -1.0, -1.0 ] >> MinBound;
+        [ 1.0, 1.0, 1.0, 1.0, 1.0 ] >> MaxBound;
+    ]
+    validate: [
+        [ Output, [ 0.5, -0.5, 0.0, 1.0, -1.0 ] ] >> ExpectEqual();
+    ]
+}

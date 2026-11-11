@@ -1,5 +1,5 @@
-# MathTest.stride
-# Unit tests for strideroot/library/1.0/Math.stride
+# MathPreludeTest.stride
+# Unit tests for strideroot/library/1.0/MathPrelude.stride
 
 functionTest AbsTest {
     target: Abs
@@ -41,8 +41,8 @@ functionTest DivideTest {
     ]
 }
 
-functionTest InverseTest {
-    target: Inverse
+functionTest NegateTest {
+    target: Negate
     prepare: [
         [ 5.0, -10.0, 0.0, 3.14 ] >> Input;
     ]

@@ -1,0 +1,68 @@
+#
+# Stride Standard DSP Package - Filters: second-order section
+#
+
+package Dsp::Filters
+
+# Second-order IIR section (direct form II transposed) with explicit coefficients
+module Section {
+	ports: [
+		mainInputPort InputPort {
+			name: "input"
+			entity: Input
+			meta: "Input signal"
+		},
+		propertyInputPort CoefficientsPort {
+			name: "coefficients"
+			entity: Coeffs
+			meta: "Normalised coefficients [b0, b1, b2, a1, a2] (a0 = 1), e.g. from FilterDesign::Coefficients"
+		},
+		mainOutputPort OutputPort {
+			name: "output"
+			entity: Output
+			meta: "Filtered output signal"
+		}
+	]
+	entities: [
+		signal Input {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Coeffs[5] {
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: [1.0, 0.0, 0.0, 0.0, 0.0]
+		},
+		signal Output {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal S1 {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+			default: 0.0
+		},
+		signal S2 {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+			default: 0.0
+		}
+	]
+	streams: [
+		# Direct form II transposed:
+		#   y[n]  = b0 x[n] + s1
+		#   s1'   = b1 x[n] - a1 y[n] + s2
+		#   s2'   = b2 x[n] - a2 y[n]
+		# S1 and S2 are read before they are written, so they keep their value
+		# from one tick to the next. The order of the streams matters: S1 is
+		# updated with the previous S2, before S2 is updated.
+		(Coeffs[0] * Input) + S1 >> Output;
+		(Coeffs[1] * Input) - (Coeffs[3] * Output) + S2 >> S1;
+		(Coeffs[2] * Input) - (Coeffs[4] * Output) >> S2;
+	]
+	meta: "Second-order IIR section with explicit normalised coefficients: Input >> Section(coefficients: Coeffs) >> Output. With the default coefficients [1, 0, 0, 0, 0] the section passes the input unchanged. The data type must be floating point."
+}

@@ -15,22 +15,22 @@ module Filter {
         propertyInputPort QPort {
             name: "q"
             entity: Q
-            meta: "Process noise covariance (variance)"
+            meta: "Process noise: the variance the state gains per second (default 0.01). Converted to a per-tick variance with the rate of the output"
         },
         propertyInputPort RPort {
             name: "r"
             entity: R
-            meta: "Measurement noise covariance (variance)"
+            meta: "Measurement noise variance of every sample (default 0.1)"
         },
         propertyInputPort InitialXPort {
             name: "initialX"
             entity: InitialX
-            meta: "Initial state estimate"
+            meta: "Initial state estimate (default 0.0)"
         },
         propertyInputPort InitialPPort {
             name: "initialP"
             entity: InitialP
-            meta: "Initial estimation error covariance"
+            meta: "Initial estimation error covariance (default 1.0)"
         },
         mainOutputPort OutputPort {
             name: "output"
@@ -40,53 +40,65 @@ module Filter {
     ]
     entities: [
         signal Input {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         },
         signal Q {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.01
         },
         signal R {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.1
         },
         signal InitialX {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal InitialP {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 1.0
         },
         signal X {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: InitialX
         },
         signal P {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: InitialP
         },
         signal PP {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal K {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal NewX {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal NewP {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal Output {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         }
     ]
     streams: [
-        # Prediction step
-        P + Q >> PP;
+        # Prediction step: the covariance grows by q * dt, with dt = 1 / rate
+        P + (Q / OutputPort.rate) >> PP;
 
         # Kalman gain computation: K = P_prior / (P_prior + R)
         PP / (PP + R) >> K;
@@ -102,5 +114,5 @@ module Filter {
         NewX >> X;
         NewP >> P;
     ]
-    meta: "1D recursive Kalman filter: NoisySignal >> Kalman::Filter(q: 0.01 r: 0.1) >> FilteredSignal."
+    meta: "1D recursive Kalman filter: NoisySignal >> Kalman::Filter(q: 0.01 r: 0.1) >> FilteredSignal. q is a variance per second and is converted against the rate of the output, so the filter behaves the same at any sample rate. Type must be floating point."
 }

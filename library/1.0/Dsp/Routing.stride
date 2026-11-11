@@ -19,12 +19,12 @@ module Level {
 		propertyInputPort GainPort {
 			name: "gain"
 			entity: Gain
-			meta: "Amplifies or attenuates the signal."
+			meta: "Amplifies or attenuates the signal (default 1.0)."
 		},
 		propertyInputPort OffsetPort {
 			name: "offset"
 			entity: Offset
-			meta: "Adds an offset to the signal after applying the gain."
+			meta: "Adds an offset to the signal after applying the gain (default 0.0)."
 		}
 	]
 	entities: [
@@ -40,15 +40,13 @@ module Level {
 		},
 		signal Gain {
 			default: 1.0
-			type: GainPort.type
-			rate: GainPort.rate
-			domain: GainPort.domain
+			type: OutputPort.type
+			domain: OutputPort.domain
 		},
 		signal Offset {
 			default: 0.0
-			type: OffsetPort.type
-			rate: OffsetPort.rate
-			domain: OffsetPort.domain
+			type: OutputPort.type
+			domain: OutputPort.domain
 		}
 	]
 	streams: [
@@ -74,15 +72,33 @@ module Pan {
 		propertyInputPort PositionPort {
 			name: "position"
 			entity: Position
-			meta: "Sets the stereo panning position in range [-1.0, 1.0]."
+			meta: "Sets the stereo panning position in range [-1.0, 1.0]: -1 is full left, 0 is centre and 1 is full right (default 0.0)."
 		}
 	]
 	entities: [
-		signal Input {},
-		signal Output[2] {},
-		signal Position { default: 0.0 domain: PositionPort.domain },
-		signal GainLeft { domain: PositionPort.domain },
-		signal GainRight { domain: PositionPort.domain }
+		signal Input {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Output[2] {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Position {
+			default: 0.0
+			type: OutputPort.type
+			domain: OutputPort.domain
+		},
+		signal GainLeft {
+			type: OutputPort.type
+			domain: OutputPort.domain
+		},
+		signal GainRight {
+			type: OutputPort.type
+			domain: OutputPort.domain
+		}
 	]
 	streams: [
 		(Position + 1.0) / 2.0 >> GainRight;
@@ -90,7 +106,7 @@ module Pan {
 		Input * GainLeft >> Output[0];
 		Input * GainRight >> Output[1];
 	]
-	meta: "Stereo panner splitting a mono signal into stereo left [0] and right [1]."
+	meta: "Linear stereo panner splitting a mono signal into stereo left [0] and right [1]."
 }
 
 module Crossfade {
@@ -113,14 +129,30 @@ module Crossfade {
 		propertyInputPort MixPort {
 			name: "mix"
 			entity: Mix
-			meta: "Crossfade blend ratio from 0.0 (input) to 1.0 (with)"
+			meta: "Crossfade blend ratio from 0.0 (input) to 1.0 (with) (default 0.5)"
 		}
 	]
 	entities: [
-		signal InputA { domain: InputAPort.domain },
-		signal InputB { domain: WithPort.domain },
-		signal Mix { default: 0.5 domain: MixPort.domain },
-		signal Output { domain: OutputPort.domain }
+		signal InputA {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal InputB {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Mix {
+			default: 0.5
+			type: OutputPort.type
+			domain: OutputPort.domain
+		},
+		signal Output {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		}
 	]
 	streams: [
 		(InputA * (1.0 - Mix)) + (InputB * Mix) >> Output;

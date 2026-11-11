@@ -1,0 +1,77 @@
+# SensorsTest.stride
+# Unit tests for strideroot/library/1.0/Sensors (package Sensors::Conditioning).
+# Debounce and ComplementaryFilter use times that are converted against the
+# rate of the output, so they run in a domain at 100 Hz.
+
+import Sensors::Conditioning as Conditioning
+
+_domainDefinition DebounceDom {
+    framework: _JitFramework
+    rate: 100
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        switch DebounceIn { domain: DebounceDom }
+    ]
+    outputs: [
+        switch DebounceOut { domain: DebounceDom }
+    ]
+    domainFunctionCode: ''
+}
+DebounceIn >> Conditioning::Debounce(time: 0.03) >> DebounceOut;
+
+functionTest DebounceTest {
+    target: DebounceDom
+    prepare: [
+        [ off, on, on, off, on, on, on, on, off, off, off, off, off ] >> DebounceIn;
+    ]
+    validate: [
+        [ DebounceOut, [ off, off, off, off, off, off, on, on, on, on, off, off, off ] ] >> ExpectEqual();
+    ]
+}
+
+functionTest DeadbandTest {
+    target: Conditioning::Deadband
+    prepare: [
+        [ 0.05, 0.1, 0.55, -0.55, 1.0, -1.0 ] >> Input;
+        [ 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 ] >> Threshold;
+    ]
+    validate: [
+        [ Output, [ 0.0, 0.0, 0.5, -0.5, 1.0, -1.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest LinearCalibrationTest {
+    target: Conditioning::LinearCalibration
+    prepare: [
+        [ 0.0, 511.5, 1023.0 ] >> Input;
+    ]
+    validate: [
+        [ Output, [ 0.0, 1.65, 3.3 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition FusionDom {
+    framework: _JitFramework
+    rate: 100
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal FusionIn { domain: FusionDom type: Real }
+    ]
+    outputs: [
+        signal FusionOut { domain: FusionDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+FusionIn >> Conditioning::ComplementaryFilter(accelAngle: 0.1 timeConstant: 0.5) >> FusionOut;
+
+functionTest ComplementaryFilterTest {
+    target: FusionDom
+    prepare: [
+        [ 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000 ] >> FusionIn;
+    ]
+    validate: [
+        [ FusionOut, [ 0.006863, 0.013591, 0.020187, 0.026654, 0.032994, 0.039210, 0.045304, 0.051278, 0.057136, 0.062878 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}

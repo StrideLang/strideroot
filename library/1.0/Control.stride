@@ -1,0 +1,17 @@
+#
+# Stride Standard Library - Control Package Barrel File
+#
+# Industrial and embedded control: PID, hysteresis, slew-rate limiting and the
+# Clarke/Park transforms of field-oriented motor control.
+#
+# This is the package `Control`. The global stream adapters (OnChange,
+# RisingEdge, FallingEdge, Latch, Smooth) are not part of it: they are in the
+# prelude file ControlPrelude.stride.
+#
+
+package Control
+
+import Control::Pid as Pid
+import Control::Hysteresis as Hysteresis
+import Control::SlewRateLimiter as SlewRateLimiter
+import Control::Foc as Foc

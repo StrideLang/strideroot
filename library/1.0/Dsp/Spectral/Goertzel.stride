@@ -16,11 +16,6 @@ module Detector {
             entity: TargetFreq
             meta: "Target tone frequency in Hz to detect"
         },
-        propertyInputPort RatePort {
-            name: "sampleRate"
-            entity: SampleRate
-            meta: "Sample rate in Hz (default 44100.0)"
-        },
         mainOutputPort PowerPort {
             name: "power"
             entity: Power
@@ -29,45 +24,51 @@ module Detector {
     ]
     entities: [
         signal Input {
+            type: PowerPort.type
             domain: PowerPort.domain
             rate: PowerPort.rate
         },
         signal TargetFreq {
+            type: PowerPort.type
             domain: PowerPort.domain
             default: 440.0
         },
-        signal SampleRate {
-            domain: PowerPort.domain
-            default: 44100.0
-        },
         signal Omega {
+            type: PowerPort.type
             domain: PowerPort.domain
         },
         signal CosOmega {
+            type: PowerPort.type
             domain: PowerPort.domain
         },
         signal Coeff {
+            type: PowerPort.type
             domain: PowerPort.domain
         },
         signal S0 {
+            type: PowerPort.type
             domain: PowerPort.domain
         },
         signal S1 {
+            type: PowerPort.type
             domain: PowerPort.domain
             default: 0.0
         },
         signal S2 {
+            type: PowerPort.type
             domain: PowerPort.domain
             default: 0.0
         },
         signal Power {
+            type: PowerPort.type
             domain: PowerPort.domain
             rate: PowerPort.rate
         }
     ]
     streams: [
         # Normalized target frequency and 2nd-order IIR recursion coefficient
-        (Math::TwoPi * TargetFreq) / SampleRate >> Omega;
+        # The sample rate is the rate of the output, so the frequency in Hz is converted against it
+        (Math::TwoPi * TargetFreq) / PowerPort.rate >> Omega;
         Omega >> Cos() >> CosOmega;
         2.0 * CosOmega >> Coeff;
 
@@ -81,5 +82,5 @@ module Detector {
         S1 >> S2;
         S0 >> S1;
     ]
-    meta: "Goertzel single-frequency power detector: AudioIn >> Goertzel::Detector(frequency: 440.0) >> TonePower."
+    meta: "Goertzel single-frequency power detector: AudioIn >> Goertzel::Detector(frequency: 440.0) >> TonePower. The frequency is in Hz and is converted against the rate of the output (the sample rate). Type must be floating point."
 }

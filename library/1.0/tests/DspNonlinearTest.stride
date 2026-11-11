@@ -1,0 +1,37 @@
+# DspNonlinearTest.stride
+# Unit tests for strideroot/library/1.0/Dsp/Nonlinear (package Dsp::Nonlinear::Saturate)
+
+import Dsp::Nonlinear::Saturate as Saturate
+
+# f(x) = 1.5 * (c - c^3 / 3) with c = clamp(x, -1, 1)
+functionTest SoftClipTest {
+    target: Saturate::SoftClip
+    prepare: [
+        [ -2.0, -0.5, 0.0, 0.5, 2.0 ] >> Input;
+    ]
+    validate: [
+        [ Output, [ -1.0, -0.6875, 0.0, 0.6875, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# Pade [3/2] approximation of tanh on [-3, 3], x clamped outside
+functionTest TanhTest {
+    target: Saturate::Tanh
+    prepare: [
+        [ -5.0, -2.0, 0.0, 0.5, 3.0 ] >> Input;
+    ]
+    validate: [
+        [ Output, [ -1.0, -0.984127, 0.0, 0.465812, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest TanhIsBoundedTest {
+    target: Saturate::Tanh
+    prepare: [
+        [ -100.0, -10.0, 10.0, 100.0 ] >> Input;
+    ]
+    validate: [
+        [ Output, [ 1.0, 1.0, 1.0, 1.0 ] ] >> ExpectLe();
+        [ Output, [ -1.0, -1.0, -1.0, -1.0 ] ] >> ExpectGe();
+    ]
+}

@@ -20,31 +20,38 @@ module Decimator2 {
     ]
     entities: [
         signal Input {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         },
         # Integrator stage 1 & 2
         signal I1 {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal I2 {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         # Comb differentiator delay memories
         signal C1Delay {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal C1Diff {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal C2Delay {
+            type: OutputPort.type
             domain: OutputPort.domain
             default: 0.0
         },
         signal Output {
+            type: OutputPort.type
             domain: OutputPort.domain
             rate: OutputPort.rate
         }

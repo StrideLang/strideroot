@@ -1,0 +1,25 @@
+# DspUnitsTest.stride
+# Unit tests for strideroot/library/1.0/Dsp/Units.stride
+
+import Dsp::Units as Units
+
+functionTest MidiToFreqTest {
+    target: Units::MidiToFreq
+    prepare: [
+        [ 69.0, 60.0, 81.0, 57.0 ] >> Note;
+    ]
+    validate: [
+        # A4, middle C, A5, A3
+        [ Frequency, [ 440.0, 261.6256, 880.0, 220.0 ] ] >> ExpectNear(epsilon: 0.001);
+    ]
+}
+
+functionTest DbToLinearTest {
+    target: Units::DbToLinear
+    prepare: [
+        [ 0.0, -6.0206, 20.0, -20.0 ] >> Db;
+    ]
+    validate: [
+        [ Linear, [ 1.0, 0.5, 10.0, 0.1 ] ] >> ExpectNear(epsilon: 0.001);
+    ]
+}

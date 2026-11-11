@@ -1,0 +1,11 @@
+#
+# Stride Standard Library - Math Package Barrel File
+#
+# This is the package `Math`: constants (Math::Pi, Math::TwoPi, Math::E).
+# The global scalar functions (Abs, Sin, Pow, Clamp, Lerp, ...) are not part of
+# it: they are in the prelude file MathPrelude.stride.
+#
+
+package Math
+
+import Math::Constants as Constants

@@ -20,10 +20,12 @@ module Clarke {
     ]
     entities: [
         signal Iabc[3] {
+            type: IalphabetaPort.type
             domain: IalphabetaPort.domain
             rate: IalphabetaPort.rate
         },
         signal Ialphabeta[2] {
+            type: IalphabetaPort.type
             domain: IalphabetaPort.domain
             rate: IalphabetaPort.rate
         }
@@ -56,21 +58,26 @@ module Park {
     ]
     entities: [
         signal Ialphabeta[2] {
+            type: IdqPort.type
             domain: IdqPort.domain
             rate: IdqPort.rate
         },
         signal Theta {
+            type: IdqPort.type
             domain: IdqPort.domain
             default: 0.0
         },
         signal Idq[2] {
+            type: IdqPort.type
             domain: IdqPort.domain
             rate: IdqPort.rate
         },
         signal SinTheta {
+            type: IdqPort.type
             domain: IdqPort.domain
         },
         signal CosTheta {
+            type: IdqPort.type
             domain: IdqPort.domain
         }
     ]
@@ -104,21 +111,26 @@ module InversePark {
     ]
     entities: [
         signal Vdq[2] {
+            type: ValphabetaPort.type
             domain: ValphabetaPort.domain
             rate: ValphabetaPort.rate
         },
         signal Theta {
+            type: ValphabetaPort.type
             domain: ValphabetaPort.domain
             default: 0.0
         },
         signal Valphabeta[2] {
+            type: ValphabetaPort.type
             domain: ValphabetaPort.domain
             rate: ValphabetaPort.rate
         },
         signal SinTheta {
+            type: ValphabetaPort.type
             domain: ValphabetaPort.domain
         },
         signal CosTheta {
+            type: ValphabetaPort.type
             domain: ValphabetaPort.domain
         }
     ]
@@ -147,10 +159,12 @@ module InverseClarke {
     ]
     entities: [
         signal Valphabeta[2] {
+            type: VabcPort.type
             domain: VabcPort.domain
             rate: VabcPort.rate
         },
         signal Vabc[3] {
+            type: VabcPort.type
             domain: VabcPort.domain
             rate: VabcPort.rate
         }

@@ -1,54 +1,88 @@
 #
-# Stride Standard DSP Package - Filters
+# Stride Standard DSP Package - Filters: BiQuad
 #
 
 package Dsp::Filters
 
+import Dsp::FilterDesign as FilterDesign
+
+# Second-order IIR filter whose response is chosen with the `mode` property
 module BiQuad {
 	ports: [
-		mainInputPort MainInputPort {
+		mainInputPort InputPort {
 			name: "input"
 			entity: Input
+			meta: "Input signal"
 		},
 		mainOutputPort OutputPort {
 			name: "output"
 			entity: Output
+			meta: "Filtered output signal"
 		},
-		propertyInputPort CenterFrequencyProperty {
-			name: "centerFrequency"
-			entity: CenterFrequency
-			meta: "The center frequency of the filter."
+		propertyInputPort ModePort {
+			name: "mode"
+			entity: Mode
+			meta: "Response: FilterDesign::ModeLowPass (default), ModeHighPass, ModeBandPass, ModeNotch, ModeAllPass or ModePeak"
 		},
-		propertyInputPort ResonanceProperty {
-			name: "resonance"
-			entity: Resonance
-			meta: "Resonance (Q) amount. Should be greater than or equal to 1.0."
+		propertyInputPort FrequencyPort {
+			name: "frequency"
+			entity: Frequency
+			meta: "Cutoff, centre or corner frequency in Hz (default 1000.0)"
+		},
+		propertyInputPort QPort {
+			name: "q"
+			entity: Q
+			meta: "Quality factor (default 0.7071). Must be greater than 0"
+		},
+		propertyInputPort GainPort {
+			name: "gain"
+			entity: GainDb
+			meta: "Boost or cut in dB, only used by ModePeak (default 0.0)"
 		}
 	]
 	entities: [
-		signal CenterFrequency {},
-		signal Resonance { default: 50 },
-		signal Input { domain: MainInputPort.domain },
-		signal Output { domain: OutputPort.domain },
-		signal Xn[2] {},
-		signal Yn[2] {},
-		signal A[3] {},
-		signal B[3] {},
-		signal Temp {},
-		signal W0 {},
-		signal Alpha {},
-		signal W0Cos {}
+		signal Input {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Output {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		},
+		signal Mode {
+			type: Int
+			domain: OutputPort.domain
+			default: 0
+		},
+		signal Frequency {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+			default: 1000.0
+		},
+		signal Q {
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 0.7071
+		},
+		signal GainDb {
+			type: OutputPort.type
+			domain: OutputPort.domain
+			default: 0.0
+		},
+		signal Coeffs[5] {
+			type: OutputPort.type
+			rate: OutputPort.rate
+			domain: OutputPort.domain
+		}
 	]
 	streams: [
-		2.0 * 3.141592653589793 * CenterFrequency / 44100.0 >> W0 >> Sin() >> Temp;
-		Temp / (2.0 * Resonance) >> Alpha >> B[1];
-		-Alpha >> B[2];
-		1.0 + Alpha >> A[0];
-		W0 >> Cos() >> W0Cos;
-		[W0Cos, 2.0] >> Multiply() >> A[1];
-		1.0 - Alpha >> A[2];
-
-		(Input * B[0] + Xn[0] * B[1] + Xn[1] * B[2] - Yn[0] * A[1] - Yn[1] * A[2]) / A[0] >> Output;
+		# The coefficients are redesigned on every tick, so frequency, q and gain
+		# can be modulated. The sample rate of the design is the rate of the output.
+		Frequency >> FilterDesign::Coefficients(mode: Mode q: Q gain: GainDb) >> Coeffs;
+		Input >> Section(coefficients: Coeffs) >> Output;
 	]
-	meta: "Direct Form II Transposed 2nd-order IIR BiQuad filter."
+	meta: "Second-order IIR filter with a selectable response (RBJ Audio EQ Cookbook): Input >> BiQuad(mode: FilterDesign::ModeLowPass frequency: 800.0 q: 0.7071) >> Output. LowPass, HighPass, BandPass, Notch, AllPass and PeakingEq are shortcuts for the common modes. The frequency is in Hz and is converted against the rate of the output. The data type must be floating point."
 }

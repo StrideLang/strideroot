@@ -1,0 +1,445 @@
+# LinAlgTest.stride
+# Unit tests for strideroot/library/1.0/LinAlg
+#
+# Vectors and matrices take their dimensions from the sizes of the connected
+# ports, so the same module is tested with several sizes. Modules with an
+# array output (Scale, Normalize, Transform, MatMul, Transpose) are tested in
+# a domain whose outputs have the size under test. Matrices are row-major.
+
+import LinAlg::Vectors as Vectors
+import LinAlg::Matrices as Matrices
+import LinAlg::Quaternion as Quaternion
+
+# ---------------------------------------------------------------- Dot, Norm
+
+functionTest DotSize2Test {
+    target: Vectors::Dot
+    prepare: [
+        [ [ 3.0, 4.0 ], [ 1.0, 0.0 ] ] >> Dot_VectorA;
+        [ [ 3.0, 4.0 ], [ 0.0, 1.0 ] ] >> Dot_VectorB;
+    ]
+    validate: [
+        [ Dot_Output, [ 25.0, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest DotSize3Test {
+    target: Vectors::Dot
+    prepare: [
+        [ [ 1.0, 2.0, 3.0 ], [ 1.0, 0.0, 0.0 ] ] >> Dot_VectorA;
+        [ [ 4.0, 5.0, 6.0 ], [ 0.0, 1.0, 0.0 ] ] >> Dot_VectorB;
+    ]
+    validate: [
+        [ Dot_Output, [ 32.0, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest DotSize4Test {
+    target: Vectors::Dot
+    prepare: [
+        [ [ 1.0, 2.0, 3.0, 4.0 ] ] >> Dot_VectorA;
+        [ [ 1.0, 1.0, 1.0, 1.0 ] ] >> Dot_VectorB;
+    ]
+    validate: [
+        [ Dot_Output, [ 10.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest NormSize2Test {
+    target: Vectors::Norm
+    prepare: [
+        [ [ 3.0, 4.0 ] ] >> Vector;
+    ]
+    validate: [
+        [ Output, [ 5.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest NormSize3Test {
+    target: Vectors::Norm
+    prepare: [
+        [ [ 1.0, 2.0, 2.0 ] ] >> Vector;
+    ]
+    validate: [
+        [ Output, [ 3.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest NormSize4Test {
+    target: Vectors::Norm
+    prepare: [
+        [ [ 1.0, 1.0, 1.0, 1.0 ] ] >> Vector;
+    ]
+    validate: [
+        [ Output, [ 2.0 ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# Wedge: one component a[i] * b[j] - a[j] * b[i] per pair i < j, in lexicographic
+# order. The output size is n * (n - 1) / 2, so it is tested in domains.
+_domainDefinition Wedge2Dom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal Wedge2A[2] { domain: Wedge2Dom type: Real }
+        signal Wedge2B[2] { domain: Wedge2Dom type: Real }
+    ]
+    outputs: [
+        signal Wedge2Out[1] { domain: Wedge2Dom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+Wedge2A >> Vectors::Wedge(with: Wedge2B) >> Wedge2Out;
+
+functionTest Wedge2Test {
+    target: Wedge2Dom
+    prepare: [
+        [ [ 1.0, 2.0 ], [ 1.0, 0.0 ] ] >> Wedge2A;
+        [ [ 3.0, 4.0 ], [ 0.0, 1.0 ] ] >> Wedge2B;
+    ]
+    validate: [
+        # the 2D cross product a0 b1 - a1 b0
+        [ Wedge2Out, [ [ -2.0 ], [ 1.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition Wedge3Dom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal Wedge3A[3] { domain: Wedge3Dom type: Real }
+        signal Wedge3B[3] { domain: Wedge3Dom type: Real }
+    ]
+    outputs: [
+        signal Wedge3Out[3] { domain: Wedge3Dom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+Wedge3A >> Vectors::Wedge(with: Wedge3B) >> Wedge3Out;
+
+functionTest Wedge3Test {
+    target: Wedge3Dom
+    prepare: [
+        [ [ 1.0, 2.0, 3.0 ], [ 1.0, 0.0, 0.0 ], [ 1.0, 2.0, 3.0 ] ] >> Wedge3A;
+        [ [ 4.0, 5.0, 6.0 ], [ 0.0, 1.0, 0.0 ], [ 1.0, 2.0, 3.0 ] ] >> Wedge3B;
+    ]
+    validate: [
+        # [w01, w02, w12]. The cross product is [w12, -w02, w01]:
+        # (1,2,3) x (4,5,6) = (-3, 6, -3), x cross y = (0, 0, 1), a x a = 0
+        [ Wedge3Out, [ [ -3.0, -6.0, -3.0 ], [ 1.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition Wedge4Dom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal Wedge4A[4] { domain: Wedge4Dom type: Real }
+        signal Wedge4B[4] { domain: Wedge4Dom type: Real }
+    ]
+    outputs: [
+        signal Wedge4Out[6] { domain: Wedge4Dom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+Wedge4A >> Vectors::Wedge(with: Wedge4B) >> Wedge4Out;
+
+functionTest Wedge4Test {
+    target: Wedge4Dom
+    prepare: [
+        [ [ 1.0, 0.0, 0.0, 0.0 ], [ 1.0, 2.0, 3.0, 4.0 ] ] >> Wedge4A;
+        [ [ 0.0, 1.0, 2.0, 3.0 ], [ 5.0, 6.0, 7.0, 8.0 ] ] >> Wedge4B;
+    ]
+    validate: [
+        # pairs (0,1) (0,2) (0,3) (1,2) (1,3) (2,3)
+        [ Wedge4Out, [ [ 1.0, 2.0, 3.0, 0.0, 0.0, 0.0 ], [ -4.0, -8.0, -12.0, -4.0, -8.0, -4.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# ------------------------------------------------- Scale, Normalize (domains)
+
+_domainDefinition ScaleDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal ScaleIn[3] { domain: ScaleDom type: Real }
+    ]
+    outputs: [
+        signal ScaleOut[3] { domain: ScaleDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+ScaleIn >> Vectors::Scale(factor: 2.0) >> ScaleOut;
+
+functionTest ScaleTest {
+    target: ScaleDom
+    prepare: [
+        [ [ 1.0, 2.0, 3.0 ], [ -1.0, 0.0, 0.5 ] ] >> ScaleIn;
+    ]
+    validate: [
+        [ ScaleOut, [ [ 2.0, 4.0, 6.0 ], [ -2.0, 0.0, 1.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition Normalize2Dom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal Normalize2In[2] { domain: Normalize2Dom type: Real }
+    ]
+    outputs: [
+        signal Normalize2Out[2] { domain: Normalize2Dom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+Normalize2In >> Vectors::Normalize() >> Normalize2Out;
+
+functionTest Normalize2Test {
+    target: Normalize2Dom
+    prepare: [
+        [ [ 3.0, 4.0 ], [ 0.0, 2.0 ] ] >> Normalize2In;
+    ]
+    validate: [
+        [ Normalize2Out, [ [ 0.6, 0.8 ], [ 0.0, 1.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+_domainDefinition Normalize3Dom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal Normalize3In[3] { domain: Normalize3Dom type: Real }
+    ]
+    outputs: [
+        signal Normalize3Out[3] { domain: Normalize3Dom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+Normalize3In >> Vectors::Normalize() >> Normalize3Out;
+
+functionTest Normalize3Test {
+    target: Normalize3Dom
+    prepare: [
+        [ [ 0.0, 0.0, 5.0 ], [ 1.0, 2.0, 2.0 ], [ 0.0, 0.0, 0.0 ] ] >> Normalize3In;
+    ]
+    validate: [
+        # the zero vector stays zero
+        [ Normalize3Out, [ [ 0.0, 0.0, 1.0 ], [ 0.333333, 0.666667, 0.666667 ], [ 0.0, 0.0, 0.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# ------------------------------------------------------------ Matrices
+
+# 2 x 3 matrix times a 3-vector: the output has 2 components
+_domainDefinition Transform23Dom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal Transform23Vec[3] { domain: Transform23Dom type: Real }
+        signal Transform23Mat[6] { domain: Transform23Dom type: Real }
+    ]
+    outputs: [
+        signal Transform23Out[2] { domain: Transform23Dom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+Transform23Vec >> Matrices::Transform(matrix: Transform23Mat) >> Transform23Out;
+
+functionTest Transform2x3Test {
+    target: Transform23Dom
+    prepare: [
+        [ [ 1.0, 0.0, -1.0 ], [ 1.0, 1.0, 1.0 ] ] >> Transform23Vec;
+        [ [ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 ], [ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 ] ] >> Transform23Mat;
+    ]
+    validate: [
+        [ Transform23Out, [ [ -2.0, -2.0 ], [ 6.0, 15.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# 2 x 2 rotation by 90 degrees
+_domainDefinition Transform22Dom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal Transform22Vec[2] { domain: Transform22Dom type: Real }
+        signal Transform22Mat[4] { domain: Transform22Dom type: Real }
+    ]
+    outputs: [
+        signal Transform22Out[2] { domain: Transform22Dom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+Transform22Vec >> Matrices::Transform(matrix: Transform22Mat) >> Transform22Out;
+
+functionTest Transform2x2Test {
+    target: Transform22Dom
+    prepare: [
+        [ [ 1.0, 0.0 ], [ 0.0, 1.0 ] ] >> Transform22Vec;
+        [ [ 0.0, -1.0, 1.0, 0.0 ], [ 0.0, -1.0, 1.0, 0.0 ] ] >> Transform22Mat;
+    ]
+    validate: [
+        [ Transform22Out, [ [ 0.0, 1.0 ], [ -1.0, 0.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# 3 x 3 identity leaves the vector unchanged
+_domainDefinition Transform33Dom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal Transform33Vec[3] { domain: Transform33Dom type: Real }
+        signal Transform33Mat[9] { domain: Transform33Dom type: Real }
+    ]
+    outputs: [
+        signal Transform33Out[3] { domain: Transform33Dom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+Transform33Vec >> Matrices::Transform(matrix: Transform33Mat) >> Transform33Out;
+
+functionTest Transform3x3IdentityTest {
+    target: Transform33Dom
+    prepare: [
+        [ [ 7.0, -2.0, 0.5 ] ] >> Transform33Vec;
+        [ [ 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 ] ] >> Transform33Mat;
+    ]
+    validate: [
+        [ Transform33Out, [ [ 7.0, -2.0, 0.5 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# (2 x 3) * (3 x 2) = (2 x 2)
+_domainDefinition MatMul232Dom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal MatMul232A[6] { domain: MatMul232Dom type: Real }
+        signal MatMul232B[6] { domain: MatMul232Dom type: Real }
+    ]
+    outputs: [
+        signal MatMul232Out[4] { domain: MatMul232Dom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+MatMul232A >> Matrices::MatMul(with: MatMul232B inner: 3 columns: 2) >> MatMul232Out;
+
+functionTest MatMul2x3By3x2Test {
+    target: MatMul232Dom
+    prepare: [
+        [ [ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 ] ] >> MatMul232A;
+        [ [ 7.0, 8.0, 9.0, 10.0, 11.0, 12.0 ] ] >> MatMul232B;
+    ]
+    validate: [
+        [ MatMul232Out, [ [ 58.0, 64.0, 139.0, 154.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# (2 x 2) * (2 x 2)
+_domainDefinition MatMul22Dom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal MatMul22A[4] { domain: MatMul22Dom type: Real }
+        signal MatMul22B[4] { domain: MatMul22Dom type: Real }
+    ]
+    outputs: [
+        signal MatMul22Out[4] { domain: MatMul22Dom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+MatMul22A >> Matrices::MatMul(with: MatMul22B inner: 2 columns: 2) >> MatMul22Out;
+
+functionTest MatMul2x2Test {
+    target: MatMul22Dom
+    prepare: [
+        [ [ 1.0, 2.0, 3.0, 4.0 ] ] >> MatMul22A;
+        [ [ 5.0, 6.0, 7.0, 8.0 ] ] >> MatMul22B;
+    ]
+    validate: [
+        [ MatMul22Out, [ [ 19.0, 22.0, 43.0, 50.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# Transpose of a 2 x 3 matrix is the 3 x 2 matrix
+_domainDefinition TransposeDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal TransposeIn[6] { domain: TransposeDom type: Real }
+    ]
+    outputs: [
+        signal TransposeOut[6] { domain: TransposeDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+TransposeIn >> Matrices::Transpose(rows: 2 columns: 3) >> TransposeOut;
+
+functionTest Transpose2x3Test {
+    target: TransposeDom
+    prepare: [
+        [ [ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 ] ] >> TransposeIn;
+    ]
+    validate: [
+        [ TransposeOut, [ [ 1.0, 4.0, 2.0, 5.0, 3.0, 6.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# ---------------------------------------------------------- Quaternions
+
+functionTest QuaternionMultiplyTest {
+    target: Quaternion::Multiply
+    prepare: [
+        [ [ 1.0, 0.0, 0.0, 0.0 ], [ 0.0, 1.0, 0.0, 0.0 ] ] >> Q1;
+        [ [ 0.5, 0.5, 0.5, 0.5 ], [ 0.0, 1.0, 0.0, 0.0 ] ] >> Q2;
+    ]
+    validate: [
+        # 1 * q = q and i * i = -1
+        [ Output, [ [ 0.5, 0.5, 0.5, 0.5 ], [ -1.0, 0.0, 0.0, 0.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+functionTest QuaternionConjugateTest {
+    target: Quaternion::Conjugate
+    prepare: [
+        [ [ 1.0, 2.0, 3.0, 4.0 ] ] >> Q;
+    ]
+    validate: [
+        [ Output, [ [ 1.0, -2.0, -3.0, -4.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
+
+# 90 degree rotation about z takes x to y
+functionTest QuaternionRotateTest {
+    target: Quaternion::Rotate
+    prepare: [
+        [ [ 1.0, 0.0, 0.0 ], [ 0.0, 1.0, 0.0 ] ] >> V;
+        [ [ 0.707107, 0.0, 0.0, 0.707107 ], [ 0.707107, 0.0, 0.0, 0.707107 ] ] >> Q;
+    ]
+    validate: [
+        [ Output, [ [ 0.0, 1.0, 0.0 ], [ -1.0, 0.0, 0.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+    ]
+}
