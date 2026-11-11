@@ -84,7 +84,7 @@ import Dsp::Units as Units
 ### 3.1 `Dsp::Routing`
 * **`Level(gain: 1.0 offset: 0.0)`**: Scales an audio stream and applies an offset:
   $$\text{output} = \text{input} \times \text{gain} + \text{offset}$$
-* **`Pan(position: 0.0)`**: Stereo panner with position in $[-1.0, 1.0]$, outputting stereo bundle `[left, right]`.
+* **`Pan(position: 0.0)`**: Stereo panner with position in $[-1.0, 1.0]$, outputting stereo array `[left, right]`.
 * **`Crossfade(mix: 0.5 with: InputB)`**: Linear interpolation blending two streams.
 
 ### 3.2 `Dsp::Generators`

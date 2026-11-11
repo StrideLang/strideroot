@@ -257,7 +257,7 @@ What a sized output can write to:
 | Destination | `OutputPort.size` | How it is written |
 | :--- | :--- | :--- |
 | An array: `>> Table` | the array's size | in place |
-| A slice or bundle: `>> Table[2:4]`, `>> [A, B]` | the number of members | into a temporary array, then copied to each member |
+| A slice: `>> Table[2:4]`, `>> [A, B]` | the number of members | into a temporary array, then copied to each member |
 | One element or signal: `>> Table[3]`, `>> X` | 1 | in place |
 
 **Driven by both.** A loop can size both sides. It decides which size to count
@@ -302,7 +302,7 @@ Add();                         # Add sizes its input from what feeds it
 The message names the call and the port:
 
 ```
-'Fill()' takes the size of its output from what it writes to (OutputPort.size), so it must write to a declared array, element or bundle
+'Fill()' takes the size of its output from what it writes to (OutputPort.size), so it must write to a declared array or element
 ```
 
 Write to a declared array first and read from it in the next stream:
@@ -340,8 +340,8 @@ reset.
 | `In >> F() >> Out;` | Main input and main output. |
 | `F(name: value)` | A property. Values can be literals, constants or blocks. |
 | `Trigger >> R();` | A reaction run when its trigger is on. A switch converts to a trigger automatically. |
-| `[A, B] >> F()` | A bundle into the main input. A loop or module receives it as one array. |
-| `Values[0:8] >> F[]() >> Out[0:8];` | One call per element (broadcast). The compiler also broadcasts on its own when a bundle goes into a call that takes fewer values. |
+| `[A, B] >> F()` | An array into the main input. A loop or module receives it as one array. |
+| `Values[0:8] >> F[]() >> Out[0:8];` | One call per element (broadcast). The compiler also broadcasts on its own when an array goes into a call that takes fewer values. |
 
 Calls of the same function in different places are separate instances. A
 module instance keeps its own state.

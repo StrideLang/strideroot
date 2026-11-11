@@ -161,7 +161,7 @@ Connections describe how data and events move across boundaries, spanning all ha
 1. **Shared Address Space (Level 1 / Intrinsic - Same Process or Common Parent)**:
    Even within a shared memory space (`_RootContext`), different access patterns require specific synchronization mechanisms:
    - **1A. Plain Direct Memory (Level 1 POC)**: Zero-overhead direct pointer dereference or register passing without locks, mutexes, or FIFOs. Suitable for single-threaded sibling domains, lock-free scalar reads, or cooperative coroutines.
-   - **1B. Mutex-Protected Shared State**: Used when concurrent asynchronous domains concurrently read and write multi-variable bundles, structured tables, or non-atomic state blocks, guaranteeing transactional consistency and preventing race conditions or torn reads.
+   - **1B. Mutex-Protected Shared State**: Used when concurrent asynchronous domains concurrently read and write multi-variable arrays, structured tables, or non-atomic state blocks, guaranteeing transactional consistency and preventing race conditions or torn reads.
    - **1C. FIFO / Lock-Free Ring Buffering (SPSC / MPMC)**: Used when streaming data or event sequences must be preserved losslessly without dropping samples across asynchronous rates (e.g. 48 kHz Audio generating samples consumed by a 60 Hz UI or ML domain, or incoming serial packets queued for a game loop).
    - **1D. Double / Triple Buffering**: Lockless latest-wins state exchange (e.g., frame peeking, oscilloscope views, display buffers, parameter snapshots) where older unread data can be safely overwritten by newer updates without blocking the producer.
 2. **Inter-Thread / Intra-Process (Level 2 - Concurrency & Synchronization)**:

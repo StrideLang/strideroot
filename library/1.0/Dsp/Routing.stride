@@ -69,7 +69,7 @@ module Pan {
 		mainOutputPort OutputPort {
 			name: "output"
 			entity: Output
-			meta: "Stereo output signal bundle [left, right]"
+			meta: "Stereo output signal array [left, right]"
 		},
 		propertyInputPort PositionPort {
 			name: "position"

@@ -80,7 +80,7 @@ type _DeviceType {
 			allowedTypes: constrainedList { allowed: [_PolicyBinding, _Any] }
 			default: []
 			required: off
-			meta: "List of policyBinding bundles specifying device-level overrides"
+			meta: "List of policyBinding arrays specifying device-level overrides"
 		}
 	]
 	inherits: [_Base]

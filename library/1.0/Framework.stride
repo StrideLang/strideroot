@@ -252,7 +252,7 @@ type _PlatformType {
 			allowedTypes: constrainedList { allowed: [_PolicyBinding, _Any] }
 			default: []
 			required: off
-			meta: "List of platform default policyBinding bundles"
+			meta: "List of platform default policyBinding arrays"
 		}
 	]
 }

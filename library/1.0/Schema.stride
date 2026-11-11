@@ -9,13 +9,13 @@ type _Any {
 type _List {
 	typeName: "_list"
 	properties: []
-	meta: "Matches any collection (list literal or array slice/bundle)."
+	meta: "Matches any collection (list literal or array slice)."
 }
 
 type _Entity {
 	typeName: "_entity"
 	properties: []
-	meta: "Matches any block entity declaration (signal, switch, buffer, table, etc., scalar or bundle)."
+	meta: "Matches any block entity declaration (signal, switch, buffer, table, etc., scalar or array)."
 }
 
 type _Constraint {
