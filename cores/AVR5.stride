@@ -1,0 +1,20 @@
+#
+# AVR5 core family: 8-bit AVR with up to 128 KB of flash and a hardware
+# multiplier (ATmega328P, ATmega32U4, ATmega168, ...).
+#
+# Devices overlay this core and add their memory, clock and peripherals.
+#
+
+core AVR5 {
+    triple: "avr"
+    pointerBits: 16
+    types: {
+        int: "Int16"
+        real: "Float32"
+        size: "UInt16"
+    }
+    hardwareFloat: off
+    codegen: "llvm"
+    frameworks: ["AVR"]
+    meta: "8-bit AVR, 16-bit pointers, no FPU (avr5 architecture)"
+}

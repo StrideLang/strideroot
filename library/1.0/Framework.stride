@@ -260,6 +260,167 @@ type _DeviceType {
 			default: []
 			required: off
 			meta: "List of policyBinding arrays specifying device-level overrides"
+		},
+		typeProperty Cpu {
+			name: "cpu"
+			allowedTypes: _StringLiteral
+			default: ""
+			required: off
+			meta: "LLVM CPU name (e.g. atmega328p)"
+		},
+		typeProperty Clock {
+			name: "clock"
+			allowedTypes: _IntLiteral
+			default: 0
+			required: off
+			meta: "Core clock in Hz"
+		},
+		typeProperty Memory {
+			name: "memory"
+			allowedTypes: _Any
+			default: none
+			required: off
+			meta: "Memory sizes in bytes: { flash: ram: eeprom: }. Merged key by key with the layers below."
+		},
+		typeProperty Ports {
+			name: "ports"
+			allowedTypes: constrainedList { allowed: [_Any] }
+			default: []
+			required: off
+			meta: "GPIO ports as named entries: gpioPort B { input: direction: output: } with data-space register addresses"
+		},
+		typeProperty TickTimer {
+			name: "tickTimer"
+			allowedTypes: _StringLiteral
+			default: ""
+			required: off
+			meta: "Timer the Stride runtime uses for the domain tick"
+		},
+		typeProperty RuntimeReserves {
+			name: "runtimeReserves"
+			allowedTypes: constrainedList { allowed: [_StringLiteral, _Any] }
+			default: []
+			required: off
+			meta: "Peripherals the Stride runtime takes for itself (e.g. Timer0, Usart0)"
+		}
+	]
+	inherits: [_Base]
+}
+
+# A processor core family, shared by every platform that uses it, e.g. AVR5
+# or CortexM33. Devices overlay a core.
+type _CoreType {
+	typeName: "core"
+	properties: [
+		typeProperty Overlays {
+			name: "overlays"
+			allowedTypes: constrainedEntity { allowed: [_Any, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "A more general core this one extends"
+		},
+		typeProperty Triple {
+			name: "triple"
+			allowedTypes: _StringLiteral
+			required: on
+			meta: "LLVM target triple (e.g. avr, thumbv8m.main-none-eabihf)"
+		},
+		typeProperty PointerBits {
+			name: "pointerBits"
+			allowedTypes: _IntLiteral
+			required: on
+			meta: "Width of a data pointer in bits"
+		},
+		typeProperty Types {
+			name: "types"
+			allowedTypes: _Any
+			default: none
+			required: off
+			meta: "Data types behind the generic ones: { int: real: size: }"
+		},
+		typeProperty HardwareFloat {
+			name: "hardwareFloat"
+			allowedTypes: _SwitchLiteral
+			default: off
+			required: off
+			meta: "Whether the core has a floating point unit"
+		},
+		typeProperty Codegen {
+			name: "codegen"
+			allowedTypes: _StringLiteral
+			default: "llvm"
+			required: off
+			meta: "llvm: Stride's built-in LLVM backend. external: Stride emits code for the core's cc tool."
+		},
+		typeProperty Frameworks {
+			name: "frameworks"
+			allowedTypes: constrainedList { allowed: [_StringLiteral] }
+			default: []
+			required: off
+			meta: "Frameworks that can target this core"
+		}
+	]
+	inherits: [_Base]
+}
+
+# A board built around a device, e.g. ArduinoUno. Boards overlay a device or
+# another board.
+type _HardwareBoardType {
+	typeName: "hardwareBoard"
+	properties: [
+		typeProperty Platform {
+			name: "platform"
+			allowedTypes: _Any
+			required: on
+			meta: "Parent platform reference (e.g. AVR)"
+		},
+		typeProperty Overlays {
+			name: "overlays"
+			allowedTypes: _Any
+			required: on
+			meta: "The device or board this board is built on"
+		},
+		typeProperty Pins {
+			name: "pins"
+			allowedTypes: constrainedList { allowed: [_Any] }
+			default: []
+			required: off
+			meta: "Board pins as named entries: pin D13 { port: B bit: 5 }. A pin with the same name in a board above replaces this one."
+		},
+		typeProperty Usb {
+			name: "usb"
+			allowedTypes: constrainedList { allowed: [_StringLiteral] }
+			default: []
+			required: off
+			meta: "USB VID:PID pairs the board shows up as, used to find its port"
+		},
+		typeProperty Upload {
+			name: "upload"
+			allowedTypes: _Any
+			default: none
+			required: off
+			meta: "How to flash the board: { method: ... } plus the method's settings"
+		},
+		typeProperty Image {
+			name: "image"
+			allowedTypes: constrainedList { allowed: [_Any] }
+			default: []
+			required: off
+			meta: "Steps that turn the linked program into the file that is flashed"
+		},
+		typeProperty Toolchain {
+			name: "toolchain"
+			allowedTypes: _Any
+			default: none
+			required: off
+			meta: "Tool for each role, e.g. cc and upload"
+		},
+		typeProperty Memory {
+			name: "memory"
+			allowedTypes: _Any
+			default: none
+			required: off
+			meta: "Board changes to device memory, e.g. { bootloader: 512 }"
 		}
 	]
 	inherits: [_Base]
@@ -351,6 +512,13 @@ type _FrameworkDescriptionType {
 			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] }
 			default: none
 			required: off
+		},
+		typeProperty Codegen {
+			name: "codegen"
+			allowedTypes: _StringLiteral
+			default: ""
+			required: off
+			meta: "llvm when platformModules are LLVM IR, so Stride compiles programs for this framework itself. Empty for C++ template frameworks."
 		}
 	]
 	inherits: [_Base]

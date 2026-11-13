@@ -1,0 +1,27 @@
+#
+# ATmega328P (Arduino Uno, Nano, Pro Mini).
+#
+# Register addresses are data-space addresses (I/O address + 0x20), which is
+# what LLVM's volatile loads and stores use on AVR.
+#
+
+device ATmega328P {
+    platform: AVR
+    overlays: AVR5
+    cpu: "atmega328p"
+    compilerFlags: "-mmcu=atmega328p"
+    clock: 16000000
+    memory: {
+        flash: 32768
+        ram: 2048
+        eeprom: 1024
+    }
+    ports: [
+        gpioPort B { input: 35 direction: 36 output: 37 },
+        gpioPort C { input: 38 direction: 39 output: 40 },
+        gpioPort D { input: 41 direction: 42 output: 43 }
+    ]
+    tickTimer: "Timer0"
+    runtimeReserves: ["Timer0", "Usart0"]
+    meta: "8-bit AVR, 32 KB flash, 2 KB RAM, 1 KB EEPROM"
+}

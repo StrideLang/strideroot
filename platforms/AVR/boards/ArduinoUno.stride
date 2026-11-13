@@ -1,0 +1,57 @@
+#
+# Arduino Uno (R3 and compatible clones) with the optiboot bootloader.
+#
+# Other boards overlay this one or ATmega328P: a Nano is the Uno's pinout on
+# a smaller board, so it only needs its own USB IDs and upload settings, plus
+# pin entries for A6 and A7. A pin entry with the same name replaces this
+# board's.
+#
+
+hardwareBoard ArduinoUno {
+    platform: AVR
+    overlays: ATmega328P
+    pins: [
+        pin D0 { port: "D" bit: 0 },
+        pin D1 { port: "D" bit: 1 },
+        pin D2 { port: "D" bit: 2 },
+        pin D3 { port: "D" bit: 3 },
+        pin D4 { port: "D" bit: 4 },
+        pin D5 { port: "D" bit: 5 },
+        pin D6 { port: "D" bit: 6 },
+        pin D7 { port: "D" bit: 7 },
+        pin D8 { port: "B" bit: 0 },
+        pin D9 { port: "B" bit: 1 },
+        pin D10 { port: "B" bit: 2 },
+        pin D11 { port: "B" bit: 3 },
+        pin D12 { port: "B" bit: 4 },
+        pin D13 { port: "B" bit: 5 },
+        pin A0 { port: "C" bit: 0 adc: 0 },
+        pin A1 { port: "C" bit: 1 adc: 1 },
+        pin A2 { port: "C" bit: 2 adc: 2 },
+        pin A3 { port: "C" bit: 3 adc: 3 },
+        pin A4 { port: "C" bit: 4 adc: 4 },
+        pin A5 { port: "C" bit: 5 adc: 5 },
+        pin LED { port: "B" bit: 5 }
+    ]
+    usb: ["2341:0043", "2341:0001", "2341:0243", "2A03:0043", "1A86:7523"]
+    upload: {
+        method: "avrdude"
+        programmer: "arduino"
+        baud: 115200
+    }
+    image: [
+        step Hex { kind: "hex" }
+    ]
+    toolchain: {
+        cc: "AvrGcc"
+        ar: "AvrGcc"
+        ld: "AvrGcc"
+        objcopy: "AvrGcc"
+        size: "AvrGcc"
+        upload: "Avrdude"
+    }
+    memory: {
+        bootloader: 512
+    }
+    meta: "Arduino Uno: ATmega328P at 16 MHz, USB serial, optiboot"
+}

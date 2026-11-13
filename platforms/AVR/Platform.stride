@@ -1,0 +1,16 @@
+#
+# AVR platform: 8-bit AVR microcontrollers programmed without the Arduino
+# build system. Boards live in boards/, devices in devices/, and the core
+# families they overlay in strideroot/cores/.
+#
+
+import ATmega328P
+
+platform AVR {
+    framework: "AVR"
+    defaultDevice: ATmega328P
+    supportedDevices: [
+        ATmega328P
+    ]
+    meta: "8-bit AVR microcontrollers (Arduino Uno and compatible boards)"
+}
