@@ -4,46 +4,110 @@
 
 import Window::Functions as Window
 
+_domainDefinition HannDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal HannIndex { domain: HannDom type: Real }
+        signal HannSize { domain: HannDom type: Real }
+    ]
+    outputs: [
+        signal HannWeight { domain: HannDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+HannIndex >> Window::Hann(size: HannSize) >> HannWeight;
+
 functionTest HannTest {
-    target: Window::Hann
+    target: HannDom
     prepare: [
-        [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0 ] >> Index;
-        [ 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 ] >> Size;
+        [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0 ] >> HannIndex;
+        [ 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 ] >> HannSize;
     ]
     validate: [
-        [ Weight, [ 0.0, 0.188255, 0.611260, 0.950484, 0.950484, 0.611260, 0.188255, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ HannWeight, [ 0.0, 0.188255, 0.611260, 0.950484, 0.950484, 0.611260, 0.188255, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
+
+_domainDefinition HammingDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal HammingIndex { domain: HammingDom type: Real }
+        signal HammingSize { domain: HammingDom type: Real }
+    ]
+    outputs: [
+        signal HammingWeight { domain: HammingDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+HammingIndex >> Window::Hamming(size: HammingSize) >> HammingWeight;
 
 functionTest HammingTest {
-    target: Window::Hamming
+    target: HammingDom
     prepare: [
-        [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0 ] >> Index;
-        [ 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 ] >> Size;
+        [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0 ] >> HammingIndex;
+        [ 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 ] >> HammingSize;
     ]
     validate: [
-        [ Weight, [ 0.08, 0.253195, 0.642360, 0.954446, 0.954446, 0.642360, 0.253195, 0.08 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ HammingWeight, [ 0.08, 0.253195, 0.642360, 0.954446, 0.954446, 0.642360, 0.253195, 0.08 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
+
+_domainDefinition BlackmanDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal BlackmanIndex { domain: BlackmanDom type: Real }
+        signal BlackmanSize { domain: BlackmanDom type: Real }
+    ]
+    outputs: [
+        signal BlackmanWeight { domain: BlackmanDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+BlackmanIndex >> Window::Blackman(size: BlackmanSize) >> BlackmanWeight;
 
 functionTest BlackmanTest {
-    target: Window::Blackman
+    target: BlackmanDom
     prepare: [
-        [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0 ] >> Index;
-        [ 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 ] >> Size;
+        [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0 ] >> BlackmanIndex;
+        [ 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 ] >> BlackmanSize;
     ]
     validate: [
-        [ Weight, [ 0.0, 0.090453, 0.459183, 0.920364, 0.920364, 0.459183, 0.090453, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ BlackmanWeight, [ 0.0, 0.090453, 0.459183, 0.920364, 0.920364, 0.459183, 0.090453, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
 
+_domainDefinition FlatTopDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal FlatTopIndex { domain: FlatTopDom type: Real }
+        signal FlatTopSize { domain: FlatTopDom type: Real }
+    ]
+    outputs: [
+        signal FlatTopWeight { domain: FlatTopDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+FlatTopIndex >> Window::FlatTop(size: FlatTopSize) >> FlatTopWeight;
+
 functionTest FlatTopTest {
-    target: Window::FlatTop
+    target: FlatTopDom
     prepare: [
-        [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0 ] >> Index;
-        [ 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 ] >> Size;
+        [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0 ] >> FlatTopIndex;
+        [ 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 ] >> FlatTopSize;
     ]
     validate: [
-        [ Weight, [ -0.000421, -0.036841, 0.010704, 0.780874, 0.780874, 0.010704, -0.036841, -0.000421 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ FlatTopWeight, [ -0.000421, -0.036841, 0.010704, 0.780874, 0.780874, 0.010704, -0.036841, -0.000421 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }

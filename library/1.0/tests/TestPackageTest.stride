@@ -6,14 +6,31 @@ import Test::Assertions as Assertions
 # Inside the bounds the guard passes the signal through unchanged.
 # (A violation raises a runtime error, which is handled by the runtime and
 # cannot be expressed as a value to compare.)
+_domainDefinition AssertInRangePassthroughDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal AssertInRangePassthroughInput { domain: AssertInRangePassthroughDom type: Real }
+        signal AssertInRangePassthroughMinBound { domain: AssertInRangePassthroughDom type: Real }
+        signal AssertInRangePassthroughMaxBound { domain: AssertInRangePassthroughDom type: Real }
+    ]
+    outputs: [
+        signal AssertInRangePassthroughOutput { domain: AssertInRangePassthroughDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+AssertInRangePassthroughInput >> Assertions::AssertInRange(min: AssertInRangePassthroughMinBound max: AssertInRangePassthroughMaxBound) >> AssertInRangePassthroughOutput;
+
 functionTest AssertInRangePassthroughTest {
-    target: Assertions::AssertInRange
+    target: AssertInRangePassthroughDom
     prepare: [
-        [ 0.5, -0.5, 0.0, 1.0, -1.0 ] >> Input;
-        [ -1.0, -1.0, -1.0, -1.0, -1.0 ] >> MinBound;
-        [ 1.0, 1.0, 1.0, 1.0, 1.0 ] >> MaxBound;
+        [ 0.5, -0.5, 0.0, 1.0, -1.0 ] >> AssertInRangePassthroughInput;
+        [ -1.0, -1.0, -1.0, -1.0, -1.0 ] >> AssertInRangePassthroughMinBound;
+        [ 1.0, 1.0, 1.0, 1.0, 1.0 ] >> AssertInRangePassthroughMaxBound;
     ]
     validate: [
-        [ Output, [ 0.5, -0.5, 0.0, 1.0, -1.0 ] ] >> ExpectEqual();
+        [ AssertInRangePassthroughOutput, [ 0.5, -0.5, 0.0, 1.0, -1.0 ] ] >> ExpectEqual();
     ]
 }

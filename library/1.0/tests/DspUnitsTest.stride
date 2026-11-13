@@ -3,23 +3,53 @@
 
 import Dsp::Units as Units
 
+_domainDefinition MidiToFreqDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal MidiToFreqNote { domain: MidiToFreqDom type: Real }
+    ]
+    outputs: [
+        signal MidiToFreqFrequency { domain: MidiToFreqDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+MidiToFreqNote >> Units::MidiToFreq() >> MidiToFreqFrequency;
+
 functionTest MidiToFreqTest {
-    target: Units::MidiToFreq
+    target: MidiToFreqDom
     prepare: [
-        [ 69.0, 60.0, 81.0, 57.0 ] >> Note;
+        [ 69.0, 60.0, 81.0, 57.0 ] >> MidiToFreqNote;
     ]
     validate: [
         # A4, middle C, A5, A3
-        [ Frequency, [ 440.0, 261.6256, 880.0, 220.0 ] ] >> ExpectNear(epsilon: 0.001);
+        [ MidiToFreqFrequency, [ 440.0, 261.6256, 880.0, 220.0 ] ] >> ExpectNear(epsilon: 0.001);
     ]
 }
 
+_domainDefinition DbToLinearDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal DbToLinearDb { domain: DbToLinearDom type: Real }
+    ]
+    outputs: [
+        signal DbToLinearLinear { domain: DbToLinearDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+DbToLinearDb >> Units::DbToLinear() >> DbToLinearLinear;
+
 functionTest DbToLinearTest {
-    target: Units::DbToLinear
+    target: DbToLinearDom
     prepare: [
-        [ 0.0, -6.0206, 20.0, -20.0 ] >> Db;
+        [ 0.0, -6.0206, 20.0, -20.0 ] >> DbToLinearDb;
     ]
     validate: [
-        [ Linear, [ 1.0, 0.5, 10.0, 0.1 ] ] >> ExpectNear(epsilon: 0.001);
+        [ DbToLinearLinear, [ 1.0, 0.5, 10.0, 0.1 ] ] >> ExpectNear(epsilon: 0.001);
     ]
 }

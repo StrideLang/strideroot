@@ -15,6 +15,24 @@ platformModule __Floor {
     inherits: [_Signal]
 }
 
+# e raised to the input
+platformModule __Exp {
+    inputs: [Real]
+    outputs: [Real]
+    linkTo: ["m"]
+    processing: "@exp"
+    inherits: [_Signal]
+}
+
+# First input raised to the second input
+platformModule __Pow {
+    inputs: [Real, Real]
+    outputs: [Real]
+    linkTo: ["m"]
+    processing: "@pow"
+    inherits: [_Signal]
+}
+
 # platformModule _Floor {
 #     inputs: [Real]
 # 	outputs: [Real] # FIXME shoudl be "int"

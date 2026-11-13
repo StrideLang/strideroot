@@ -4,34 +4,79 @@
 import Dsp::Nonlinear::Saturate as Saturate
 
 # f(x) = 1.5 * (c - c^3 / 3) with c = clamp(x, -1, 1)
+_domainDefinition SoftClipDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal SoftClipInput { domain: SoftClipDom type: Real }
+    ]
+    outputs: [
+        signal SoftClipOutput { domain: SoftClipDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+SoftClipInput >> Saturate::SoftClip() >> SoftClipOutput;
+
 functionTest SoftClipTest {
-    target: Saturate::SoftClip
+    target: SoftClipDom
     prepare: [
-        [ -2.0, -0.5, 0.0, 0.5, 2.0 ] >> Input;
+        [ -2.0, -0.5, 0.0, 0.5, 2.0 ] >> SoftClipInput;
     ]
     validate: [
-        [ Output, [ -1.0, -0.6875, 0.0, 0.6875, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ SoftClipOutput, [ -1.0, -0.6875, 0.0, 0.6875, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
 
 # Pade [3/2] approximation of tanh on [-3, 3], x clamped outside
+_domainDefinition TanhDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal TanhInput { domain: TanhDom type: Real }
+    ]
+    outputs: [
+        signal TanhOutput { domain: TanhDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+TanhInput >> Saturate::Tanh() >> TanhOutput;
+
 functionTest TanhTest {
-    target: Saturate::Tanh
+    target: TanhDom
     prepare: [
-        [ -5.0, -2.0, 0.0, 0.5, 3.0 ] >> Input;
+        [ -5.0, -2.0, 0.0, 0.5, 3.0 ] >> TanhInput;
     ]
     validate: [
-        [ Output, [ -1.0, -0.984127, 0.0, 0.465812, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ TanhOutput, [ -1.0, -0.984127, 0.0, 0.465812, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
 
+_domainDefinition TanhIsBoundedDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal TanhIsBoundedInput { domain: TanhIsBoundedDom type: Real }
+    ]
+    outputs: [
+        signal TanhIsBoundedOutput { domain: TanhIsBoundedDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+TanhIsBoundedInput >> Saturate::Tanh() >> TanhIsBoundedOutput;
+
 functionTest TanhIsBoundedTest {
-    target: Saturate::Tanh
+    target: TanhIsBoundedDom
     prepare: [
-        [ -100.0, -10.0, 10.0, 100.0 ] >> Input;
+        [ -100.0, -10.0, 10.0, 100.0 ] >> TanhIsBoundedInput;
     ]
     validate: [
-        [ Output, [ 1.0, 1.0, 1.0, 1.0 ] ] >> ExpectLe();
-        [ Output, [ -1.0, -1.0, -1.0, -1.0 ] ] >> ExpectGe();
+        [ TanhIsBoundedOutput, [ 1.0, 1.0, 1.0, 1.0 ] ] >> ExpectLe();
+        [ TanhIsBoundedOutput, [ -1.0, -1.0, -1.0, -1.0 ] ] >> ExpectGe();
     ]
 }

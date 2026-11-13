@@ -3,50 +3,115 @@
 
 import Dsp::Routing as Routing
 
+_domainDefinition LevelDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal LevelInput { domain: LevelDom type: Real }
+        signal LevelGain { domain: LevelDom type: Real }
+        signal LevelOffset { domain: LevelDom type: Real }
+    ]
+    outputs: [
+        signal LevelOutput { domain: LevelDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+LevelInput >> Routing::Level(gain: LevelGain offset: LevelOffset) >> LevelOutput;
+
 functionTest LevelTest {
-    target: Routing::Level
+    target: LevelDom
     prepare: [
-        [ 1.0, -0.5, 0.25 ] >> Input;
-        [ 2.0, 2.0, 2.0 ]   >> Gain;
-        [ 0.5, 0.5, 0.5 ]   >> Offset;
+        [ 1.0, -0.5, 0.25 ] >> LevelInput;
+        [ 2.0, 2.0, 2.0 ] >> LevelGain;
+        [ 0.5, 0.5, 0.5 ] >> LevelOffset;
     ]
     validate: [
         # input * gain + offset
-        [ Output, [ 2.5, -0.5, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ LevelOutput, [ 2.5, -0.5, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
 
+_domainDefinition LevelDefaultsDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal LevelDefaultsInput { domain: LevelDefaultsDom type: Real }
+    ]
+    outputs: [
+        signal LevelDefaultsOutput { domain: LevelDefaultsDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+LevelDefaultsInput >> Routing::Level() >> LevelDefaultsOutput;
+
 functionTest LevelDefaultsTest {
-    target: Routing::Level
+    target: LevelDefaultsDom
     prepare: [
-        [ 1.0, -3.0, 0.25 ] >> Input;
+        [ 1.0, -3.0, 0.25 ] >> LevelDefaultsInput;
     ]
     validate: [
         # gain 1.0 and offset 0.0 by default
-        [ Output, [ 1.0, -3.0, 0.25 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ LevelDefaultsOutput, [ 1.0, -3.0, 0.25 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
 
+_domainDefinition PanDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal PanInput { domain: PanDom type: Real }
+        signal PanPosition { domain: PanDom type: Real }
+    ]
+    outputs: [
+        signal PanOutput[2] { domain: PanDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+PanInput >> Routing::Pan(position: PanPosition) >> PanOutput;
+
 functionTest PanTest {
-    target: Routing::Pan
+    target: PanDom
     prepare: [
-        [ 1.0, 1.0, 1.0 ]   >> Input;
-        [ -1.0, 0.0, 1.0 ]  >> Position;
+        [ 1.0, 1.0, 1.0 ] >> PanInput;
+        [ -1.0, 0.0, 1.0 ] >> PanPosition;
     ]
     validate: [
         # [left, right]: full left, centre, full right
-        [ Output, [ [ 1.0, 0.0 ], [ 0.5, 0.5 ], [ 0.0, 1.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+        [ PanOutput, [ [ 1.0, 0.0 ], [ 0.5, 0.5 ], [ 0.0, 1.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
 
+_domainDefinition CrossfadeDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal CrossfadeInputA { domain: CrossfadeDom type: Real }
+        signal CrossfadeInputB { domain: CrossfadeDom type: Real }
+        signal CrossfadeMix { domain: CrossfadeDom type: Real }
+    ]
+    outputs: [
+        signal CrossfadeOutput { domain: CrossfadeDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+CrossfadeInputA >> Routing::Crossfade(with: CrossfadeInputB mix: CrossfadeMix) >> CrossfadeOutput;
+
 functionTest CrossfadeTest {
-    target: Routing::Crossfade
+    target: CrossfadeDom
     prepare: [
-        [ 1.0, 1.0, 1.0 ] >> InputA;
-        [ 3.0, 3.0, 3.0 ] >> InputB;
-        [ 0.0, 0.5, 1.0 ] >> Mix;
+        [ 1.0, 1.0, 1.0 ] >> CrossfadeInputA;
+        [ 3.0, 3.0, 3.0 ] >> CrossfadeInputB;
+        [ 0.0, 0.5, 1.0 ] >> CrossfadeMix;
     ]
     validate: [
-        [ Output, [ 1.0, 2.0, 3.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ CrossfadeOutput, [ 1.0, 2.0, 3.0 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }

@@ -31,12 +31,27 @@ functionTest KalmanTest {
     ]
 }
 
+_domainDefinition PeakDetectorDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal PeakDetectorInput { domain: PeakDetectorDom type: Real }
+    ]
+    outputs: [
+        switch PeakDetectorOutput { domain: PeakDetectorDom }
+    ]
+    domainFunctionCode: ''
+}
+PeakDetectorInput >> PeakDetector::Detector() >> PeakDetectorOutput;
+
 functionTest PeakDetectorTest {
-    target: PeakDetector::Detector
+    target: PeakDetectorDom
     prepare: [
-        [ 0.000000, 1.000000, 0.200000, 0.300000, 0.900000, 0.400000, 0.000000, 0.200000 ] >> Input;
+        [ 0.000000, 1.000000, 0.200000, 0.300000, 0.900000, 0.400000, 0.000000, 0.200000 ] >> PeakDetectorInput;
     ]
     validate: [
-        [ Output, [ off, off, on, off, off, on, off, off ] ] >> ExpectEqual();
+        [ PeakDetectorOutput, [ off, off, on, off, off, on, off, off ] ] >> ExpectEqual();
     ]
 }

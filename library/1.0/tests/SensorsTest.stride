@@ -30,24 +30,55 @@ functionTest DebounceTest {
     ]
 }
 
+_domainDefinition DeadbandDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal DeadbandInput { domain: DeadbandDom type: Real }
+        signal DeadbandThreshold { domain: DeadbandDom type: Real }
+    ]
+    outputs: [
+        signal DeadbandOutput { domain: DeadbandDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+DeadbandInput >> Conditioning::Deadband(threshold: DeadbandThreshold) >> DeadbandOutput;
+
 functionTest DeadbandTest {
-    target: Conditioning::Deadband
+    target: DeadbandDom
     prepare: [
-        [ 0.05, 0.1, 0.55, -0.55, 1.0, -1.0 ] >> Input;
-        [ 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 ] >> Threshold;
+        [ 0.05, 0.1, 0.55, -0.55, 1.0, -1.0 ] >> DeadbandInput;
+        [ 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 ] >> DeadbandThreshold;
     ]
     validate: [
-        [ Output, [ 0.0, 0.0, 0.5, -0.5, 1.0, -1.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ DeadbandOutput, [ 0.0, 0.0, 0.5, -0.5, 1.0, -1.0 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
 
+_domainDefinition LinearCalibrationDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal LinearCalibrationInput { domain: LinearCalibrationDom type: Real }
+    ]
+    outputs: [
+        signal LinearCalibrationOutput { domain: LinearCalibrationDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+LinearCalibrationInput >> Conditioning::LinearCalibration() >> LinearCalibrationOutput;
+
 functionTest LinearCalibrationTest {
-    target: Conditioning::LinearCalibration
+    target: LinearCalibrationDom
     prepare: [
-        [ 0.0, 511.5, 1023.0 ] >> Input;
+        [ 0.0, 511.5, 1023.0 ] >> LinearCalibrationInput;
     ]
     validate: [
-        [ Output, [ 0.0, 1.65, 3.3 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ LinearCalibrationOutput, [ 0.0, 1.65, 3.3 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
 

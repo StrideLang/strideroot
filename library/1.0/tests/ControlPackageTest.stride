@@ -83,58 +83,135 @@ functionTest SlewRateLimiterTest {
     ]
 }
 
+_domainDefinition HysteresisDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal HysteresisInput { domain: HysteresisDom type: Real }
+    ]
+    outputs: [
+        switch HysteresisOutput { domain: HysteresisDom }
+    ]
+    domainFunctionCode: ''
+}
+HysteresisInput >> Hysteresis::Hysteresis() >> HysteresisOutput;
+
 functionTest HysteresisTest {
-    target: Hysteresis::Hysteresis
+    target: HysteresisDom
     prepare: [
-        [ 0.1, 0.5, 0.9, 0.5, 0.1, 0.5, 0.8, 0.2 ] >> Input;
+        [ 0.1, 0.5, 0.9, 0.5, 0.1, 0.5, 0.8, 0.2 ] >> HysteresisInput;
     ]
     validate: [
-        [ Output, [ off, off, on, on, off, off, on, off ] ] >> ExpectEqual();
+        [ HysteresisOutput, [ off, off, on, on, off, off, on, off ] ] >> ExpectEqual();
     ]
 }
 
 # Clarke: [Ia, Ib, Ic] -> [Ialpha, Ibeta] = [Ia, (Ia + 2 Ib) / sqrt(3)]
+_domainDefinition ClarkeDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal ClarkeIabc[3] { domain: ClarkeDom type: Real }
+    ]
+    outputs: [
+        signal ClarkeIalphabeta[2] { domain: ClarkeDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+ClarkeIabc >> Foc::Clarke() >> ClarkeIalphabeta;
+
 functionTest ClarkeTest {
-    target: Foc::Clarke
+    target: ClarkeDom
     prepare: [
-        [ [ 1.0, -0.5, -0.5 ], [ 0.0, 0.866025, -0.866025 ] ] >> Iabc;
+        [ [ 1.0, -0.5, -0.5 ], [ 0.0, 0.866025, -0.866025 ] ] >> ClarkeIabc;
     ]
     validate: [
-        [ Ialphabeta, [ [ 1.0, 0.0 ], [ 0.0, 1.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+        [ ClarkeIalphabeta, [ [ 1.0, 0.0 ], [ 0.0, 1.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
 
 # Park at angle 0 is the identity, at angle pi/2 it swaps and negates
+_domainDefinition ParkDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal ParkIalphabeta[2] { domain: ParkDom type: Real }
+        signal ParkTheta { domain: ParkDom type: Real }
+    ]
+    outputs: [
+        signal ParkIdq[2] { domain: ParkDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+ParkIalphabeta >> Foc::Park(angle: ParkTheta) >> ParkIdq;
+
 functionTest ParkTest {
-    target: Foc::Park
+    target: ParkDom
     prepare: [
-        [ [ 1.0, 0.0 ], [ 1.0, 0.0 ], [ 0.0, 1.0 ] ] >> Ialphabeta;
-        [ 0.0, 1.570796, 1.570796 ] >> Theta;
+        [ [ 1.0, 0.0 ], [ 1.0, 0.0 ], [ 0.0, 1.0 ] ] >> ParkIalphabeta;
+        [ 0.0, 1.570796, 1.570796 ] >> ParkTheta;
     ]
     validate: [
-        [ Idq, [ [ 1.0, 0.0 ], [ 0.0, -1.0 ], [ 1.0, 0.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+        [ ParkIdq, [ [ 1.0, 0.0 ], [ 0.0, -1.0 ], [ 1.0, 0.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
 
 # InversePark undoes Park
+_domainDefinition InverseParkDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal InverseParkVdq[2] { domain: InverseParkDom type: Real }
+        signal InverseParkTheta { domain: InverseParkDom type: Real }
+    ]
+    outputs: [
+        signal InverseParkValphabeta[2] { domain: InverseParkDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+InverseParkVdq >> Foc::InversePark(angle: InverseParkTheta) >> InverseParkValphabeta;
+
 functionTest InverseParkTest {
-    target: Foc::InversePark
+    target: InverseParkDom
     prepare: [
-        [ [ 1.0, 0.0 ], [ 0.0, -1.0 ], [ 1.0, 0.0 ] ] >> Vdq;
-        [ 0.0, 1.570796, 1.570796 ] >> Theta;
+        [ [ 1.0, 0.0 ], [ 0.0, -1.0 ], [ 1.0, 0.0 ] ] >> InverseParkVdq;
+        [ 0.0, 1.570796, 1.570796 ] >> InverseParkTheta;
     ]
     validate: [
-        [ Valphabeta, [ [ 1.0, 0.0 ], [ 1.0, 0.0 ], [ 0.0, 1.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+        [ InverseParkValphabeta, [ [ 1.0, 0.0 ], [ 1.0, 0.0 ], [ 0.0, 1.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
 
 # InverseClarke undoes Clarke
+_domainDefinition InverseClarkeDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal InverseClarkeValphabeta[2] { domain: InverseClarkeDom type: Real }
+    ]
+    outputs: [
+        signal InverseClarkeVabc[3] { domain: InverseClarkeDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+InverseClarkeValphabeta >> Foc::InverseClarke() >> InverseClarkeVabc;
+
 functionTest InverseClarkeTest {
-    target: Foc::InverseClarke
+    target: InverseClarkeDom
     prepare: [
-        [ [ 1.0, 0.0 ], [ 0.0, 1.0 ] ] >> Valphabeta;
+        [ [ 1.0, 0.0 ], [ 0.0, 1.0 ] ] >> InverseClarkeValphabeta;
     ]
     validate: [
-        [ Vabc, [ [ 1.0, -0.5, -0.5 ], [ 0.0, 0.866025, -0.866025 ] ] ] >> ExpectNear(epsilon: 0.0001);
+        [ InverseClarkeVabc, [ [ 1.0, -0.5, -0.5 ], [ 0.0, 0.866025, -0.866025 ] ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }

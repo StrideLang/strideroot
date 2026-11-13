@@ -361,34 +361,79 @@ functionTest SectionTest {
 
 # Rectify, Halfband and Cic do not depend on the rate
 
+_domainDefinition RectifyDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal RectifyInput { domain: RectifyDom type: Real }
+    ]
+    outputs: [
+        signal RectifyOutput { domain: RectifyDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+RectifyInput >> Filters::Rectify() >> RectifyOutput;
+
 functionTest RectifyTest {
-    target: Filters::Rectify
+    target: RectifyDom
     prepare: [
-        [ -2.0, -0.5, 0.0, 0.5, 2.0 ] >> Input;
+        [ -2.0, -0.5, 0.0, 0.5, 2.0 ] >> RectifyInput;
     ]
     validate: [
-        [ Output, [ 2.0, 0.5, 0.0, 0.5, 2.0 ] ] >> ExpectEqual();
+        [ RectifyOutput, [ 2.0, 0.5, 0.0, 0.5, 2.0 ] ] >> ExpectEqual();
     ]
 }
 
 import Dsp::Filters::Halfband as Halfband
 
+_domainDefinition HalfbandImpulseDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal HalfbandImpulseInput { domain: HalfbandImpulseDom type: Real }
+    ]
+    outputs: [
+        signal HalfbandImpulseOutput { domain: HalfbandImpulseDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+HalfbandImpulseInput >> Halfband::Fir7() >> HalfbandImpulseOutput;
+
 functionTest HalfbandImpulseTest {
-    target: Halfband::Fir7
+    target: HalfbandImpulseDom
     prepare: [
-        [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> Input;
+        [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> HalfbandImpulseInput;
     ]
     validate: [
-        [ Output, [ -0.031250, 0.000000, 0.281250, 0.500000, 0.281250, 0.000000, -0.031250, 0.000000, 0.000000 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ HalfbandImpulseOutput, [ -0.031250, 0.000000, 0.281250, 0.500000, 0.281250, 0.000000, -0.031250, 0.000000, 0.000000 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
 
+_domainDefinition HalfbandDcGainDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal HalfbandDcGainInput { domain: HalfbandDcGainDom type: Real }
+    ]
+    outputs: [
+        signal HalfbandDcGainOutput { domain: HalfbandDcGainDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+HalfbandDcGainInput >> Halfband::Fir7() >> HalfbandDcGainOutput;
+
 functionTest HalfbandDcGainTest {
-    target: Halfband::Fir7
+    target: HalfbandDcGainDom
     prepare: [
-        [ 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 ] >> Input;
+        [ 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 ] >> HalfbandDcGainInput;
     ]
     validate: [
-        [ Output, [ -0.03125, -0.03125, 0.25, 0.75, 1.03125, 1.03125, 1.0, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ HalfbandDcGainOutput, [ -0.03125, -0.03125, 0.25, 0.75, 1.03125, 1.03125, 1.0, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }

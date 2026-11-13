@@ -12,66 +12,159 @@ import LinAlg::Quaternion as Quaternion
 
 # ---------------------------------------------------------------- Dot, Norm
 
+_domainDefinition DotSize2Dom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal DotSize2Dot_VectorA[2] { domain: DotSize2Dom type: Real }
+        signal DotSize2Dot_VectorB[2] { domain: DotSize2Dom type: Real }
+    ]
+    outputs: [
+        signal DotSize2Dot_Output { domain: DotSize2Dom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+DotSize2Dot_VectorA >> Vectors::Dot(with: DotSize2Dot_VectorB) >> DotSize2Dot_Output;
+
 functionTest DotSize2Test {
-    target: Vectors::Dot
+    target: DotSize2Dom
     prepare: [
-        [ [ 3.0, 4.0 ], [ 1.0, 0.0 ] ] >> Dot_VectorA;
-        [ [ 3.0, 4.0 ], [ 0.0, 1.0 ] ] >> Dot_VectorB;
+        [ [ 3.0, 4.0 ], [ 1.0, 0.0 ] ] >> DotSize2Dot_VectorA;
+        [ [ 3.0, 4.0 ], [ 0.0, 1.0 ] ] >> DotSize2Dot_VectorB;
     ]
     validate: [
-        [ Dot_Output, [ 25.0, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ DotSize2Dot_Output, [ 25.0, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
+
+_domainDefinition DotSize3Dom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal DotSize3Dot_VectorA[3] { domain: DotSize3Dom type: Real }
+        signal DotSize3Dot_VectorB[3] { domain: DotSize3Dom type: Real }
+    ]
+    outputs: [
+        signal DotSize3Dot_Output { domain: DotSize3Dom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+DotSize3Dot_VectorA >> Vectors::Dot(with: DotSize3Dot_VectorB) >> DotSize3Dot_Output;
 
 functionTest DotSize3Test {
-    target: Vectors::Dot
+    target: DotSize3Dom
     prepare: [
-        [ [ 1.0, 2.0, 3.0 ], [ 1.0, 0.0, 0.0 ] ] >> Dot_VectorA;
-        [ [ 4.0, 5.0, 6.0 ], [ 0.0, 1.0, 0.0 ] ] >> Dot_VectorB;
+        [ [ 1.0, 2.0, 3.0 ], [ 1.0, 0.0, 0.0 ] ] >> DotSize3Dot_VectorA;
+        [ [ 4.0, 5.0, 6.0 ], [ 0.0, 1.0, 0.0 ] ] >> DotSize3Dot_VectorB;
     ]
     validate: [
-        [ Dot_Output, [ 32.0, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ DotSize3Dot_Output, [ 32.0, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
+
+_domainDefinition DotSize4Dom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal DotSize4Dot_VectorA[4] { domain: DotSize4Dom type: Real }
+        signal DotSize4Dot_VectorB[4] { domain: DotSize4Dom type: Real }
+    ]
+    outputs: [
+        signal DotSize4Dot_Output { domain: DotSize4Dom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+DotSize4Dot_VectorA >> Vectors::Dot(with: DotSize4Dot_VectorB) >> DotSize4Dot_Output;
 
 functionTest DotSize4Test {
-    target: Vectors::Dot
+    target: DotSize4Dom
     prepare: [
-        [ [ 1.0, 2.0, 3.0, 4.0 ] ] >> Dot_VectorA;
-        [ [ 1.0, 1.0, 1.0, 1.0 ] ] >> Dot_VectorB;
+        [ [ 1.0, 2.0, 3.0, 4.0 ] ] >> DotSize4Dot_VectorA;
+        [ [ 1.0, 1.0, 1.0, 1.0 ] ] >> DotSize4Dot_VectorB;
     ]
     validate: [
-        [ Dot_Output, [ 10.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ DotSize4Dot_Output, [ 10.0 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
+
+_domainDefinition NormSize2Dom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal NormSize2Vector[2] { domain: NormSize2Dom type: Real }
+    ]
+    outputs: [
+        signal NormSize2Output { domain: NormSize2Dom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+NormSize2Vector >> Vectors::Norm() >> NormSize2Output;
 
 functionTest NormSize2Test {
-    target: Vectors::Norm
+    target: NormSize2Dom
     prepare: [
-        [ [ 3.0, 4.0 ] ] >> Vector;
+        [ [ 3.0, 4.0 ] ] >> NormSize2Vector;
     ]
     validate: [
-        [ Output, [ 5.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ NormSize2Output, [ 5.0 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
+
+_domainDefinition NormSize3Dom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal NormSize3Vector[3] { domain: NormSize3Dom type: Real }
+    ]
+    outputs: [
+        signal NormSize3Output { domain: NormSize3Dom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+NormSize3Vector >> Vectors::Norm() >> NormSize3Output;
 
 functionTest NormSize3Test {
-    target: Vectors::Norm
+    target: NormSize3Dom
     prepare: [
-        [ [ 1.0, 2.0, 2.0 ] ] >> Vector;
+        [ [ 1.0, 2.0, 2.0 ] ] >> NormSize3Vector;
     ]
     validate: [
-        [ Output, [ 3.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ NormSize3Output, [ 3.0 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
 
+_domainDefinition NormSize4Dom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal NormSize4Vector[4] { domain: NormSize4Dom type: Real }
+    ]
+    outputs: [
+        signal NormSize4Output { domain: NormSize4Dom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+NormSize4Vector >> Vectors::Norm() >> NormSize4Output;
+
 functionTest NormSize4Test {
-    target: Vectors::Norm
+    target: NormSize4Dom
     prepare: [
-        [ [ 1.0, 1.0, 1.0, 1.0 ] ] >> Vector;
+        [ [ 1.0, 1.0, 1.0, 1.0 ] ] >> NormSize4Vector;
     ]
     validate: [
-        [ Output, [ 2.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ NormSize4Output, [ 2.0 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -410,36 +503,83 @@ functionTest Transpose2x3Test {
 
 # ---------------------------------------------------------- Quaternions
 
+_domainDefinition QuaternionMultiplyDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal QuaternionMultiplyQ1[4] { domain: QuaternionMultiplyDom type: Real }
+        signal QuaternionMultiplyQ2[4] { domain: QuaternionMultiplyDom type: Real }
+    ]
+    outputs: [
+        signal QuaternionMultiplyOutput[4] { domain: QuaternionMultiplyDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+QuaternionMultiplyQ1 >> Quaternion::Multiply(with: QuaternionMultiplyQ2) >> QuaternionMultiplyOutput;
+
 functionTest QuaternionMultiplyTest {
-    target: Quaternion::Multiply
+    target: QuaternionMultiplyDom
     prepare: [
-        [ [ 1.0, 0.0, 0.0, 0.0 ], [ 0.0, 1.0, 0.0, 0.0 ] ] >> Q1;
-        [ [ 0.5, 0.5, 0.5, 0.5 ], [ 0.0, 1.0, 0.0, 0.0 ] ] >> Q2;
+        [ [ 1.0, 0.0, 0.0, 0.0 ], [ 0.0, 1.0, 0.0, 0.0 ] ] >> QuaternionMultiplyQ1;
+        [ [ 0.5, 0.5, 0.5, 0.5 ], [ 0.0, 1.0, 0.0, 0.0 ] ] >> QuaternionMultiplyQ2;
     ]
     validate: [
         # 1 * q = q and i * i = -1
-        [ Output, [ [ 0.5, 0.5, 0.5, 0.5 ], [ -1.0, 0.0, 0.0, 0.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+        [ QuaternionMultiplyOutput, [ [ 0.5, 0.5, 0.5, 0.5 ], [ -1.0, 0.0, 0.0, 0.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
 
+_domainDefinition QuaternionConjugateDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal QuaternionConjugateQ[4] { domain: QuaternionConjugateDom type: Real }
+    ]
+    outputs: [
+        signal QuaternionConjugateOutput[4] { domain: QuaternionConjugateDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+QuaternionConjugateQ >> Quaternion::Conjugate() >> QuaternionConjugateOutput;
+
 functionTest QuaternionConjugateTest {
-    target: Quaternion::Conjugate
+    target: QuaternionConjugateDom
     prepare: [
-        [ [ 1.0, 2.0, 3.0, 4.0 ] ] >> Q;
+        [ [ 1.0, 2.0, 3.0, 4.0 ] ] >> QuaternionConjugateQ;
     ]
     validate: [
-        [ Output, [ [ 1.0, -2.0, -3.0, -4.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+        [ QuaternionConjugateOutput, [ [ 1.0, -2.0, -3.0, -4.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
 
 # 90 degree rotation about z takes x to y
+_domainDefinition QuaternionRotateDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal QuaternionRotateV[3] { domain: QuaternionRotateDom type: Real }
+        signal QuaternionRotateQ[4] { domain: QuaternionRotateDom type: Real }
+    ]
+    outputs: [
+        signal QuaternionRotateOutput[3] { domain: QuaternionRotateDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+QuaternionRotateV >> Quaternion::Rotate(rotation: QuaternionRotateQ) >> QuaternionRotateOutput;
+
 functionTest QuaternionRotateTest {
-    target: Quaternion::Rotate
+    target: QuaternionRotateDom
     prepare: [
-        [ [ 1.0, 0.0, 0.0 ], [ 0.0, 1.0, 0.0 ] ] >> V;
-        [ [ 0.707107, 0.0, 0.0, 0.707107 ], [ 0.707107, 0.0, 0.0, 0.707107 ] ] >> Q;
+        [ [ 1.0, 0.0, 0.0 ], [ 0.0, 1.0, 0.0 ] ] >> QuaternionRotateV;
+        [ [ 0.707107, 0.0, 0.0, 0.707107 ], [ 0.707107, 0.0, 0.0, 0.707107 ] ] >> QuaternionRotateQ;
     ]
     validate: [
-        [ Output, [ [ 0.0, 1.0, 0.0 ], [ -1.0, 0.0, 0.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+        [ QuaternionRotateOutput, [ [ 0.0, 1.0, 0.0 ], [ -1.0, 0.0, 0.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }

@@ -67,12 +67,27 @@ functionTest CompressorTest {
     ]
 }
 
+_domainDefinition LimiterDom {
+    framework: _JitFramework
+    rate: -1
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal LimiterInput { domain: LimiterDom type: Real }
+    ]
+    outputs: [
+        signal LimiterOutput { domain: LimiterDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+LimiterInput >> Limiter::Fast() >> LimiterOutput;
+
 functionTest LimiterTest {
-    target: Limiter::Fast
+    target: LimiterDom
     prepare: [
-        [ -2.0, -0.5, 0.5, 2.0 ] >> Input;
+        [ -2.0, -0.5, 0.5, 2.0 ] >> LimiterInput;
     ]
     validate: [
-        [ Output, [ -0.95, -0.5, 0.5, 0.95 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ LimiterOutput, [ -0.95, -0.5, 0.5, 0.95 ] ] >> ExpectNear(epsilon: 0.0001);
     ]
 }
