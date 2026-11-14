@@ -146,6 +146,7 @@ platformModule Concat {
     ]
     outputs: [String]
     processing: "@__stride_jit_string_concat_n"
+    resultSize: "sum"
     inherits: [_Signal]
 }
 
@@ -160,6 +161,7 @@ platformModule Format {
     ]
     outputs: [String]
     processing: "@__stride_jit_string_format"
+    resultSize: "format"
     inherits: [_Signal]
 }
 
@@ -168,6 +170,7 @@ platformModule Repeat {
     inputs: [String, Int]
     outputs: [String]
     processing: "%%outtokens:0%% = @__stride_jit_string_repeat %%intokens:0%%, %%intokens:1%%"
+    resultSize: "repeat"
     inherits: [_Signal]
 }
 

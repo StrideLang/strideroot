@@ -172,6 +172,13 @@ type _PlatformModuleType {
 			default: off
 			required: off
 			meta: "on when the result depends only on the inputs and the program's definition (no state, no side effects), so the compiler may call it while compiling, for example to fill constants"
+		},
+		typeProperty ResultSize {
+			name: "resultSize"
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "For a module whose String result has new characters: how big the result can get, so the caller reserves scratch space for it when compiling. 'sum' (the String inputs' sizes added up), 'format' (the template plus each value's widest text) or 'repeat' (the String input's size times the count). The function then takes the scratch and its size just before the result pointer."
 		}
 	]
 	inherits: [_PlatformCodeType]
