@@ -1,0 +1,60 @@
+# Math from avr-libc. avr-libc's double is 32 bits, so sin, floor, ... take
+# and return Float32, which is this framework's Real.
+
+platformModule __Abs {
+    inputs: [Real]
+    outputs: [Real]
+    linkTo: ["m"]
+    processing: "@fabs"
+    inherits: [_Signal]
+}
+
+platformModule __Floor {
+    inputs: [Real]
+    outputs: [Real]
+    linkTo: ["m"]
+    processing: "@floor"
+    inherits: [_Signal]
+}
+
+# e raised to the input
+platformModule __Exp {
+    inputs: [Real]
+    outputs: [Real]
+    linkTo: ["m"]
+    processing: "@exp"
+    inherits: [_Signal]
+}
+
+# First input raised to the second input
+platformModule __Pow {
+    inputs: [Real, Real]
+    outputs: [Real]
+    linkTo: ["m"]
+    processing: "@pow"
+    inherits: [_Signal]
+}
+
+platformModule __Sin {
+    inputs: [Real]
+    outputs: [Real]
+    linkTo: ["m"]
+    processing: "@sin"
+    inherits: [_Signal]
+}
+
+platformModule __Cos {
+    inputs: [Real]
+    outputs: [Real]
+    linkTo: ["m"]
+    processing: "@cos"
+    inherits: [_Signal]
+}
+
+platformModule __Tan {
+    inputs: [Real]
+    outputs: [Real]
+    linkTo: ["m"]
+    processing: "@tan"
+    inherits: [_Signal]
+}

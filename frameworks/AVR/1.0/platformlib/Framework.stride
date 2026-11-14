@@ -1,0 +1,22 @@
+#
+# AVR framework: Stride programs compiled by Stride's own LLVM backend for
+# 8-bit AVR microcontrollers (Arduino Uno and compatible boards), without
+# the Arduino build system.
+#
+# platformModules are LLVM IR or calls into the small C runtime in
+# ../runtime, which provides main(), the Timer0 tick and the serial port.
+#
+
+_frameworkDescription _AvrFramework {
+    frameworkName: "AVR"
+    defaultDataType: Real
+    codegen: "llvm"
+}
+
+alias PlatformDomain {
+    entity: AvrTickDomain
+}
+
+alias PlatformRate {
+    entity: 1000
+}

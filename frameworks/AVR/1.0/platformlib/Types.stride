@@ -1,0 +1,130 @@
+# Data types. The name of an integer type sets its sign: Int8..Int64 are
+# signed and UInt8..UInt64 unsigned. Int, UInt, Real and Size are aliases
+# of the fixed size types an 8-bit AVR handles best.
+#
+# avr-gcc's libgcc and avr-libc have no 64-bit floating point routines, so
+# a program that uses Float64 does not link. Real is Float32.
+
+frameworkDataType Int8 {
+	frameworkName: "int8_t"
+	includes: ["<stdint.h>"]
+	kind: "integer"
+	bits: 8
+}
+
+frameworkDataType Int16 {
+	frameworkName: "int16_t"
+	includes: ["<stdint.h>"]
+	kind: "integer"
+	bits: 16
+}
+
+frameworkDataType Int32 {
+	frameworkName: "int32_t"
+	includes: ["<stdint.h>"]
+	kind: "integer"
+	bits: 32
+}
+
+frameworkDataType Int64 {
+	frameworkName: "int64_t"
+	includes: ["<stdint.h>"]
+	kind: "integer"
+	bits: 64
+}
+
+frameworkDataType UInt8 {
+	frameworkName: "uint8_t"
+	includes: ["<stdint.h>"]
+	kind: "integer"
+	bits: 8
+}
+
+frameworkDataType UInt16 {
+	frameworkName: "uint16_t"
+	includes: ["<stdint.h>"]
+	kind: "integer"
+	bits: 16
+}
+
+frameworkDataType UInt32 {
+	frameworkName: "uint32_t"
+	includes: ["<stdint.h>"]
+	kind: "integer"
+	bits: 32
+}
+
+frameworkDataType UInt64 {
+	frameworkName: "uint64_t"
+	includes: ["<stdint.h>"]
+	kind: "integer"
+	bits: 64
+}
+
+frameworkDataType Float32 {
+	frameworkName: "float"
+	includes: []
+	kind: "float"
+	bits: 32
+}
+
+frameworkDataType Float64 {
+	frameworkName: "double"
+	includes: []
+	kind: "float"
+	bits: 64
+}
+
+frameworkDataType Switch {
+	frameworkName: "bool"
+	includes: ["<stdbool.h>"]
+	kind: "switch"
+}
+
+frameworkDataType String {
+	frameworkName: "StrideStringView"
+	includes: []
+	kind: "string"
+}
+
+# The sizes this framework prefers
+
+# Signed integer of the size the framework prefers
+alias Int {
+	entity: Int16
+}
+
+# Unsigned integer of the size the framework prefers
+alias UInt {
+	entity: UInt16
+}
+
+# Floating point number of the size the framework prefers
+alias Real {
+	entity: Float32
+}
+
+# Unsigned integer for sizes and counts
+alias Size {
+	entity: UInt16
+}
+
+### ----------------------
+# Type classes are schema types: allowedTypes lists them to accept any of
+# their members. The first member of 'types' is the default data type.
+
+typeClass _NumericTypes {
+	types: [Real, Int, UInt, Size, Float32, Float64, Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64]
+}
+
+typeClass _IntegerTypes {
+	types: [Int, UInt, Size, Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64]
+}
+
+typeClass _FloatTypes {
+	types: [Real, Float32, Float64]
+}
+
+typeClass _DataTypes {
+	types: [Real, Int, UInt, Size, Float32, Float64, Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64, Switch, String]
+}

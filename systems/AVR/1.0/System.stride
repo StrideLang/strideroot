@@ -1,0 +1,17 @@
+
+# 8-bit AVR boards. The board comes from `use AVR version 1.0 on <Board>`
+# and is resolved from platforms/AVR/boards.
+platform _AvrPlatform {
+	framework: "AVR"
+	frameworkVersion: "1.0"
+	hardware: "AVR"
+	hardwareVersion: "1.0"
+	required: on #TODO validation of "required" is not yet implemented
+    rootNamespace: ""
+}
+
+system AVR {
+    platforms: [_AvrPlatform]
+    connections: []
+    meta: "8-bit AVR boards (Arduino Uno and compatible)"
+}

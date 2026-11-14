@@ -1,0 +1,39 @@
+# Digital pins, by Arduino pin number (D13 is 13, A0 is 14).
+#
+# These call the C runtime, which maps a pin number to its port and bit with
+# the table it is built with for the board. A later version emits the
+# register access as LLVM IR instead, so a constant pin becomes a single
+# sbi/cbi instruction; programs written against these modules don't change.
+
+# Pin mode: 0 input, 1 output, 2 input with pull-up.
+platformModule __AvrPinMode {
+    inputs: [Int, Int]
+    outputs: []
+    processing: "@__stride_avr_pin_mode"
+    inherits: [_Signal]
+}
+
+# Drives an output pin high (on) or low (off).
+platformModule __AvrPinWrite {
+    inputs: [Int, Switch]
+    outputs: []
+    processing: "@__stride_avr_pin_write"
+    inherits: [_Signal]
+}
+
+# Reads a pin: on when it is high.
+platformModule __AvrPinRead {
+    inputs: [Int]
+    outputs: [Switch]
+    processing: "@__stride_avr_pin_read"
+    inherits: [_Signal]
+}
+
+# Milliseconds since the program started, from the Timer0 tick. Wraps after
+# about 49 days.
+platformModule __AvrMillis {
+    inputs: []
+    outputs: [UInt32]
+    processing: "@__stride_avr_millis"
+    inherits: [_Signal]
+}

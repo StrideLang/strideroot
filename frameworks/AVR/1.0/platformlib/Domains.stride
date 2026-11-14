@@ -1,0 +1,33 @@
+resource _RootContext {
+	dependsOn: []
+	exclusive: none
+	meta: 'The microcontroller: one core, no threads'
+}
+
+domainResource _DomainFunction {
+	exclusive: on # Takes over _RootContext resource
+	meta: 'Function the runtime calls from main()'
+}
+
+# Runs once, before the first tick.
+_domainDefinition RootDomain {
+	framework: _AvrFramework
+	requiresResources: [_RootContext]
+	providesResources: [_DomainFunction]
+	rate: -1 # -1 is 'one-shot/final' domain
+    substitutions: [ ]
+    domainIncludes: []
+	domainFunctionCode: ''
+}
+
+# The main loop. The runtime calls AvrTickDomain_process() once per Timer0
+# tick, 1000 times a second.
+_domainDefinition AvrTickDomain {
+	framework: _AvrFramework
+	requiresResources: [_RootContext]
+	providesResources: [_DomainFunction]
+	rate: 1000
+    substitutions: [ ]
+    domainIncludes: []
+	domainFunctionCode: ''
+}
