@@ -1,13 +1,15 @@
 # MathPreludeTest.stride
 # Unit tests for strideroot/library/1.0/MathPrelude.stride
 
+import Testing as Testing
+
 functionTest AbsTest {
     target: Abs
     prepare: [
         [ -5.0, 3.2, 0.0, -100.25, 42.0 ] >> Input;
     ]
     validate: [
-        [ Output, [ 5.0, 3.2, 0.0, 100.25, 42.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 5.0, 3.2, 0.0, 100.25, 42.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -17,7 +19,7 @@ functionTest SignTest {
         [ -10.5, 0.0, 42.0, -0.001, 100.0 ] >> Input;
     ]
     validate: [
-        [ Output, [ -1.0, 0.0, 1.0, -1.0, 1.0 ] ] >> ExpectEqual();
+        [ Output, [ -1.0, 0.0, 1.0, -1.0, 1.0 ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -27,7 +29,7 @@ functionTest MultiplyTest {
         [ [ 2.0, 3.0 ], [ -4.0, 5.0 ], [ 0.0, 10.0 ], [ 2.5, 4.0 ] ] >> Input;
     ]
     validate: [
-        [ Output, [ 6.0, -20.0, 0.0, 10.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 6.0, -20.0, 0.0, 10.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -37,7 +39,7 @@ functionTest DivideTest {
         [ [ 6.0, 2.0 ], [ 10.0, 4.0 ], [ -15.0, 3.0 ], [ 1.0, 2.0 ] ] >> Input;
     ]
     validate: [
-        [ Output, [ 3.0, 2.5, -5.0, 0.5 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 3.0, 2.5, -5.0, 0.5 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -47,7 +49,7 @@ functionTest NegateTest {
         [ 5.0, -10.0, 0.0, 3.14 ] >> Input;
     ]
     validate: [
-        [ Output, [ -5.0, 10.0, 0.0, -3.14 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ -5.0, 10.0, 0.0, -3.14 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -57,7 +59,7 @@ functionTest MaxTest {
         [ [ 1.0, 5.0 ], [ 10.0, -2.0 ], [ 3.0, 3.0 ], [ -8.0, -3.0 ] ] >> Input;
     ]
     validate: [
-        [ Output, [ 5.0, 10.0, 3.0, -3.0 ] ] >> ExpectEqual();
+        [ Output, [ 5.0, 10.0, 3.0, -3.0 ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -67,7 +69,7 @@ functionTest MinTest {
         [ [ 1.0, 5.0 ], [ 10.0, -2.0 ], [ 3.0, 3.0 ], [ -8.0, -3.0 ] ] >> Input;
     ]
     validate: [
-        [ Output, [ 1.0, -2.0, 3.0, -8.0 ] ] >> ExpectEqual();
+        [ Output, [ 1.0, -2.0, 3.0, -8.0 ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -79,7 +81,7 @@ functionTest ClampTest {
         [ 1.0, 1.0, 1.0, 1.0, 1.0 ]  >> MaxVal;
     ]
     validate: [
-        [ Output, [ 0.0, 0.0, 0.4, 1.0, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 0.0, 0.0, 0.4, 1.0, 1.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -89,7 +91,7 @@ functionTest FloorTest {
         [ 1.0, 1.9, 2.0, -0.5, -1.2 ] >> Input;
     ]
     validate: [
-        [ Output, [ 1.0, 1.0, 2.0, -1.0, -2.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 1.0, 1.0, 2.0, -1.0, -2.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -101,7 +103,7 @@ functionTest WrapTest {
         [ 1.0, 1.0, 1.0, 1.0,  1.0,  1.0   ] >> MaxVal;
     ]
     validate: [
-        [ Output, [ 0.0, 0.5, 0.0, 0.25, 0.5, 0.75 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 0.0, 0.5, 0.0, 0.25, 0.5, 0.75 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -113,7 +115,7 @@ functionTest LerpTest {
         [ 0.0,  0.25, 0.5,  1.0  ] >> Factor;
     ]
     validate: [
-        [ Output, [ 10.0, 12.5, 15.0, 20.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 10.0, 12.5, 15.0, 20.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -127,6 +129,6 @@ functionTest MapTest {
         [ 200.0, 200.0, 200.0  ] >> OutMax;
     ]
     validate: [
-        [ Output, [ 100.0, 150.0, 200.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 100.0, 150.0, 200.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }

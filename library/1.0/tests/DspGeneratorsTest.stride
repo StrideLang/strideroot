@@ -8,6 +8,7 @@
 # documentation.
 
 import Dsp::Generators as Generators
+import Testing as Testing
 
 _domainDefinition OscillatorDom {
     framework: _JitFramework
@@ -32,6 +33,6 @@ functionTest OscillatorOneCycleTest {
         [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ] >> OscillatorTick;
     ]
     validate: [
-        [ OscillatorOut, [ 0.0, 0.707107, 1.0, 0.707107, 0.0, -0.707107, -1.0, -0.707107, 0.0, 0.707107 ] ] >> ExpectNear(epsilon: 0.001);
+        [ OscillatorOut, [ 0.0, 0.707107, 1.0, 0.707107, 0.0, -0.707107, -1.0, -0.707107, 0.0, 0.707107 ] ] >> Testing::ExpectNear(epsilon: 0.001);
     ]
 }

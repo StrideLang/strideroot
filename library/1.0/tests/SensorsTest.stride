@@ -4,6 +4,7 @@
 # rate of the output, so they run in a domain at 100 Hz.
 
 import Sensors::Conditioning as Conditioning
+import Testing as Testing
 
 _domainDefinition DebounceDom {
     framework: _JitFramework
@@ -26,7 +27,7 @@ functionTest DebounceTest {
         [ off, on, on, off, on, on, on, on, off, off, off, off, off ] >> DebounceIn;
     ]
     validate: [
-        [ DebounceOut, [ off, off, off, off, off, off, on, on, on, on, off, off, off ] ] >> ExpectEqual();
+        [ DebounceOut, [ off, off, off, off, off, off, on, on, on, on, off, off, off ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -53,7 +54,7 @@ functionTest DeadbandTest {
         [ 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 ] >> DeadbandThreshold;
     ]
     validate: [
-        [ DeadbandOutput, [ 0.0, 0.0, 0.5, -0.5, 1.0, -1.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ DeadbandOutput, [ 0.0, 0.0, 0.5, -0.5, 1.0, -1.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -78,7 +79,7 @@ functionTest LinearCalibrationTest {
         [ 0.0, 511.5, 1023.0 ] >> LinearCalibrationInput;
     ]
     validate: [
-        [ LinearCalibrationOutput, [ 0.0, 1.65, 3.3 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ LinearCalibrationOutput, [ 0.0, 1.65, 3.3 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -103,6 +104,6 @@ functionTest ComplementaryFilterTest {
         [ 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000 ] >> FusionIn;
     ]
     validate: [
-        [ FusionOut, [ 0.006863, 0.013591, 0.020187, 0.026654, 0.032994, 0.039210, 0.045304, 0.051278, 0.057136, 0.062878 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ FusionOut, [ 0.006863, 0.013591, 0.020187, 0.026654, 0.032994, 0.039210, 0.045304, 0.051278, 0.057136, 0.062878 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }

@@ -2,6 +2,7 @@
 # Unit tests for strideroot/library/1.0/Test (package Test::Assertions)
 
 import Test::Assertions as Assertions
+import Testing as Testing
 
 # Inside the bounds the guard passes the signal through unchanged.
 # (A violation raises a runtime error, which is handled by the runtime and
@@ -31,6 +32,6 @@ functionTest AssertInRangePassthroughTest {
         [ 1.0, 1.0, 1.0, 1.0, 1.0 ] >> AssertInRangePassthroughMaxBound;
     ]
     validate: [
-        [ AssertInRangePassthroughOutput, [ 0.5, -0.5, 0.0, 1.0, -1.0 ] ] >> ExpectEqual();
+        [ AssertInRangePassthroughOutput, [ 0.5, -0.5, 0.0, 1.0, -1.0 ] ] >> Testing::ExpectEqual();
     ]
 }

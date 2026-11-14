@@ -5,6 +5,7 @@
 
 import Estimation::Kalman as Kalman
 import Estimation::PeakDetector as PeakDetector
+import Testing as Testing
 
 _domainDefinition KalmanDom {
     framework: _JitFramework
@@ -27,7 +28,7 @@ functionTest KalmanTest {
         [ 1.000000, 1.000000, 1.000000, 1.000000, 1.200000, 0.800000, 1.000000, 1.000000 ] >> KalmanIn;
     ]
     validate: [
-        [ KalmanOut, [ 0.909910, 0.955177, 0.972029, 0.981049, 1.046077, 0.976147, 0.982767, 0.987490 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ KalmanOut, [ 0.909910, 0.955177, 0.972029, 0.981049, 1.046077, 0.976147, 0.982767, 0.987490 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -52,6 +53,6 @@ functionTest PeakDetectorTest {
         [ 0.000000, 1.000000, 0.200000, 0.300000, 0.900000, 0.400000, 0.000000, 0.200000 ] >> PeakDetectorInput;
     ]
     validate: [
-        [ PeakDetectorOutput, [ off, off, on, off, off, on, off, off ] ] >> ExpectEqual();
+        [ PeakDetectorOutput, [ off, off, on, off, off, on, off, off ] ] >> Testing::ExpectEqual();
     ]
 }

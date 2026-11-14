@@ -2,6 +2,7 @@
 # Unit tests for strideroot/library/1.0/Dsp/Routing.stride
 
 import Dsp::Routing as Routing
+import Testing as Testing
 
 _domainDefinition LevelDom {
     framework: _JitFramework
@@ -29,7 +30,7 @@ functionTest LevelTest {
     ]
     validate: [
         # input * gain + offset
-        [ LevelOutput, [ 2.5, -0.5, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ LevelOutput, [ 2.5, -0.5, 1.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -55,7 +56,7 @@ functionTest LevelDefaultsTest {
     ]
     validate: [
         # gain 1.0 and offset 0.0 by default
-        [ LevelDefaultsOutput, [ 1.0, -3.0, 0.25 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ LevelDefaultsOutput, [ 1.0, -3.0, 0.25 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -83,7 +84,7 @@ functionTest PanTest {
     ]
     validate: [
         # [left, right]: full left, centre, full right
-        [ PanOutput, [ [ 1.0, 0.0 ], [ 0.5, 0.5 ], [ 0.0, 1.0 ] ] ] >> ExpectNear(epsilon: 0.0001);
+        [ PanOutput, [ [ 1.0, 0.0 ], [ 0.5, 0.5 ], [ 0.0, 1.0 ] ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -112,6 +113,6 @@ functionTest CrossfadeTest {
         [ 0.0, 0.5, 1.0 ] >> CrossfadeMix;
     ]
     validate: [
-        [ CrossfadeOutput, [ 1.0, 2.0, 3.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ CrossfadeOutput, [ 1.0, 2.0, 3.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }

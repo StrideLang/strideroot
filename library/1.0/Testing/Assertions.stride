@@ -1,4 +1,8 @@
-# Assertions.stride
+#
+# Stride Standard Library - Testing Package: Unit Test Assertions
+#
+
+package Testing
 
 module ExpectEqual {
 	ports: [

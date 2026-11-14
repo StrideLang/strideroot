@@ -1,6 +1,8 @@
 # CounterTest.stride
 # Unit tests for strideroot/library/1.0/Counter.stride
 
+import Testing as Testing
+
 functionTest CounterBasicTest {
     target: Counter
     prepare: [
@@ -9,7 +11,7 @@ functionTest CounterBasicTest {
         [ 1, 1, 1, 1, 1 ]   >> Increment;
     ]
     validate: [
-        [ Output, [ 1, 2, 3, 0, 1 ] ] >> ExpectEqual();
+        [ Output, [ 1, 2, 3, 0, 1 ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -21,6 +23,6 @@ functionTest CounterStepTest {
         [ 2,  2,  2,  2  ]   >> Increment;
     ]
     validate: [
-        [ Output, [ 2, 4, 6, 8 ] ] >> ExpectEqual();
+        [ Output, [ 2, 4, 6, 8 ] ] >> Testing::ExpectEqual();
     ]
 }

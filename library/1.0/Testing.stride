@@ -1,0 +1,7 @@
+#
+# Stride Standard Library - Testing Package Barrel File
+#
+
+package Testing
+
+import Testing::Assertions as Assertions

@@ -1,13 +1,15 @@
 # SinQualityTest.stride
 # Precision differential verification test for Sine approximations
 
+import Testing as Testing
+
 functionTest SinPoly5AccuracyTest {
     target: Sin@Poly5
     prepare: [
         [ -3.14159, -1.57079, -0.78539, 0.0, 0.78539, 1.57079, 3.14159 ] >> InputPort;
     ]
     validate: [
-        [ OutputPort, [ 0.0, -1.0, -0.707106, 0.0, 0.707106, 1.0, 0.0 ] ] >> ExpectNear(epsilon: 0.0002);
+        [ OutputPort, [ 0.0, -1.0, -0.707106, 0.0, 0.707106, 1.0, 0.0 ] ] >> Testing::ExpectNear(epsilon: 0.0002);
     ]
 }
 
@@ -17,7 +19,7 @@ functionTest SinDirectAccuracyTest {
         [ -3.14159, -1.57079, 0.0, 1.57079, 3.14159 ] >> InputPort;
     ]
     validate: [
-        [ OutputPort, [ 0.0, -1.0, 0.0, 1.0, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ OutputPort, [ 0.0, -1.0, 0.0, 1.0, 0.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -27,8 +29,8 @@ functionTest SinApproximationDifferential {
         [ -3.14159, -2.35619, -1.57079, -0.78539, 0.0, 0.78539, 1.57079, 2.35619, 3.14159 ] >> InputPort;
     ]
     validate: [
-        [ OutputPort, [ 0.0, -0.707106, -1.0, -0.707106, 0.0, 0.707106, 1.0, 0.707106, 0.0 ] ] >> ExpectMaxError(maxError: 0.0002);
-        [ OutputPort, [ 0.0, -0.707106, -1.0, -0.707106, 0.0, 0.707106, 1.0, 0.707106, 0.0 ] ] >> ExpectSnr(minSnr: 80.0);
+        [ OutputPort, [ 0.0, -0.707106, -1.0, -0.707106, 0.0, 0.707106, 1.0, 0.707106, 0.0 ] ] >> Testing::ExpectMaxError(maxError: 0.0002);
+        [ OutputPort, [ 0.0, -0.707106, -1.0, -0.707106, 0.0, 0.707106, 1.0, 0.707106, 0.0 ] ] >> Testing::ExpectSnr(minSnr: 80.0);
     ]
 }
 
@@ -39,6 +41,6 @@ functionTest SinHostDefaultTest {
         [ -3.14159, -1.57079, 0.0, 1.57079, 3.14159 ] >> InputPort;
     ]
     validate: [
-        [ OutputPort, [ 0.0, -1.0, 0.0, 1.0, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ OutputPort, [ 0.0, -1.0, 0.0, 1.0, 0.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }

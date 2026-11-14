@@ -2,6 +2,7 @@
 # Unit tests for strideroot/library/1.0/Dsp/Units.stride
 
 import Dsp::Units as Units
+import Testing as Testing
 
 _domainDefinition MidiToFreqDom {
     framework: _JitFramework
@@ -25,7 +26,7 @@ functionTest MidiToFreqTest {
     ]
     validate: [
         # A4, middle C, A5, A3
-        [ MidiToFreqFrequency, [ 440.0, 261.6256, 880.0, 220.0 ] ] >> ExpectNear(epsilon: 0.001);
+        [ MidiToFreqFrequency, [ 440.0, 261.6256, 880.0, 220.0 ] ] >> Testing::ExpectNear(epsilon: 0.001);
     ]
 }
 
@@ -50,6 +51,6 @@ functionTest DbToLinearTest {
         [ 0.0, -6.0206, 20.0, -20.0 ] >> DbToLinearDb;
     ]
     validate: [
-        [ DbToLinearLinear, [ 1.0, 0.5, 10.0, 0.1 ] ] >> ExpectNear(epsilon: 0.001);
+        [ DbToLinearLinear, [ 1.0, 0.5, 10.0, 0.1 ] ] >> Testing::ExpectNear(epsilon: 0.001);
     ]
 }

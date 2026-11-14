@@ -1,6 +1,8 @@
 # LogicTest.stride
 # Unit tests for strideroot/library/1.0/Logic.stride
 
+import Testing as Testing
+
 functionTest SelectTest {
     target: Select
     prepare: [
@@ -10,7 +12,7 @@ functionTest SelectTest {
         [ 0.0, 0.0, 0.0, 0.0 ] >> WhenOff;
     ]
     validate: [
-        [ Output, [ 9.0, 0.0, 9.0, 0.0 ] ] >> ExpectEqual();
+        [ Output, [ 9.0, 0.0, 9.0, 0.0 ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -20,7 +22,7 @@ functionTest AndTest {
         [ [ on, on ], [ on, off ], [ off, on ], [ off, off ] ] >> Input;
     ]
     validate: [
-        [ Output, [ on, off, off, off ] ] >> ExpectEqual();
+        [ Output, [ on, off, off, off ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -30,7 +32,7 @@ functionTest OrTest {
         [ [ on, on ], [ on, off ], [ off, on ], [ off, off ] ] >> Input;
     ]
     validate: [
-        [ Output, [ on, on, on, off ] ] >> ExpectEqual();
+        [ Output, [ on, on, on, off ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -40,7 +42,7 @@ functionTest NotTest {
         [ on, off, on, off ] >> Input;
     ]
     validate: [
-        [ Output, [ off, on, off, on ] ] >> ExpectEqual();
+        [ Output, [ off, on, off, on ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -50,7 +52,7 @@ functionTest XorTest {
         [ [ on, on ], [ on, off ], [ off, on ], [ off, off ] ] >> Input;
     ]
     validate: [
-        [ Output, [ off, on, on, off ] ] >> ExpectEqual();
+        [ Output, [ off, on, on, off ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -60,7 +62,7 @@ functionTest NandTest {
         [ [ on, on ], [ on, off ], [ off, on ], [ off, off ] ] >> Input;
     ]
     validate: [
-        [ Output, [ off, on, on, on ] ] >> ExpectEqual();
+        [ Output, [ off, on, on, on ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -70,6 +72,6 @@ functionTest NorTest {
         [ [ on, on ], [ on, off ], [ off, on ], [ off, off ] ] >> Input;
     ]
     validate: [
-        [ Output, [ off, off, off, on ] ] >> ExpectEqual();
+        [ Output, [ off, off, off, on ] ] >> Testing::ExpectEqual();
     ]
 }

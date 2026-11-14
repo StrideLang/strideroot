@@ -1,13 +1,15 @@
 # ControlPreludeTest.stride
 # Unit tests for strideroot/library/1.0/ControlPrelude.stride
 
+import Testing as Testing
+
 functionTest RisingEdgeTest {
     target: RisingEdge
     prepare: [
         [ off, on, on, off, on ] >> Input;
     ]
     validate: [
-        [ Output, [ off, on, off, off, on ] ] >> ExpectEqual();
+        [ Output, [ off, on, off, off, on ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -17,7 +19,7 @@ functionTest FallingEdgeTest {
         [ off, on, on, off, on, off ] >> Input;
     ]
     validate: [
-        [ Output, [ off, off, off, on, off, on ] ] >> ExpectEqual();
+        [ Output, [ off, off, off, on, off, on ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -28,7 +30,7 @@ functionTest LatchTest {
         [ on,   off,  off,  on,   off  ] >> Trigger;
     ]
     validate: [
-        [ Output, [ 10.0, 10.0, 10.0, 40.0, 40.0 ] ] >> ExpectEqual();
+        [ Output, [ 10.0, 10.0, 10.0, 40.0, 40.0 ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -55,7 +57,7 @@ functionTest SmoothTest {
         [ 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000 ] >> SmoothIn;
     ]
     validate: [
-        [ SmoothOut, [ 0.095163, 0.181269, 0.259182, 0.329680, 0.393469, 0.451188 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ SmoothOut, [ 0.095163, 0.181269, 0.259182, 0.329680, 0.393469, 0.451188 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -80,6 +82,6 @@ functionTest SmoothTimeIsIndependentOfRateTest {
         [ 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000 ] >> SmoothRateIn;
     ]
     validate: [
-        [ SmoothRateOut, [ 0.048771, 0.095163, 0.139292, 0.181269, 0.221199, 0.259182, 0.295312, 0.329680, 0.362372, 0.393469, 0.423050, 0.451188 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ SmoothRateOut, [ 0.048771, 0.095163, 0.139292, 0.181269, 0.221199, 0.259182, 0.295312, 0.329680, 0.362372, 0.393469, 0.423050, 0.451188 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }

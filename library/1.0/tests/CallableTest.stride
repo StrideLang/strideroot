@@ -3,6 +3,8 @@
 # Verifies compilation, data movement, state handling, and trigger semantics
 # using both traditional/canonical syntax and new compact callable syntax.
 
+import Testing as Testing
+
 # ------------------------------------------------------------------------------
 # 1. Modules - Old / Canonical Syntax
 # ------------------------------------------------------------------------------
@@ -30,7 +32,7 @@ functionTest ClassicScaleModuleTest {
         [ 2.0, 3.0, 0.5, -1.0 ] >> Factor;
     ]
     validate: [
-        [ Output, [ 2.0, 6.0, 1.5, -4.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 2.0, 6.0, 1.5, -4.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -63,7 +65,7 @@ functionTest ClassicAccumulatorModuleTest {
         [ off,  off,  on,  off  ] >> Reset;
     ]
     validate: [
-        [ Output, [ 10.0, 30.0, 5.0, 20.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 10.0, 30.0, 5.0, 20.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -85,7 +87,7 @@ functionTest CompactScaleModuleTest {
         [ 3.0, 0.5, 2.0, -1.0 ] >> Factor;
     ]
     validate: [
-        [ Output, [ 6.0, 2.0, 12.0, -8.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 6.0, 2.0, 12.0, -8.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -109,7 +111,7 @@ functionTest CompactAccumulatorModuleTest {
         [ off,  off,  on,  off  ] >> Reset;
     ]
     validate: [
-        [ Output, [ 10.0, 30.0, 5.0, 20.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 10.0, 30.0, 5.0, 20.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -140,7 +142,7 @@ functionTest ClassicReactionDirectTest {
         [ 1.0, 2.0,  3.0  ] >> Offset;
     ]
     validate: [
-        [ Output, [ 6.0, 17.0, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 6.0, 17.0, 1.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -163,7 +165,7 @@ functionTest CompactReactionDirectTest {
         [ 2.0,  5.0,  -10.0 ] >> Offset;
     ]
     validate: [
-        [ Output, [ 12.0, 25.0, 20.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 12.0, 25.0, 20.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -196,8 +198,8 @@ functionTest ReactionConditionalExecutionTest {
         [ off, on,   off,  on   ] >> TriggerCompact;
     ]
     validate: [
-        [ OutClassic, [ 6.0, 6.0, 21.0, 21.0 ] ] >> ExpectNear(epsilon: 0.0001);
-        [ OutCompact, [ 0.0, 20.0, 20.0, 40.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ OutClassic, [ 6.0, 6.0, 21.0, 21.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
+        [ OutCompact, [ 0.0, 20.0, 20.0, 40.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -230,7 +232,7 @@ functionTest ClassicSumLoopTest {
         [ [ 1.0, 2.0, 3.0, 4.0 ], [ 10.0, 20.0, 30.0, 40.0 ] ] >> Input;
     ]
     validate: [
-        [ Output, [ 10.0, 100.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 10.0, 100.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -257,7 +259,7 @@ functionTest CompactSumLoopTest {
         [ [ 5.0, 15.0, 25.0 ], [ 100.0, 200.0, 300.0 ] ] >> Input;
     ]
     validate: [
-        [ Output, [ 45.0, 600.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 45.0, 600.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -285,7 +287,7 @@ functionTest CompactScaleSumLoopTest {
         [ 2.0, 0.5 ] >> Factor;
     ]
     validate: [
-        [ Output, [ 12.0, 7.5 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 12.0, 7.5 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -312,6 +314,6 @@ functionTest PipelineIntegrationTest {
         [ 1.0, 2.0, 5.0, 10.0 ] >> PipeIn;
     ]
     validate: [
-        [ PipeOut, [ 6.0, 12.0, 30.0, 60.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ PipeOut, [ 6.0, 12.0, 30.0, 60.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }

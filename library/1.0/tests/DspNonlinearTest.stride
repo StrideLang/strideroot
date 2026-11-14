@@ -2,6 +2,7 @@
 # Unit tests for strideroot/library/1.0/Dsp/Nonlinear (package Dsp::Nonlinear::Saturate)
 
 import Dsp::Nonlinear::Saturate as Saturate
+import Testing as Testing
 
 # f(x) = 1.5 * (c - c^3 / 3) with c = clamp(x, -1, 1)
 _domainDefinition SoftClipDom {
@@ -25,7 +26,7 @@ functionTest SoftClipTest {
         [ -2.0, -0.5, 0.0, 0.5, 2.0 ] >> SoftClipInput;
     ]
     validate: [
-        [ SoftClipOutput, [ -1.0, -0.6875, 0.0, 0.6875, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ SoftClipOutput, [ -1.0, -0.6875, 0.0, 0.6875, 1.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -51,7 +52,7 @@ functionTest TanhTest {
         [ -5.0, -2.0, 0.0, 0.5, 3.0 ] >> TanhInput;
     ]
     validate: [
-        [ TanhOutput, [ -1.0, -0.984127, 0.0, 0.465812, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ TanhOutput, [ -1.0, -0.984127, 0.0, 0.465812, 1.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -76,7 +77,7 @@ functionTest TanhIsBoundedTest {
         [ -100.0, -10.0, 10.0, 100.0 ] >> TanhIsBoundedInput;
     ]
     validate: [
-        [ TanhIsBoundedOutput, [ 1.0, 1.0, 1.0, 1.0 ] ] >> ExpectLe();
-        [ TanhIsBoundedOutput, [ -1.0, -1.0, -1.0, -1.0 ] ] >> ExpectGe();
+        [ TanhIsBoundedOutput, [ 1.0, 1.0, 1.0, 1.0 ] ] >> Testing::ExpectLe();
+        [ TanhIsBoundedOutput, [ -1.0, -1.0, -1.0, -1.0 ] ] >> Testing::ExpectGe();
     ]
 }

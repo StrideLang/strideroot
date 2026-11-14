@@ -1,13 +1,15 @@
 # BasicOperationsTest.stride
 # Unit tests for strideroot/library/1.0/BasicOperations.stride
 
+import Testing as Testing
+
 functionTest SumTest {
     target: Sum
     prepare: [
         [ [ 1.0, 2.0, 3.0, 4.0 ] ] >> Sum_Input;
     ]
     validate: [
-        [ Sum_Output, [ 10.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Sum_Output, [ 10.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -17,7 +19,7 @@ functionTest AverageTest {
         [ [ 2.0, 4.0, 6.0, 8.0 ] ] >> Input;
     ]
     validate: [
-        [ Output, [ 5.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 5.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -29,6 +31,6 @@ functionTest ClipTest {
         [ 1.0,  1.0, 1.0, 1.0 ] >> MaxVal;
     ]
     validate: [
-        [ Output, [ 0.0, 0.2, 0.8, 1.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ Output, [ 0.0, 0.2, 0.8, 1.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }

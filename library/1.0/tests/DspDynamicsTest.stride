@@ -6,6 +6,7 @@
 import Dsp::Dynamics::EnvelopeFollower as EnvelopeFollower
 import Dsp::Dynamics::Compressor as Compressor
 import Dsp::Dynamics::Limiter as Limiter
+import Testing as Testing
 
 _domainDefinition FollowerDom {
     framework: _JitFramework
@@ -28,7 +29,7 @@ functionTest FollowerTest {
         [ 0.000000, 1.000000, 1.000000, 1.000000, 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> FollowerIn;
     ]
     validate: [
-        [ FollowerOut, [ 0.000000, 0.181269, 0.329680, 0.451188, 0.550671, 0.523814, 0.498268, 0.473967, 0.450851, 0.428863 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ FollowerOut, [ 0.000000, 0.181269, 0.329680, 0.451188, 0.550671, 0.523814, 0.498268, 0.473967, 0.450851, 0.428863 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -38,7 +39,7 @@ functionTest FollowerRectifiesTest {
         [ -1.000000, 1.000000, -1.000000, 1.000000, 0.000000, 0.000000 ] >> FollowerIn;
     ]
     validate: [
-        [ FollowerOut, [ 0.181269, 0.329680, 0.451188, 0.550671, 0.523814, 0.498268 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ FollowerOut, [ 0.181269, 0.329680, 0.451188, 0.550671, 0.523814, 0.498268 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -63,7 +64,7 @@ functionTest CompressorTest {
         [ 0.200000, 0.200000, 0.200000, 0.200000, 0.200000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000 ] >> CompressorIn;
     ]
     validate: [
-        [ CompressorOut, [ 0.200000, 0.200000, 0.200000, 0.200000, 0.200000, 0.781764, 0.670616, 0.640583, 0.630586, 0.627036, 0.625746, 0.625274, 0.625101, 0.625037, 0.625014, 0.625005, 0.625002 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ CompressorOut, [ 0.200000, 0.200000, 0.200000, 0.200000, 0.200000, 0.781764, 0.670616, 0.640583, 0.630586, 0.627036, 0.625746, 0.625274, 0.625101, 0.625037, 0.625014, 0.625005, 0.625002 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -88,6 +89,6 @@ functionTest LimiterTest {
         [ -2.0, -0.5, 0.5, 2.0 ] >> LimiterInput;
     ]
     validate: [
-        [ LimiterOutput, [ -0.95, -0.5, 0.5, 0.95 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ LimiterOutput, [ -0.95, -0.5, 0.5, 0.95 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }

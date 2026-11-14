@@ -3,6 +3,7 @@
 # Windows of N = 8 points: n = 0..7. All windows are symmetric.
 
 import Window::Functions as Window
+import Testing as Testing
 
 _domainDefinition HannDom {
     framework: _JitFramework
@@ -27,7 +28,7 @@ functionTest HannTest {
         [ 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 ] >> HannSize;
     ]
     validate: [
-        [ HannWeight, [ 0.0, 0.188255, 0.611260, 0.950484, 0.950484, 0.611260, 0.188255, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ HannWeight, [ 0.0, 0.188255, 0.611260, 0.950484, 0.950484, 0.611260, 0.188255, 0.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -54,7 +55,7 @@ functionTest HammingTest {
         [ 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 ] >> HammingSize;
     ]
     validate: [
-        [ HammingWeight, [ 0.08, 0.253195, 0.642360, 0.954446, 0.954446, 0.642360, 0.253195, 0.08 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ HammingWeight, [ 0.08, 0.253195, 0.642360, 0.954446, 0.954446, 0.642360, 0.253195, 0.08 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -81,7 +82,7 @@ functionTest BlackmanTest {
         [ 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 ] >> BlackmanSize;
     ]
     validate: [
-        [ BlackmanWeight, [ 0.0, 0.090453, 0.459183, 0.920364, 0.920364, 0.459183, 0.090453, 0.0 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ BlackmanWeight, [ 0.0, 0.090453, 0.459183, 0.920364, 0.920364, 0.459183, 0.090453, 0.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -108,6 +109,6 @@ functionTest FlatTopTest {
         [ 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0 ] >> FlatTopSize;
     ]
     validate: [
-        [ FlatTopWeight, [ -0.000421, -0.036841, 0.010704, 0.780874, 0.780874, 0.010704, -0.036841, -0.000421 ] ] >> ExpectNear(epsilon: 0.0001);
+        [ FlatTopWeight, [ -0.000421, -0.036841, 0.010704, 0.780874, 0.780874, 0.010704, -0.036841, -0.000421 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }

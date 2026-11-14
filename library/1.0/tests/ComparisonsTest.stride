@@ -1,13 +1,15 @@
 # ComparisonsTest.stride
 # Unit tests for strideroot/library/1.0/Comparisons.stride
 
+import Testing as Testing
+
 functionTest GreaterTest {
     target: Greater
     prepare: [
         [ [ 5.0, 3.0 ], [ 2.0, 4.0 ], [ 1.0, 1.0 ] ] >> Input;
     ]
     validate: [
-        [ Output, [ on, off, off ] ] >> ExpectEqual();
+        [ Output, [ on, off, off ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -17,7 +19,7 @@ functionTest GreaterOrEqualTest {
         [ [ 5.0, 3.0 ], [ 2.0, 4.0 ], [ 1.0, 1.0 ] ] >> Input;
     ]
     validate: [
-        [ Output, [ on, off, on ] ] >> ExpectEqual();
+        [ Output, [ on, off, on ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -27,7 +29,7 @@ functionTest LessTest {
         [ [ 5.0, 3.0 ], [ 2.0, 4.0 ], [ 1.0, 1.0 ] ] >> Input;
     ]
     validate: [
-        [ Output, [ off, on, off ] ] >> ExpectEqual();
+        [ Output, [ off, on, off ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -37,7 +39,7 @@ functionTest LessOrEqualTest {
         [ [ 5.0, 3.0 ], [ 2.0, 4.0 ], [ 1.0, 1.0 ] ] >> Input;
     ]
     validate: [
-        [ Output, [ off, on, on ] ] >> ExpectEqual();
+        [ Output, [ off, on, on ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -47,7 +49,7 @@ functionTest EqualTest {
         [ [ 5.0, 5.0 ], [ 2.0, 4.0 ], [ 0.0, 0.0 ] ] >> Input;
     ]
     validate: [
-        [ Output, [ on, off, on ] ] >> ExpectEqual();
+        [ Output, [ on, off, on ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -57,7 +59,7 @@ functionTest NotEqualTest {
         [ [ 5.0, 5.0 ], [ 2.0, 4.0 ], [ 0.0, 0.0 ] ] >> Input;
     ]
     validate: [
-        [ Output, [ off, on, off ] ] >> ExpectEqual();
+        [ Output, [ off, on, off ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -67,7 +69,7 @@ functionTest AllOnTest {
         [ [ on, on, off ], [ off, on, on ], [ on, on, on ] ] >> AllOn_Input;
     ]
     validate: [
-        [ AllOn_Output, [ off, off, on ] ] >> ExpectEqual();
+        [ AllOn_Output, [ off, off, on ] ] >> Testing::ExpectEqual();
     ]
 }
 
@@ -77,6 +79,6 @@ functionTest AllOffTest {
         [ [ off, off, on ], [ on, on, off ], [ off, off, off ] ] >> AllOff_Input;
     ]
     validate: [
-        [ AllOff_Output, [ off, off, on ] ] >> ExpectEqual();
+        [ AllOff_Output, [ off, off, on ] ] >> Testing::ExpectEqual();
     ]
 }
