@@ -190,20 +190,13 @@ type _String {
 		}
 		typeProperty MaxSize {
 			name: "maxSize"
-			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] }
-			default: none
-			required: off
-			meta: "Maximum size of the string"
-		}
-		typeProperty PreAllocate {
-			name: "preallocate"
 			allowedTypes: _IntLiteral
-			default: 0
+			default: 128
 			required: off
-			meta: "Preallocate to size"
+			meta: "Maximum size of the string in bytes. The string's storage is this size, fixed at compile time; longer values are cut off."
 		}
 	]
-	meta: "Strings with variable length. Not rated, so reactive."
+	meta: "Strings of variable length up to maxSize bytes, stored in place. Not rated, so reactive."
 
 	inherits: [_Streamable, _DomainMember, _Resetable]
 }
