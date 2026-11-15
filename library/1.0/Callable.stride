@@ -98,6 +98,12 @@ type _Port {
 
 type _Callable {
 	typeName: "callable"
+	properties: []
+	meta: "Entities that can be used as functions within streams"
+}
+
+type _PortedCallable {
+	typeName: "_portedCallable"
 	properties: [
 		typeProperty Ports {
 			name: "ports"
@@ -106,5 +112,6 @@ type _Callable {
 			required: off
 		}
 	]
-	meta: "Objects can be used as functions within streams"
+	inherits: [_Callable]
+	meta: "Callable entities that declare ports"
 }

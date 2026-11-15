@@ -173,6 +173,13 @@ type _PlatformModuleType {
 			required: off
 			meta: "on when the result depends only on the inputs and the program's definition (no state, no side effects), so the compiler may call it while compiling, for example to fill constants"
 		},
+		typeProperty Status {
+			name: "status"
+			allowedTypes: _SwitchLiteral
+			default: off
+			required: off
+			meta: "on when the function reports a status code (stride_status.h): returned, or written through a trailing status pointer when its return value is the result. The compiler ORs it into the domain's status word; Stride code never sees the return value."
+		},
 		typeProperty ResultSize {
 			name: "resultSize"
 			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] }

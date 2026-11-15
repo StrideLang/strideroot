@@ -109,6 +109,7 @@ platformModule Parse@String_Int {
     inputs: [String, Int]
     outputs: [Int]
     processing: "%%outtokens:0%% = @__stride_jit_string_parse_int %%intokens:0%%, %%intokens:1%%"
+    status: on
     inherits: [_Signal]
 }
 
@@ -117,6 +118,7 @@ platformModule Parse@String_Real {
     inputs: [String, Real]
     outputs: [Real]
     processing: "%%outtokens:0%% = @__stride_jit_string_parse_real %%intokens:0%%, %%intokens:1%%"
+    status: on
     inherits: [_Signal]
 }
 
@@ -147,6 +149,7 @@ platformModule Concat {
     outputs: [String]
     processing: "@__stride_jit_string_concat_n"
     resultSize: "sum"
+    status: on
     inherits: [_Signal]
 }
 
@@ -162,6 +165,7 @@ platformModule Format {
     outputs: [String]
     processing: "@__stride_jit_string_format"
     resultSize: "format"
+    status: on
     inherits: [_Signal]
 }
 
@@ -171,6 +175,7 @@ platformModule Repeat {
     outputs: [String]
     processing: "%%outtokens:0%% = @__stride_jit_string_repeat %%intokens:0%%, %%intokens:1%%"
     resultSize: "repeat"
+    status: on
     inherits: [_Signal]
 }
 

@@ -28,9 +28,18 @@ type _DomainDefinition {
 		},
 		typeProperty DomainRate {
 			name: "rate"
-			allowedTypes: constrainedEntity { allowed: [_RealLiteral, _IntLiteral, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_RealLiteral, _IntLiteral, _MemberAccess, _Constant, _NoneLiteral] }
 			required: on
+			default: none
+			public: on
 			meta: "The domain's rate. A value of none indicates an asynchronous or immediate domain."
+		},
+		typeProperty Trigger {
+			name: "trigger"
+			allowedTypes: constrainedEntity { allowed: [_Switch, _Trigger, _MemberAccess, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "Switch, trigger, or buffer readiness (e.g. Buf.ready) that ticks a reactive subdomain."
 		},
 		typeProperty QualityPolicyProperty {
 			name: "qualityPolicy"
@@ -183,9 +192,23 @@ type _DomainDefinition {
 			default: []
 			required: off
 			meta: "State machines executed continuously within this domain."
+		},
+		typeProperty PreSubdomains {
+			name: "preSubdomains"
+			allowedTypes: constrainedList { allowed: [_DomainDefinition, _StringLiteral] }
+			default: []
+			required: off
+			meta: "Parent-ticked subdomains executed in order before this domain's streams."
+		},
+		typeProperty PostSubdomains {
+			name: "postSubdomains"
+			allowedTypes: constrainedList { allowed: [_DomainDefinition, _StringLiteral] }
+			default: []
+			required: off
+			meta: "Parent-ticked subdomains executed in order after this domain's streams and stateMachines."
 		}
 	]
-	inherits: [_Base]
+	inherits: [_Base, _Callable]
 }
 
 module Exit {

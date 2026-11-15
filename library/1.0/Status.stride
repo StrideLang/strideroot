@@ -1,0 +1,46 @@
+#
+# Stride Status Package
+#
+# The codes a domain's status word can hold. A runtime operation that cannot
+# do what it was asked sets one of these in <Domain>.status, where it stays
+# until the program clears the word (0 >> RootDomain.status), and leaves it as
+# the last write's code on the variable it wrote (<Name>.status). Each code is
+# one bit, so the word holds several at once:
+#
+#   RootDomain.status >> BitAnd(Status::Truncated) >> Greater(0) >> Lost;
+#
+# The codes match stride_status.h in the runtime. A code names a kind of
+# failure, not where it happened.
+#
+
+package Status
+
+constant Ok {
+	value: 0
+	meta: "Done as asked"
+}
+
+constant Truncated {
+	value: 1
+	meta: "The result did not fit where it had to go and part of it was dropped: a string past its maxSize, a value past a buffer"
+}
+
+constant Invalid {
+	value: 2
+	meta: "The input cannot be used: text with no number in it, a bad template"
+}
+
+constant OutOfRange {
+	value: 4
+	meta: "A value or index lies outside what is allowed: a number too big for Int, a pin the board does not have"
+}
+
+constant Unavailable {
+	value: 8
+	meta: "The resource cannot be used right now: a full transmit buffer, a peripheral that is not ready"
+}
+
+constant Platform {
+	value: 128
+	meta: "A failure of the platform runtime's own"
+}

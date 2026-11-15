@@ -25,7 +25,7 @@ type _Module {
 			required: off
 		}
 	]
-	inherits: [_Base, _CodeGenerator, _Callable]
+	inherits: [_Base, _CodeGenerator, _PortedCallable]
 	meta: "Modules encapsulate streams"
 }
 
@@ -39,7 +39,7 @@ type _Reaction {
 			required: off
 		}
 	]
-	inherits: [_Base, _DomainMember, _CodeGenerator, _Callable]
+	inherits: [_Base, _DomainMember, _CodeGenerator, _PortedCallable]
 }
 
 type _Loop {
@@ -71,5 +71,5 @@ type _Loop {
 			required: off
 		}
 	]
-	inherits: [_Base, _DomainMember, _CodeGenerator, _Callable]
+	inherits: [_Base, _DomainMember, _CodeGenerator, _PortedCallable]
 }
