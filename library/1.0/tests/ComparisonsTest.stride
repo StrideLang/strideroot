@@ -13,10 +13,30 @@ functionTest GreaterTest {
     ]
 }
 
+functionTest GreaterIntTest {
+    target: Greater
+    prepare: [
+        [ [ 5, 3 ], [ 2, 4 ], [ 1, 1 ] ] >> Input;
+    ]
+    validate: [
+        [ Output, [ on, off, off ] ] >> Testing::ExpectEqual();
+    ]
+}
+
 functionTest GreaterOrEqualTest {
     target: GreaterOrEqual
     prepare: [
         [ [ 5.0, 3.0 ], [ 2.0, 4.0 ], [ 1.0, 1.0 ] ] >> Input;
+    ]
+    validate: [
+        [ Output, [ on, off, on ] ] >> Testing::ExpectEqual();
+    ]
+}
+
+functionTest GreaterOrEqualIntTest {
+    target: GreaterOrEqual
+    prepare: [
+        [ [ 5, 3 ], [ 2, 4 ], [ 1, 1 ] ] >> Input;
     ]
     validate: [
         [ Output, [ on, off, on ] ] >> Testing::ExpectEqual();
@@ -33,10 +53,30 @@ functionTest LessTest {
     ]
 }
 
+functionTest LessIntTest {
+    target: Less
+    prepare: [
+        [ [ 5, 3 ], [ 2, 4 ], [ 1, 1 ] ] >> Input;
+    ]
+    validate: [
+        [ Output, [ off, on, off ] ] >> Testing::ExpectEqual();
+    ]
+}
+
 functionTest LessOrEqualTest {
     target: LessOrEqual
     prepare: [
         [ [ 5.0, 3.0 ], [ 2.0, 4.0 ], [ 1.0, 1.0 ] ] >> Input;
+    ]
+    validate: [
+        [ Output, [ off, on, on ] ] >> Testing::ExpectEqual();
+    ]
+}
+
+functionTest LessOrEqualIntTest {
+    target: LessOrEqual
+    prepare: [
+        [ [ 5, 3 ], [ 2, 4 ], [ 1, 1 ] ] >> Input;
     ]
     validate: [
         [ Output, [ off, on, on ] ] >> Testing::ExpectEqual();
@@ -53,10 +93,30 @@ functionTest EqualTest {
     ]
 }
 
+functionTest EqualIntTest {
+    target: Equal
+    prepare: [
+        [ [ 5, 5 ], [ 2, 4 ], [ 0, 0 ] ] >> Input;
+    ]
+    validate: [
+        [ Output, [ on, off, on ] ] >> Testing::ExpectEqual();
+    ]
+}
+
 functionTest NotEqualTest {
     target: NotEqual
     prepare: [
         [ [ 5.0, 5.0 ], [ 2.0, 4.0 ], [ 0.0, 0.0 ] ] >> Input;
+    ]
+    validate: [
+        [ Output, [ off, on, off ] ] >> Testing::ExpectEqual();
+    ]
+}
+
+functionTest NotEqualIntTest {
+    target: NotEqual
+    prepare: [
+        [ [ 5, 5 ], [ 2, 4 ], [ 0, 0 ] ] >> Input;
     ]
     validate: [
         [ Output, [ off, on, off ] ] >> Testing::ExpectEqual();

@@ -9,28 +9,33 @@ import Control::SlewRateLimiter as SlewRateLimiter
 import Control::Foc as Foc
 import Testing as Testing
 
-_domainDefinition PidDom {
+_domainDefinition PidDomain {
     framework: _JitFramework
     rate: 100
     substitutions: []
     domainIncludes: []
     inputs: [
-        signal PidIn { domain: PidDom type: Real }
+        signal PidIn { domain: PidDomain type: Real }
     ]
     outputs: [
-        signal PidOut { domain: PidDom type: Real }
+        signal PidOut { domain: PidDomain type: Real }
     ]
     domainFunctionCode: ''
 }
 PidIn >> Pid::Pid(kp: 2.0 ki: 50.0 kd: 0.01) >> PidOut;
 
 functionTest PidTest {
-    target: PidDom
+    target: PidDomain
     prepare: [
-        [ 0.100000, 0.100000, 0.100000, 0.100000, 0.000000, -0.100000, -0.100000, 0.000000 ] >> PidIn;
+        [ 0.100000, 0.100000, 0.100000, 0.100000, 0.000000, -0.100000, -0.100000, 0.000000 ]
+            >> PidIn;
     ]
     validate: [
-        [ PidOut, [ 0.350000, 0.300000, 0.350000, 0.400000, 0.100000, -0.150000, -0.100000, 0.200000 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
+        [
+            PidOut,
+            [ 0.350000, 0.300000, 0.350000, 0.400000, 0.100000, -0.150000, -0.100000, 0.200000
+        ] ]
+            >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -52,10 +57,47 @@ PidSatIn >> Pid::Pid(kp: 0.5 ki: 100.0 min: -1.0 max: 1.0) >> PidSatOut;
 functionTest PidSaturationAndAntiWindupTest {
     target: PidSatDom
     prepare: [
-        [ 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000 ] >> PidSatIn;
+        [
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000
+        ]
+            >> PidSatIn;
     ]
     validate: [
-        [ PidSatOut, [ 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
+        [
+            PidSatOut,
+            [ 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 1.000000
+            ]
+        ]
+            >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -77,10 +119,26 @@ SlewIn >> SlewRateLimiter::SlewRateLimiter(up: 1.0 down: 2.0) >> SlewOut;
 functionTest SlewRateLimiterTest {
     target: SlewDom
     prepare: [
-        [ 1.000000, 1.000000, 1.000000, 1.000000, 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ] >> SlewIn;
+        [
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            0.000000,
+            0.000000,
+            0.000000,
+            0.000000,
+            0.000000,
+            0.000000
+        ]
+            >> SlewIn;
     ]
     validate: [
-        [ SlewOut, [ 0.010000, 0.020000, 0.030000, 0.040000, 0.050000, 0.030000, 0.010000, 0.000000, 0.000000, 0.000000, 0.000000 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
+        [ SlewOut,
+            [ 0.010000, 0.020000, 0.030000, 0.040000, 0.050000, 0.030000, 0.010000, 0.000000, 0.000000, 0.000000, 0.000000
+        ] ]
+            >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -131,7 +189,8 @@ functionTest ClarkeTest {
         [ [ 1.0, -0.5, -0.5 ], [ 0.0, 0.866025, -0.866025 ] ] >> ClarkeIabc;
     ]
     validate: [
-        [ ClarkeIalphabeta, [ [ 1.0, 0.0 ], [ 0.0, 1.0 ] ] ] >> Testing::ExpectNear(epsilon: 0.0001);
+        [ ClarkeIalphabeta, [ [ 1.0, 0.0 ], [ 0.0, 1.0 ] ] ]
+            >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -159,7 +218,8 @@ functionTest ParkTest {
         [ 0.0, 1.570796, 1.570796 ] >> ParkTheta;
     ]
     validate: [
-        [ ParkIdq, [ [ 1.0, 0.0 ], [ 0.0, -1.0 ], [ 1.0, 0.0 ] ] ] >> Testing::ExpectNear(epsilon: 0.0001);
+        [ ParkIdq, [ [ 1.0, 0.0 ], [ 0.0, -1.0 ], [ 1.0, 0.0 ] ] ]
+            >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -187,7 +247,8 @@ functionTest InverseParkTest {
         [ 0.0, 1.570796, 1.570796 ] >> InverseParkTheta;
     ]
     validate: [
-        [ InverseParkValphabeta, [ [ 1.0, 0.0 ], [ 1.0, 0.0 ], [ 0.0, 1.0 ] ] ] >> Testing::ExpectNear(epsilon: 0.0001);
+        [ InverseParkValphabeta, [ [ 1.0, 0.0 ], [ 1.0, 0.0 ], [ 0.0, 1.0 ] ] ]
+            >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
 
@@ -213,6 +274,8 @@ functionTest InverseClarkeTest {
         [ [ 1.0, 0.0 ], [ 0.0, 1.0 ] ] >> InverseClarkeValphabeta;
     ]
     validate: [
-        [ InverseClarkeVabc, [ [ 1.0, -0.5, -0.5 ], [ 0.0, 0.866025, -0.866025 ] ] ] >> Testing::ExpectNear(epsilon: 0.0001);
+        [ InverseClarkeVabc, [ [ 1.0, -0.5, -0.5 ], [ 0.0, 0.866025, -0.866025 ] ] ]
+            >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
+

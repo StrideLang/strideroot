@@ -176,3 +176,4 @@ module InverseClarke {
     ]
     meta: "Inverse Clarke transform: [Valpha, Vbeta] >> InverseClarke() >> [Va, Vb, Vc]."
 }
+

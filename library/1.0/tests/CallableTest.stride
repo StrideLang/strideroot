@@ -6,7 +6,7 @@
 import Testing as Testing
 
 # ------------------------------------------------------------------------------
-# 1. Modules - Old / Canonical Syntax
+# 1. Modules - Canonical Syntax
 # ------------------------------------------------------------------------------
 
 module ClassicScaleModule {
@@ -73,121 +73,121 @@ functionTest ClassicAccumulatorModuleTest {
 # 2. Modules - New Compact Syntax
 # ------------------------------------------------------------------------------
 
-module Input >> CompactScaleModule(factor: signal Factor { default: 2.0 type: Real }) 
-            >> signal Output { default: 0.0 type: Real } {
-    code: [
-        Input * Factor >> Output;
-    ]
-}
+module Input >> CompactScaleModule(factor: signal Factor { default: 2.0 type: Real })
+    >> signal Output { default: 0.0 type: Real } {
+        code: [
+            Input * Factor >> Output;
+        ]
+    }
 
-functionTest CompactScaleModuleTest {
-    target: CompactScaleModule
-    prepare: [
-        [ 2.0, 4.0, 6.0, 8.0 ] >> Input;
-        [ 3.0, 0.5, 2.0, -1.0 ] >> Factor;
-    ]
-    validate: [
-        [ Output, [ 6.0, 2.0, 12.0, -8.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
-    ]
-}
+    functionTest CompactScaleModuleTest {
+        target: CompactScaleModule
+        prepare: [
+            [ 2.0, 4.0, 6.0, 8.0 ] >> Input;
+            [ 3.0, 0.5, 2.0, -1.0 ] >> Factor;
+        ]
+        validate: [
+            [ Output, [ 6.0, 2.0, 12.0, -8.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
+        ]
+    }
 
-module Input >> CompactAccumulatorModule(reset: switch Reset { default: off })
-        >> signal Output { default: 0.0 type: Real } {
-    code: [
-        signal Total {
-            default: 0.0
-            type: Real
-            reset: Reset
-        }
-        Total + Input >> Total;
-        Total >> Output;
-    ]
-}
+    module Input >> CompactAccumulatorModule(reset: switch Reset { default: off })
+    >> signal Output { default: 0.0 type: Real } {
+        code: [
+            signal Total {
+                default: 0.0
+                type: Real
+                reset: Reset
+            }
+            Total + Input >> Total;
+            Total >> Output;
+        ]
+    }
 
-functionTest CompactAccumulatorModuleTest {
-    target: CompactAccumulatorModule
-    prepare: [
-        [ 10.0, 20.0, 5.0, 15.0 ] >> Input;
-        [ off,  off,  on,  off  ] >> Reset;
-    ]
-    validate: [
-        [ Output, [ 10.0, 30.0, 5.0, 20.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
-    ]
-}
+    functionTest CompactAccumulatorModuleTest {
+        target: CompactAccumulatorModule
+        prepare: [
+            [ 10.0, 20.0, 5.0, 15.0 ] >> Input;
+            [ off,  off,  on,  off  ] >> Reset;
+        ]
+        validate: [
+            [ Output, [ 10.0, 30.0, 5.0, 20.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
+        ]
+    }
 
-# ------------------------------------------------------------------------------
-# 3. Reactions - Old / Canonical Syntax
-# ------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------
+    # 3. Reactions - Canonical Syntax
+    # ------------------------------------------------------------------------------
 
-reaction ClassicReaction {
-    ports: [
-        propertyInputPort ValuePort { name: "value" entity: Value }
-        propertyInputPort OffsetPort { name: "offset" entity: Offset }
-        mainOutputPort OutPort { entity: Output }
-    ]
-    entities: [
-        signal Value { default: 0.0 type: Real }
-        signal Offset { default: 0.0 type: Real }
-        signal Output { default: 0.0 type: Real }
-    ]
-    streams: [
-        Value + Offset >> Output;
-    ]
-}
+    reaction ClassicReaction {
+        ports: [
+            propertyInputPort ValuePort { name: "value" entity: Value }
+            propertyInputPort OffsetPort { name: "offset" entity: Offset }
+            mainOutputPort OutPort { entity: Output }
+        ]
+        entities: [
+            signal Value { default: 0.0 type: Real }
+            signal Offset { default: 0.0 type: Real }
+            signal Output { default: 0.0 type: Real }
+        ]
+        streams: [
+            Value + Offset >> Output;
+        ]
+    }
 
-functionTest ClassicReactionDirectTest {
-    target: ClassicReaction
-    prepare: [
-        [ 5.0, 15.0, -2.0 ] >> Value;
-        [ 1.0, 2.0,  3.0  ] >> Offset;
-    ]
-    validate: [
-        [ Output, [ 6.0, 17.0, 1.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
-    ]
-}
+    functionTest ClassicReactionDirectTest {
+        target: ClassicReaction
+        prepare: [
+            [ 5.0, 15.0, -2.0 ] >> Value;
+            [ 1.0, 2.0,  3.0  ] >> Offset;
+        ]
+        validate: [
+            [ Output, [ 6.0, 17.0, 1.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
+        ]
+    }
 
-# ------------------------------------------------------------------------------
-# 4. Reactions - New Compact Syntax
-# ------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------
+    # 4. Reactions - New Compact Syntax
+    # ------------------------------------------------------------------------------
 
-reaction CompactReaction(value: signal Value { default: 0.0 type: Real },
-                        offset: signal Offset { default: 0.0 type: Real })
-        >> signal Output { default: 0.0 type: Real } {
-    code: [
-        Value + Offset >> Output;
-    ]
-}
+    reaction CompactReaction(value: signal Value { default: 0.0 type: Real },
+        offset: signal Offset { default: 0.0 type: Real })
+    >> signal Output { default: 0.0 type: Real } {
+        code: [
+            Value + Offset >> Output;
+        ]
+    }
 
-functionTest CompactReactionDirectTest {
-    target: CompactReaction
-    prepare: [
-        [ 10.0, 20.0, 30.0 ] >> Value;
-        [ 2.0,  5.0,  -10.0 ] >> Offset;
-    ]
-    validate: [
-        [ Output, [ 12.0, 25.0, 20.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
-    ]
-}
+    functionTest CompactReactionDirectTest {
+        target: CompactReaction
+        prepare: [
+            [ 10.0, 20.0, 30.0 ] >> Value;
+            [ 2.0,  5.0,  -10.0 ] >> Offset;
+        ]
+        validate: [
+            [ Output, [ 12.0, 25.0, 20.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
+        ]
+    }
 
-# ------------------------------------------------------------------------------
-# 5. Reactions - Stream Integration & Conditional Trigger Execution
-# ------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------
+    # 5. Reactions - Stream Integration & Conditional Trigger Execution
+    # ------------------------------------------------------------------------------
 
-_domainDefinition ReactionPipelineDomain {
-    framework: _JitFramework
-    rate: -1
-    inputs: [
-        signal InVal { domain: ReactionPipelineDomain type: Real }
-        switch TriggerClassic { domain: ReactionPipelineDomain }
-        switch TriggerCompact { domain: ReactionPipelineDomain }
-    ]
-    outputs: [
-        signal OutClassic { domain: ReactionPipelineDomain type: Real default: 0.0 }
-        signal OutCompact { domain: ReactionPipelineDomain type: Real default: 0.0 }
-    ]
-}
+    _domainDefinition ReactionPipelineDomain {
+        framework: _JitFramework
+        rate: -1
+        inputs: [
+            signal InVal { domain: ReactionPipelineDomain type: Real }
+            switch TriggerClassic { domain: ReactionPipelineDomain }
+            switch TriggerCompact { domain: ReactionPipelineDomain }
+        ]
+        outputs: [
+            signal OutClassic { domain: ReactionPipelineDomain type: Real default: 0.0 }
+            signal OutCompact { domain: ReactionPipelineDomain type: Real default: 0.0 }
+        ]
+    }
 
-TriggerClassic >> ClassicReaction(value: InVal offset: 1.0) >> OutClassic;
+    TriggerClassic >> ClassicReaction(value: InVal offset: 1.0) >> OutClassic;
 TriggerCompact >> CompactReaction(value: InVal offset: 10.0) >> OutCompact;
 
 functionTest ReactionConditionalExecutionTest {
@@ -204,7 +204,7 @@ functionTest ReactionConditionalExecutionTest {
 }
 
 # ------------------------------------------------------------------------------
-# 6. Loops - Old / Canonical Syntax
+# 6. Loops - Canonical Syntax
 # ------------------------------------------------------------------------------
 
 loop ClassicSumLoop {
@@ -241,72 +241,72 @@ functionTest ClassicSumLoopTest {
 # ------------------------------------------------------------------------------
 
 loop Input[] >> CompactSumLoop()
-        >> signal Output { default: 0.0 type: Real domain: OutputPort.domain } {
-    terminateWhen: Done
-    code: [
-        signal Index { default: 0 type: Int reset: Reset domain: OutputPort.domain }
-        switch Done { default: off domain: OutputPort.domain }
+    >> signal Output { default: 0.0 type: Real domain: OutputPort.domain } {
+        terminateWhen: Done
+        code: [
+            signal Index { default: 0 type: Int reset: Reset domain: OutputPort.domain }
+            switch Done { default: off domain: OutputPort.domain }
 
-        Input[Index] + Output >> Output;
-        Index + 1 >> Index;
-        [Index, InputPort.size] >> Equal() >> Done;
-    ]
-}
+            Input[Index] + Output >> Output;
+            Index + 1 >> Index;
+            [Index, InputPort.size] >> Equal() >> Done;
+        ]
+    }
 
-functionTest CompactSumLoopTest {
-    target: CompactSumLoop
-    prepare: [
-        [ [ 5.0, 15.0, 25.0 ], [ 100.0, 200.0, 300.0 ] ] >> Input;
-    ]
-    validate: [
-        [ Output, [ 45.0, 600.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
-    ]
-}
+    functionTest CompactSumLoopTest {
+        target: CompactSumLoop
+        prepare: [
+            [ [ 5.0, 15.0, 25.0 ], [ 100.0, 200.0, 300.0 ] ] >> Input;
+        ]
+        validate: [
+            [ Output, [ 45.0, 600.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
+        ]
+    }
 
-# ------------------------------------------------------------------------------
-# 8. Compact Loop with Property Input & Scaled Reduction
-# ------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------
+    # 8. Compact Loop with Property Input & Scaled Reduction
+    # ------------------------------------------------------------------------------
 
-loop Input[] >> CompactScaleSumLoop(factor: signal Factor { default: 1.0 type: Real })
-        >> signal Output { default: 0.0 type: Real domain: OutputPort.domain } {
-    terminateWhen: Done
-    code: [
-        signal Index { default: 0 type: Int reset: Reset domain: OutputPort.domain }
-        switch Done { default: off domain: OutputPort.domain }
+    loop Input[] >> CompactScaleSumLoop(factor: signal Factor { default: 1.0 type: Real })
+    >> signal Output { default: 0.0 type: Real domain: OutputPort.domain } {
+        terminateWhen: Done
+        code: [
+            signal Index { default: 0 type: Int reset: Reset domain: OutputPort.domain }
+            switch Done { default: off domain: OutputPort.domain }
 
-        (Input[Index] * Factor) + Output >> Output;
-        Index + 1 >> Index;
-        [Index, InputPort.size] >> Equal() >> Done;
-    ]
-}
+            (Input[Index] * Factor) + Output >> Output;
+            Index + 1 >> Index;
+            [Index, InputPort.size] >> Equal() >> Done;
+        ]
+    }
 
-functionTest CompactScaleSumLoopTest {
-    target: CompactScaleSumLoop
-    prepare: [
-        [ [ 1.0, 2.0, 3.0 ], [ 4.0, 5.0, 6.0 ] ] >> Input;
-        [ 2.0, 0.5 ] >> Factor;
-    ]
-    validate: [
-        [ Output, [ 12.0, 7.5 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
-    ]
-}
+    functionTest CompactScaleSumLoopTest {
+        target: CompactScaleSumLoop
+        prepare: [
+            [ [ 1.0, 2.0, 3.0 ], [ 4.0, 5.0, 6.0 ] ] >> Input;
+            [ 2.0, 0.5 ] >> Factor;
+        ]
+        validate: [
+            [ Output, [ 12.0, 7.5 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
+        ]
+    }
 
-# ------------------------------------------------------------------------------
-# 9. Pipeline Integration Test (Chaining Compact and Canonical Modules)
-# ------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------
+    # 9. Pipeline Integration Test (Chaining Compact and Canonical Modules)
+    # ------------------------------------------------------------------------------
 
-_domainDefinition PipelineDomain {
-    framework: _JitFramework
-    rate: -1
-    inputs: [
-        signal PipeIn { domain: PipelineDomain type: Real }
-    ]
-    outputs: [
-        signal PipeOut { domain: PipelineDomain type: Real }
-    ]
-}
+    _domainDefinition PipelineDomain {
+        framework: _JitFramework
+        rate: -1
+        inputs: [
+            signal PipeIn { domain: PipelineDomain type: Real }
+        ]
+        outputs: [
+            signal PipeOut { domain: PipelineDomain type: Real }
+        ]
+    }
 
-PipeIn >> CompactScaleModule(factor: 3.0) >> ClassicScaleModule(factor: 2.0) >> PipeOut;
+    PipeIn >> CompactScaleModule(factor: 3.0) >> ClassicScaleModule(factor: 2.0) >> PipeOut;
 
 functionTest PipelineIntegrationTest {
     target: PipelineDomain
@@ -317,3 +317,4 @@ functionTest PipelineIntegrationTest {
         [ PipeOut, [ 6.0, 12.0, 30.0, 60.0 ] ] >> Testing::ExpectNear(epsilon: 0.0001);
     ]
 }
+

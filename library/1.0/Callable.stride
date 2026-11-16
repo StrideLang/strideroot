@@ -40,7 +40,11 @@ type _PortAttributes {
 		},
 		typeProperty Domain {
 			name: "domain"
-			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _DomainDefinition, _NoneLiteral] } # This should be made to accept type handles
+			allowedTypes: constrainedEntity { allowed: [
+					_StringLiteral,
+					_DomainDefinition,
+					_NoneLiteral
+			] } # This should be made to accept type handles
 			default: none
 			writeable: off
 			public: on
@@ -58,7 +62,10 @@ type _PortAttributes {
 		},
 		typeProperty Size {
 			name: "size"
-			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } # This should be made to accept type handles
+			allowedTypes: constrainedEntity { allowed: [
+					_IntLiteral,
+					_NoneLiteral
+			] } # This should be made to accept type handles
 			default: none
 			writeable: off
 			public: on
@@ -86,7 +93,11 @@ type _Port {
 		},
 		typeProperty Type {
 			name: "allowedTypes"
-			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _DataTypes, _NoneLiteral] } # This should be made to accept type handles
+			allowedTypes: constrainedEntity { allowed: [
+					_StringLiteral,
+					_DataTypes,
+					_NoneLiteral
+			] } # This should be made to accept type handles
 			default: none # None means undefined. Should be resolved from context, and if not possible should resolve to _DefaultSignalType
 			required: off
 		},
@@ -94,7 +105,6 @@ type _Port {
 	inherits: [_Base]
 	meta: ""
 }
-
 
 type _Callable {
 	typeName: "callable"
@@ -107,7 +117,12 @@ type _PortedCallable {
 	properties: [
 		typeProperty Ports {
 			name: "ports"
-			allowedTypes: constrainedList { allowed: [_MainOutputPort, _MainInputPort, _PropertyOutputPort, _PropertyInputPort] } 
+			allowedTypes: constrainedList { allowed: [
+					_MainOutputPort,
+					_MainInputPort,
+					_PropertyOutputPort,
+					_PropertyInputPort
+			] }
 			default: []
 			required: off
 		}
@@ -115,3 +130,4 @@ type _PortedCallable {
 	inherits: [_Callable]
 	meta: "Callable entities that declare ports"
 }
+

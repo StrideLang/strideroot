@@ -154,7 +154,7 @@ module Latch {
         [Trigger, Input, Held] >> __Select() >> Held;
         Held >> Output;
     ]
-    meta: "Sample and hold: samples Input when trigger is on and holds the value when off: Input >> Latch(trigger: Gate) >> Output."
+    meta: "Track and hold (level-sensitive sample and hold): tracks Input continuously while trigger is on and holds the last value when trigger goes off: Input >> Latch(trigger: Gate) >> Output."
 }
 
 module Smooth {
