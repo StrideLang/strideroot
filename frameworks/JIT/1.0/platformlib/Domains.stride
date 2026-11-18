@@ -18,3 +18,10 @@ _domainDefinition RootDomain {
     domainIncludes: []
 	domainFunctionCode: ''
 }
+
+platformModule __JitSleep {
+	inputs: [Real]
+	outputs: []
+	processing: "@__stride_jit_sleep"
+	inherits: [_Signal]
+}

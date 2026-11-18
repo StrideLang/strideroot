@@ -64,11 +64,15 @@ extern uint8_t __stride_RootDomain_state[] __attribute__((weak));
 int32_t AvrTickDomain_init(void *state) __attribute__((weak));
 int32_t AvrTickDomain_process(void *state) __attribute__((weak));
 extern uint8_t __stride_AvrTickDomain_state[] __attribute__((weak));
+int32_t AvrLoopDomain_init(void *state) __attribute__((weak));
+int32_t AvrLoopDomain_process(void *state) __attribute__((weak));
+extern uint8_t __stride_AvrLoopDomain_state[] __attribute__((weak));
 
 /* ---- Tick (Timer0) ---------------------------------------------------- */
 
 static volatile uint32_t s_millis;
 static volatile uint8_t s_pendingTicks;
+static volatile uint32_t s_avrTickSleepTicks;
 
 ISR(TIMER0_COMPA_vect) {
   s_millis++;
@@ -92,6 +96,16 @@ uint32_t __stride_avr_millis(void) {
   uint32_t value = s_millis;
   SREG = sreg;
   return value;
+}
+
+void __stride_avr_tick_sleep(uint32_t ticks) {
+  s_avrTickSleepTicks = ticks;
+}
+
+void __stride_avr_sleep_ms(uint32_t ms) {
+  uint32_t start = __stride_avr_millis();
+  while ((uint32_t)(__stride_avr_millis() - start) < ms) {
+  }
 }
 
 /* ---- Digital pins ------------------------------------------------------ */
@@ -258,11 +272,17 @@ int main(void) {
     SREG = sreg;
 
     /* Run one process call per elapsed tick, so time stays right when a
-     * tick takes longer than 1 ms now and then. */
+     * tick takes longer than 1 ms now and then. Skip ticks while sleeping. */
     while (ticks--) {
-      if (AvrTickDomain_process) {
+      if (s_avrTickSleepTicks > 0) {
+        s_avrTickSleepTicks--;
+      } else if (AvrTickDomain_process) {
         AvrTickDomain_process(__stride_AvrTickDomain_state);
       }
+    }
+
+    if (AvrLoopDomain_process) {
+      AvrLoopDomain_process(__stride_AvrLoopDomain_state);
     }
   }
 }

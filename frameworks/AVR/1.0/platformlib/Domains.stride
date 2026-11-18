@@ -20,14 +20,46 @@ _domainDefinition RootDomain {
 	domainFunctionCode: ''
 }
 
-# The main loop. The runtime calls AvrTickDomain_process() once per Timer0
-# tick, 1000 times a second.
+# The 1 kHz tick loop. Child of RootDomain; the runtime calls
+# AvrTickDomain_process() once per Timer0 tick, 1000 times a second,
+# before AvrLoopDomain_process() in each main() loop iteration.
 _domainDefinition AvrTickDomain {
 	framework: _AvrFramework
-	requiresResources: [_RootContext]
+	parentDomain: RootDomain
+	requiresResources: [_RootContext, _AvrProcessor, _AvrFlashMemory, _AvrSram, _AvrTimer0]
 	providesResources: [_DomainFunction]
 	rate: 1000
     substitutions: [ ]
     domainIncludes: []
 	domainFunctionCode: ''
+}
+
+# Continuous main loop. Child of RootDomain; the runtime calls
+# AvrLoopDomain_process() on every iteration of the main() loop after
+# pending AvrTickDomain ticks have been processed.
+_domainDefinition AvrLoopDomain {
+	framework: _AvrFramework
+	parentDomain: RootDomain
+	requiresResources: [_RootContext, _AvrProcessor, _AvrFlashMemory, _AvrSram]
+	providesResources: [_DomainFunction]
+	rate: 0
+    substitutions: [ ]
+    domainIncludes: []
+	domainFunctionCode: ''
+}
+
+# Suspends AvrTickDomain for the given number of Timer0 ticks (1 ms each).
+platformModule __AvrTickSleep {
+	inputs: [UInt32]
+	outputs: []
+	processing: "@__stride_avr_tick_sleep"
+	inherits: [_Signal]
+}
+
+# Blocks for the given number of milliseconds using the Timer0 tick.
+platformModule __AvrSleepMs {
+	inputs: [UInt32]
+	outputs: []
+	processing: "@__stride_avr_sleep_ms"
+	inherits: [_Signal]
 }

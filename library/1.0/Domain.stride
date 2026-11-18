@@ -231,3 +231,28 @@ module Exit {
     ]
 	meta: 'When input is true, the current domain terminates without executing any further.'
 }
+
+module Sleep {
+    ports: [
+        mainInputPort DurationPort {
+            name: "duration"
+            entity: Duration
+            meta: "Duration to sleep in seconds"
+        },
+        propertyInputPort DomainPort {
+            name: "domain"
+            entity: TargetDomain
+            meta: "The domain that sleeps"
+        }
+    ]
+    entities: [
+        signal Duration {
+            default: 0.0
+            type: Real
+            domain: DurationPort.domain
+        }
+    ]
+    streams: [
+    ]
+    meta: 'Suspends the specified domain (and all parent synchronous domains) for the given duration in seconds: 0.5 >> Sleep(domain: MyDomain);'
+}
