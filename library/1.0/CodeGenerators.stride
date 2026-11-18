@@ -3,7 +3,7 @@ type _CodeGenerator {
 	properties: [
 		typeProperty {
 			name: "entities"
-			allowedTypes: constrainedList { allowed: [_Streamable, _Reaction, _Module] }
+			allowedTypes: constrainedList { allowed: [_Streamable, _Constant, _Reaction, _Module] }
 			default: []
 			required: off
 		},

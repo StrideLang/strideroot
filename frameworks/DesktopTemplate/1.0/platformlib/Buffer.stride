@@ -1,20 +1,4 @@
 
-type _TableType {
-        typeName: "_tableType"
-	properties: [
-		typeProperty DataTypePort {
-			name: "dataType"
-			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] }
-			default: none
-			required: off
-		}
-	]
-}
-
-_tableType _FloatTableType {
-        dataType: "float"
-}
-
 type _BufferType {
 	typeName: "_bufferType"
 	properties: [

@@ -148,36 +148,6 @@ type _Buffer {
 }
 
 
-type _Table {
-	typeName: "table"
-	properties: [
-		typeProperty SizePort {
-			name: "size"
-			allowedTypes: _IntLiteral
-			required: on
-		},
-		typeProperty RatePort {
-			name: "rate"
-			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] }
-			default: none
-			required: off
-		},
-		typeProperty TypePort {
-			name: "type"
-			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] }
-			default: none
-			required: off
-		},
-		typeProperty _InternalType {
-			name: "_internalType"
-			allowedTypes: _Any
-			default: _TableType
-			required: off
-		}
-	]
-	inherits: [_DomainMember, _Resetable]
-}
-
 type _String {
 	typeName: "string"
 	properties: [

@@ -220,3 +220,41 @@ module Smooth {
     ]
     meta: "Exponential (one-pole low-pass) smoothing of Input with a time constant in seconds: Input >> Smooth(time: 0.05) >> Output. The time is converted with the rate of the output, so it is independent of the sample rate. Type must be a floating point type."
 }
+
+module RateAdapter {
+    ports: [
+        mainInputPort InputPort {
+            entity: Input
+            meta: "Input signal evaluated at the adapted rate"
+        },
+        mainOutputPort OutputPort {
+            entity: Output
+            meta: "Output signal passed at the downstream rate"
+        },
+        propertyInputPort RatePort {
+            name: "rate"
+            entity: TargetRate
+            meta: "Sample rate propagated upstream to connected producers"
+        }
+    ]
+    entities: [
+        signal Input {
+            rate: TargetRate
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal Output {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        signal TargetRate {
+            type: Real
+            default: 1.0
+            domain: OutputPort.domain
+        }
+    ]
+    streams: [
+        Input >> Output;
+    ]
+    meta: "Adapts stream rate without changing values: Producer >> RateAdapter(rate: R) >> Consumer."
+}

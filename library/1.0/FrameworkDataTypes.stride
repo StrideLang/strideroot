@@ -180,20 +180,7 @@ typeClass _DataTypes {
 	meta: "All data types"
 }
 
-# Buffer and table types (platformlib Buffer.stride in each framework)
-
-type _TableType {
-	typeName: "_tableType"
-	properties: [
-		typeProperty DataTypePort {
-			name: "dataType"
-			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] }
-			default: none
-			required: off
-		}
-	]
-	meta: "Dummy type. Each framework declares its own _TableType, which overlays this one."
-}
+# Buffer types (platformlib Buffer.stride in each framework)
 
 type _BufferType {
 	typeName: "_bufferType"

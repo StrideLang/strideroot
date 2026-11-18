@@ -101,7 +101,14 @@ type _DomainDefinition {
 			allowedTypes: constrainedList { allowed: [_StreamType] }
 			default: []
 			required: off
-			meta: "Streams that prepare one instance of the domain, such as placing a game's starting pieces (Create_Black();). They run in order every time an instance starts or restarts, before any other part of its start: after the domain is loaded (so they can read what onLoad prepared), but before the domain's blocks take their default values and its state machines enter their initial states. Every block has a default, so a value they write to a block of the domain is replaced when the blocks are reset after them: what they do lasts only through what they call outside the domain, such as a host's functions. They run inside the instance, so they can read the domain's blocks and inputs as well as the root scope."
+			meta: "Streams that prepare one instance of the domain, such as placing a game's starting pieces (Create_Black();). They run in order every time an instance starts or restarts, before any other part of its start: after the domain is loaded (so they can read what onLoad prepared), but before the domain's blocks take their default values and its state machines enter their initial states. Every block has a default, so a value they write to a block of the domain is replaced when the blocks are reset after them: what they do lasts only through what they call outside the domain, such as a host's functions. They run inside the instance, so they can read the domain's blocks and inputs as well as the root scope. Calling <Domain>_init again requires calling <Domain>_cleanup first."
+		},
+		typeProperty OnReset {
+			name: "onReset"
+			allowedTypes: constrainedList { allowed: [_StreamType] }
+			default: []
+			required: off
+			meta: "Streams that reset or initialize runtime domain blocks (such as signal arrays or buffers). They run at the end of <Domain>_reset (and at the end of <Domain>_init), after defaults, state machines, and buffer counters have been reset, so values written to domain blocks persist. Safe to call via <Domain>_reset while the domain is initialized."
 		},
 #		typeProperty GlobalsTag {
 #			name: "globalsTag"

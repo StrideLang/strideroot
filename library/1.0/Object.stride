@@ -60,7 +60,7 @@ type _Rated {
 	properties: [
 		typeProperty Rate {
 			name: "rate"
-			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral, _PortProperty, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral, _Constant, _Entity, _PortProperty, _NoneLiteral] }
 			default: none
 			required: off
 		}

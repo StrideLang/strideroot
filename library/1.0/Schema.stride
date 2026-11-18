@@ -15,7 +15,7 @@ type _List {
 type _Entity {
 	typeName: "_entity"
 	properties: []
-	meta: "Matches any block entity declaration (signal, switch, buffer, table, etc., scalar or array)."
+	meta: "Matches any block entity declaration (signal, switch, buffer, constant, etc., scalar or array)."
 }
 
 type _Constraint {

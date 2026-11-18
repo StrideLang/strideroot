@@ -15,6 +15,7 @@ The Stride standard library and runtime ecosystem is structured across four arch
    - Boolean logic: `Select()`, `And()`, `Or()`, `Not()`, `Xor()`, `Nand()`, `Nor()`
    - Stream adapters (`ControlPrelude.stride`, `Counter.stride`): `OnChange()`, `RisingEdge()`, `FallingEdge()`, `Latch()`, `Smooth()`, `Counter()`
    - Collection reductions: `Sum()`, `Average()`
+   - Domain control (`Domain.stride`): `Exit()`, `Sleep(domain: ...)` (suspends the specified domain and all parent synchronous domains for the given duration in seconds)
    - Diagnostics: `DebugPrint()`, `Probe()`, `Error()`
 3. **Layer 3: Standard Library Packages (Explicitly Imported):** Cohesive, domain-specific modules organized under namespaced packages:
    - **`package IO`:** Input/output, serial communications, OSC networking, MIDI events, and packet framing (`IO.stride`, `IO/`).
@@ -52,7 +53,7 @@ The library never takes a sample rate as a property. A module that works with ti
 | Quantity | Unit | Converted with | Modules |
 |---|---|---|---|
 | Frequency | Hz | `2π · f / rate` | `Oscillator`, `Impulse`, `TableOscillator`, `BandLimitedSaw`, `FilterDesign::Coefficients`, `BiQuad` and the filters, `Goertzel::Detector` |
-| Duration, time constant | seconds | `time · rate` (samples), `exp(-1 / (time · rate))` (one-pole coefficient) | `Smooth`, `AD`, `EnvelopeFollower::Follower`, `Compressor::Device`, `FractionalDelay::Line`, `Debounce`, `ComplementaryFilter` |
+| Duration, time constant | seconds | `time · rate` (samples), `exp(-1 / (time · rate))` (one-pole coefficient) | `Smooth`, `AD`, `EnvelopeFollower::Follower`, `Compressor::Device`, `FractionalDelay::Line`, `Debounce`, `ComplementaryFilter`, `Sleep` |
 | Rate of change | units per second | `value / rate` | `SlewRateLimiter` (`up`, `down`), `Pid` (`ki`; `kd` is multiplied by `rate`), `Kalman::Filter` (`q`) |
 
 Consequences:
@@ -399,9 +400,10 @@ import Test::Assertions as Assert
 `Select()`, `And()`, `Or()`, `Not()`, `Xor()`, `Nand()`, `Nor()`.
 
 ### 12.4 Stream Adapters (`ControlPrelude.stride`, `Counter.stride`)
-`OnChange()`, `RisingEdge()`, `FallingEdge()`, `Latch(trigger: ...)`, `Smooth(time: ...)`, `Counter()`.
+`OnChange()`, `RisingEdge()`, `FallingEdge()`, `Latch(trigger: ...)`, `Smooth(time: ...)`, `RateAdapter(rate: ...)`, `Counter()`.
 
 * **`Smooth(time: 0.01)`**: Exponential smoothing (one-pole low-pass). `time` is the time constant in **seconds** (it was the per-sample `coefficient`; the coefficient is now $e^{-1 / (time \cdot rate)}$).
+* **`RateAdapter(rate: 1.0)`**: Zero-copy passthrough module whose input port adopts `rate:` (propagated upstream to `OutputPort.rate` of connected producers) while its output port follows the downstream rate. Useful inside output-sized `loop`s (`RateAdapter(rate: OutputPort.size)`) and at explicit stream rate boundaries.
 
 ### 12.5 Collections (`BasicOperations.stride`)
 `Sum()`, `Average()`, `Clip(minimum: ... maximum: ...)` (a shortcut for `Clamp`).

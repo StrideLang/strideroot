@@ -36,3 +36,28 @@ functionTest OscillatorOneCycleTest {
         [ OscillatorOut, [ 0.0, 0.707107, 1.0, 0.707107, 0.0, -0.707107, -1.0, -0.707107, 0.0, 0.707107 ] ] >> Testing::ExpectNear(epsilon: 0.001);
     ]
 }
+
+_domainDefinition TableOscDom {
+    framework: _JitFramework
+    rate: 8
+    substitutions: []
+    domainIncludes: []
+    inputs: [
+        signal TableOscTick { domain: TableOscDom type: Real }
+    ]
+    outputs: [
+        signal TableOscOut { domain: TableOscDom type: Real }
+    ]
+    domainFunctionCode: ''
+}
+Generators::TableOscillator(frequency: 1.0) >> TableOscOut;
+
+functionTest TableOscillatorOneCycleTest {
+    target: TableOscDom
+    prepare: [
+        [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ] >> TableOscTick;
+    ]
+    validate: [
+        [ TableOscOut, [ 0.0, 0.707107, 1.0, 0.707107, 0.0, -0.707107, -1.0, -0.707107 ] ] >> Testing::ExpectNear(epsilon: 0.005);
+    ]
+}

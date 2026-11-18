@@ -174,7 +174,7 @@ module Accumulator {
     entities: [
         signal Input { default: 0.0 }
         signal Output { default: 0.0 }
-        signal Total { default: 0.0 reset: Reset persistent: on }
+        signal Total { default: 0.0 reset: Reset }
         switch Reset { default: off }
     ]
     streams: [

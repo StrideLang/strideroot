@@ -41,9 +41,8 @@ module Line {
         constant MaxBufferSize {
             value: 4096
         },
-        table DelayTable {
-            size: MaxBufferSize
-            rate: MaxBufferSize
+        signal DelayTable[MaxBufferSize] {
+            type: OutputPort.type
             domain: OutputPort.domain
         },
         signal WriteIndex {

@@ -4,6 +4,26 @@
 
 package Dsp::Generators
 
+loop FillSineTable {
+    ports: [
+        mainOutputPort OutputPort {
+            entity: Output
+        }
+    ]
+    entities: [
+        signal Output[OutputPort.size] {
+            type: OutputPort.type
+            domain: OutputPort.domain
+        },
+        iterator Out {
+            entity: Output
+        }
+    ]
+    streams: [
+        Oscillator(frequency: 1.0) >> RateAdapter(rate: OutputPort.size) >> Out;
+    ]
+}
+
 module TableOscillator {
     ports: [
         mainOutputPort OutputPort {
@@ -42,10 +62,19 @@ module TableOscillator {
         constant TableSize {
             value: 1024
         },
-        table SineTable {
-            size: TableSize
-            rate: TableSize
+        signal SineTable[TableSize] {
+            type: OutputPort.type
             domain: OutputPort.domain
+        },
+        switch TableNeedsInit {
+            default: on
+            domain: OutputPort.domain
+        },
+        reaction InitTable {
+            streams: [
+                FillSineTable() >> SineTable;
+                off >> TableNeedsInit;
+            ]
         },
         signal Phase {
             type: OutputPort.type
@@ -68,7 +97,7 @@ module TableOscillator {
         }
     ]
     streams: [
-        Oscillator(frequency: 1.0) >> SineTable;
+        TableNeedsInit >> InitTable();
         Frequency * TableSize / OutputPort.rate >> PhaseInc;
         SineTable[Phase] * Amplitude >> Output;
         Phase + PhaseInc >> Phase;
