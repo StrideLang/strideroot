@@ -24,8 +24,8 @@
  *   uint8_t __stride_<Domain>_state[];   the domain's state, sized by stridec
  *                                         with the AVR data layout
  *
- * They are declared weak here, so a program without a RootDomain or
- * AvrTickDomain stream still links.
+ * They are declared weak here, so a program without a RootDomain,
+ * AvrTickDomain, or AvrLoopDomain stream still links.
  */
 
 #include <avr/interrupt.h>
@@ -261,6 +261,9 @@ int main(void) {
   }
   if (AvrTickDomain_init) {
     AvrTickDomain_init(__stride_AvrTickDomain_state);
+  }
+  if (AvrLoopDomain_init) {
+    AvrLoopDomain_init(__stride_AvrLoopDomain_state);
   }
 
   for (;;) {

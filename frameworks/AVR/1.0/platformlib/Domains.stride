@@ -4,6 +4,48 @@ resource _RootContext {
 	meta: 'The microcontroller: one core, no threads'
 }
 
+resource _AvrProcessor {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'Single-core 8-bit AVR CPU shared cooperatively by domains in main()'
+}
+
+resource _AvrFlashMemory {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'Shared program flash memory for code and constants'
+}
+
+resource _AvrSram {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'Shared SRAM for domain state, globals, stack, and ring buffers'
+}
+
+resource _AvrEeprom {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'Shared non-volatile EEPROM'
+}
+
+resource _AvrTimer0 {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'Shared Timer0 peripheral and 1 kHz tick/millis ISR'
+}
+
+resource _AvrUsart0 {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'Shared USART0 serial peripheral and TX/RX ring buffers'
+}
+
+resource _AvrGpio {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'Shared GPIO ports and pins'
+}
+
 domainResource _DomainFunction {
 	exclusive: on # Takes over _RootContext resource
 	meta: 'Function the runtime calls from main()'
@@ -12,7 +54,7 @@ domainResource _DomainFunction {
 # Runs once, before the first tick.
 _domainDefinition RootDomain {
 	framework: _AvrFramework
-	requiresResources: [_RootContext]
+	requiresResources: [_RootContext, _AvrProcessor, _AvrFlashMemory, _AvrSram]
 	providesResources: [_DomainFunction]
 	rate: -1 # -1 is 'one-shot/final' domain
     substitutions: [ ]

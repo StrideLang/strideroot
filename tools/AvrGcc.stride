@@ -1,0 +1,20 @@
+toolTemplate AvrGccTemplate {
+    displayName: "AVR GCC Toolchain"
+    output: AvrGcc
+    meta: "avr-gcc, avr-objcopy, avr-size for 8-bit AVR microcontrollers"
+    platforms: ['macOS', 'Windows', 'Linux']
+}
+
+toolSearch AvrGccSearch {
+    toolTemplate: AvrGccTemplate
+    rootPathRegex: ""
+    nameRegex: "avr-gcc"
+    platforms: ['macOS', 'Linux']
+}
+
+toolSearch AvrGccSearch_Win {
+    toolTemplate: AvrGccTemplate
+    rootPathRegex: "~/AppData/Local/Arduino15/packages/arduino/tools/avr-gcc"
+    nameRegex: "avr-gcc.exe"
+    platforms: ['Windows']
+}

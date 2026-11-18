@@ -1,0 +1,20 @@
+toolTemplate AvrdudeTemplate {
+    displayName: "AVRDUDE Uploader"
+    output: Avrdude
+    meta: "avrdude programmer for uploading firmware to AVR boards"
+    platforms: ['macOS', 'Windows', 'Linux']
+}
+
+toolSearch AvrdudeSearch {
+    toolTemplate: AvrdudeTemplate
+    rootPathRegex: ""
+    nameRegex: "avrdude"
+    platforms: ['macOS', 'Linux']
+}
+
+toolSearch AvrdudeSearch_Win {
+    toolTemplate: AvrdudeTemplate
+    rootPathRegex: "~/AppData/Local/Arduino15/packages/arduino/tools/avrdude"
+    nameRegex: "avrdude.exe"
+    platforms: ['Windows']
+}
