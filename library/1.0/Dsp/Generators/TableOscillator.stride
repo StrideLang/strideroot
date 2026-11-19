@@ -32,17 +32,17 @@ module TableOscillator {
         propertyInputPort FrequencyPort {
             name: "frequency"
             entity: Frequency
-            meta: "The frequency of the oscillator."
+            meta: "Oscillator frequency in Hz (default 440.0)."
         },
         propertyInputPort AmplitudeProperty {
             name: "amplitude"
             entity: Amplitude
-            meta: "The amplitude of the oscillator."
+            meta: "Peak amplitude multiplier (default 1.0)."
         },
         propertyInputPort StartPhaseProperty {
             name: "phase"
             entity: StartPhase
-            meta: "The starting phase of the oscillator."
+            meta: "Initial phase (default 0.0)."
         },
         propertyInputPort ResetPort {
             name: "reset"
@@ -103,5 +103,5 @@ module TableOscillator {
         Phase + PhaseInc >> Phase;
         [Phase, TableSize] >> Greater() >> PhaseOverflow >> WrapPhase();
     ]
-    meta: "Table read oscillator."
+    meta: "1024-sample wavetable sine oscillator with bipolar output [-1.0, 1.0] scaled by amplitude."
 }

@@ -121,7 +121,7 @@ module ExpectLt {
 	]
 	streams: [
 	]
-	meta: "Less-than-or-equal assertion module (Actual < Expected). Declared for schema validation; handled with special treatment in the testing framework."
+	meta: "Less-than assertion module (Actual < Expected). Declared for schema validation; handled with special treatment in the testing framework."
 }
 
 module ExpectLe {

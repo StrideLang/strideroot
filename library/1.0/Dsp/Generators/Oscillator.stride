@@ -12,17 +12,17 @@ module Oscillator {
         propertyInputPort FrequencyPort {
             name: "frequency"
             entity: Frequency
-            meta: "The frequency of the oscillator."
+            meta: "Sine frequency in Hz (default 440.0)."
         },
         propertyInputPort AmplitudeProperty {
             name: "amplitude"
             entity: Amplitude
-            meta: "The amplitude of the oscillator."
+            meta: "Peak amplitude multiplier (default 1.0)."
         },
         propertyInputPort StartPhaseProperty {
             name: "phase"
             entity: StartPhase
-            meta: "The starting phase of the oscillator."
+            meta: "Initial phase in radians (default 0.0)."
         },
         propertyInputPort ResetPort {
             name: "reset"
@@ -74,7 +74,7 @@ module Oscillator {
     constraints: [
         [OutputPort.rate, 0] >> LessOrEqual() >> Error(message: "The rate of the signal block connected to the main output port of the Oscillator module cannot be less than or equal to zero.");
     ]
-    meta: "Bipolar output [-1.0, 1.0] scaled by amplitude."
+    meta: "Sine wave oscillator with bipolar output [-1.0, 1.0] scaled by amplitude, converted against the rate of the output."
 }
 
 module Impulse {
@@ -85,12 +85,12 @@ module Impulse {
         propertyInputPort FrequencyPort {
             name: "frequency"
             entity: Frequency
-            meta: "The frequency of the oscillator."
+            meta: "Impulse frequency in Hz (default 440.0)."
         },
         propertyInputPort AmplitudePort {
             name: "amplitude"
             entity: Amplitude
-            meta: "The amplitude of the oscillator."
+            meta: "Impulse amplitude (currently unused; outputs 1.0 or 0.0)."
         }
     ]
     entities: [
@@ -128,5 +128,5 @@ module Impulse {
         [Phase, 1.0] >> GreaterOrEqual() >> Select(whenOn: 1 whenOff: 0) >> Output;
         [Phase, 1.0] >> GreaterOrEqual() >> PhaseOverflow >> WrapPhase();
     ]
-    meta: "Impulse train generator."
+    meta: "Impulse train generator outputting 1.0 for one tick at each period and 0.0 otherwise, converted against the rate of the output."
 }

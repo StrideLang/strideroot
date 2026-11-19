@@ -34,7 +34,7 @@ module Clarke {
         Iabc[0] >> Ialphabeta[0];
         (Iabc[0] + (2.0 * Iabc[1])) * 0.5773502691896257 >> Ialphabeta[1];
     ]
-    meta: "Clarke transform: 3-phase currents [Ia, Ib, Ic] >> Clarke() >> [Ialpha, Ibeta]."
+    meta: "Amplitude-invariant Clarke transform (assumes balanced Ia + Ib + Ic = 0, so Ic is unused): [Ia, Ib, Ic] >> Clarke() >> [Ialpha, Ibeta]."
 }
 
 # Park Transform: Converts 2-phase stationary frame [Ialpha, Ibeta] into rotating frame [Id, Iq]

@@ -10,7 +10,7 @@ module Counter {
         propertyInputPort StartValuePort {
             name: "startValue"
             entity: StartValue
-            meta: "The starting value of the counter, which is also the first output value."
+            meta: "Value loaded into the counter on rollover or reset (default 0)."
         },
         propertyInputPort StopValuePort {
             name: "stopValue"

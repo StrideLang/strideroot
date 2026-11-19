@@ -3,10 +3,12 @@ module DebugPrint {
 		mainInputPort ValueProperty {
 			name: "value"
 			entity: Value
+			meta: "Value to print to debug output"
 		}
 		propertyInputPort TriggerPort {
 			name: "trigger"
 			entity: Trigger
+			meta: "Switch or trigger controlling when to print (default on)"
 		}
 	]
     entities: [
@@ -21,21 +23,24 @@ module DebugPrint {
     streams: [
 		Trigger >> Print();
     ]
-    meta: ""
+    meta: "Prints a value to the debug output when trigger is on."
 }
 
 module Error {
 	ports: [
 		mainInputPort TriggerPort {
 			entity: Trigger
+			meta: "Switch or trigger that raises the error when on"
 		}
 		propertyInputPort MessagePort {
 			name: "message"
 			entity: Message
+			meta: "Error message string"
 		}
 	]
 	streams: [
 	]
+	meta: "Raises a compile-time or runtime error with message when triggered."
 }
 
 module Probe {

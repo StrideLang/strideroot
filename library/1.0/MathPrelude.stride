@@ -684,7 +684,7 @@ module Lerp {
 	streams: [
 		Input + ((Target - Input) * Factor) >> Output;
 	]
-	meta: "Linearly interpolates from Input to Target based on factor: Input >> Lerp(target: Target factor: 0.5) >> Output."
+	meta: "Linearly interpolates from Input to Target based on factor (unclamped): Input >> Lerp(target: Target factor: 0.5) >> Output."
 }
 
 module Map {
@@ -763,5 +763,5 @@ module Map {
 		(Input - InMin) / (InMax - InMin) >> Norm;
 		OutMin + (Norm * (OutMax - OutMin)) >> Output;
 	]
-	meta: "Linearly maps Input from [inMin, inMax] to [outMin, outMax]: Input >> Map(inMin: 0.0 inMax: 1.0 outMin: 100.0 outMax: 1000.0) >> Output."
+	meta: "Linearly maps Input from [inMin, inMax] to [outMin, outMax] (unclamped): Input >> Map(inMin: 0.0 inMax: 1.0 outMin: 100.0 outMax: 1000.0) >> Output."
 }

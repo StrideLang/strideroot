@@ -19,12 +19,12 @@ module AD {
         propertyInputPort AttackTimePort {
             name: "attack"
             entity: AttackTime
-            meta: "Attack time in seconds"
+            meta: "Attack ramp time from 0.0 to 1.0 in seconds (default 0.2)"
         },
         propertyInputPort DecayTimePort {
             name: "decay"
             entity: DecayTime
-            meta: "Decay time in seconds"
+            meta: "Decay ramp time from 1.0 to 0.0 in seconds (default 3.0)"
         }
     ]
     entities: [
@@ -56,5 +56,5 @@ module AD {
         [Output, 1.0] >> GreaterOrEqual() >> reaction { 1 >> Stage; };
         [Output, 0.0] >> Less() >> reaction { -1 >> Stage; };
     ]
-    meta: "Attack-Decay envelope generator."
+    meta: "Linear Attack-Decay envelope generator outputting [0.0, 1.0], triggered by input and converted against the rate of the output."
 }

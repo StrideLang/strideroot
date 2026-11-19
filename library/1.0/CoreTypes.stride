@@ -25,6 +25,7 @@ type _Switch {
 		}
 	]
 	inherits: [_Streamable, _Rated, _DomainMember, _Resetable]
+	meta: "Boolean state entity (on or off, default off)."
 }
 
 type _Trigger {
@@ -32,6 +33,7 @@ type _Trigger {
 	properties: [
 	]
 	inherits: [_Streamable, _DomainMember]
+	meta: "Single-tick event signal that fires streams or reactions without carrying a numeric value. Automatically resets to off after each tick, unlike a switch."
 }
 
 type _Signal {
@@ -51,6 +53,7 @@ type _Signal {
 		}
 	]
 	inherits: [_Streamable, _Rated, _Typed, _DomainMember, _Resetable]
+	meta: "Numeric streamable entity holding a value of the declared type."
 }
 
 type _Buffer {
@@ -66,18 +69,21 @@ type _Buffer {
 			name: "capacity"
 			allowedTypes: _IntegerTypes
 			required: on
+			meta: "Maximum number of samples the buffer can hold"
 		},
 		typeProperty FrameSizePort {
 			name: "frameSize"
 			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] }
 			default: none
 			required: off
+			meta: "Number of samples per frame when using framed output (none for unframed)"
 		},
 		typeProperty HopPort {
 			name: "hop"
 			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] }
 			default: none
 			required: off
+			meta: "Number of new samples between consecutive frames (defaults to frameSize when none)"
 		},
 		typeProperty ModePort {
 			name: "mode"
@@ -145,6 +151,7 @@ type _Buffer {
 		}
 	]
 	inherits: [_DomainMember, _Resetable]
+	meta: "Fixed-capacity buffer with optional framing (frameSize, hop) and ready trigger."
 }
 
 
@@ -250,6 +257,7 @@ type _IteratorType {
 		}
 	]
 	inherits: [_Streamable, _DomainMember]
+	meta: "Iterates over elements of an array or buffer, or generates an index sequence."
 }
 
 type _SequenceType {
@@ -305,6 +313,7 @@ type _SequenceType {
 		}
 	]
 	inherits: [_Streamable, _DomainMember]
+	meta: "Generates a numeric sequence from `from` up to `limit` in steps of `step`."
 }
 
 type _GroupType {

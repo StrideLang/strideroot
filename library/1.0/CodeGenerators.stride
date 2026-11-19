@@ -40,6 +40,7 @@ type _Reaction {
 		}
 	]
 	inherits: [_Base, _DomainMember, _CodeGenerator, _PortedCallable]
+	meta: "Reactive list of streams executed when triggered"
 }
 
 type _Loop {
@@ -72,4 +73,5 @@ type _Loop {
 		}
 	]
 	inherits: [_Base, _DomainMember, _CodeGenerator, _PortedCallable]
+	meta: "Iterative list of streams executed repeatedly until terminateWhen turns on, or the iterator completes its run"
 }

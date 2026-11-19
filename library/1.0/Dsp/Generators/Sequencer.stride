@@ -8,6 +8,7 @@ module Sequencer {
     ports: [
         mainInputPort InputPort {
             entity: Input
+            meta: "Trigger that advances the sequencer to the next step"
         },
         mainOutputPort OutputPort {
             entity: Output
@@ -15,7 +16,7 @@ module Sequencer {
         propertyInputPort ValuesPort {
             name: "values"
             entity: Values
-            meta: "Values in the sequencer"
+            meta: "Constant array of step values to cycle through"
         }
     ]
     entities: [
@@ -48,5 +49,5 @@ module Sequencer {
         Input >> NextStep();
         [Counter, ValuesPort.size] >> Equal() >> CounterReset;
     ]
-    meta: "Step sequencer module."
+    meta: "Cycles through the constant values array, outputting the current step and advancing on each input trigger."
 }

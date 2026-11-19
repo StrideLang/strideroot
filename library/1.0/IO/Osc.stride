@@ -19,12 +19,12 @@ module Out {
 		propertyInputPort HostProperty {
 			name: "host"
 			entity: Host
-			meta: "Destination hostname or IP address"
+			meta: "Destination hostname or IP address (default 127.0.0.1)"
 		},
 		propertyInputPort PortProperty {
 			name: "port"
 			entity: Port
-			meta: "Destination UDP network port number"
+			meta: "Destination UDP network port number (default 9010)"
 		}
 	]
 	entities: [
@@ -49,17 +49,17 @@ module In {
 		propertyInputPort AddressProperty {
 			name: "address"
 			entity: Address
-			meta: "The OSC address filter"
+			meta: "The OSC address filter (default /Stride)"
 		},
 		propertyInputPort HostProperty {
 			name: "host"
 			entity: Host
-			meta: "Network interface or IP to listen on"
+			meta: "Network interface or IP to listen on (default 127.0.0.1)"
 		},
 		propertyInputPort PortProperty {
 			name: "port"
 			entity: Port
-			meta: "Local UDP network port number to bind"
+			meta: "Local UDP network port number to bind (default 9011)"
 		}
 	]
 	entities: [
