@@ -23,9 +23,8 @@ platformModule __AvrSerialPrintReal {
     inherits: [_Signal]
 }
 
-# Ends the line ("\r\n"). Strings are not printed yet: a String is passed as
-# a {pointer, length} struct, and avr-gcc and LLVM may not agree on how a
-# struct argument is passed on AVR.
+# Ends the line ("\r\n"). To print text, use Print and PrintLn
+# (Strings.stride): they write to this port.
 platformModule __AvrSerialNewLine {
     inputs: []
     outputs: []

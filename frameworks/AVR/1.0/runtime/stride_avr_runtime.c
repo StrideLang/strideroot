@@ -240,6 +240,14 @@ void __stride_avr_serial_print_real(float value) {
 
 void __stride_avr_serial_newline(void) { serial_write_text("\r\n"); }
 
+/* Print and PrintLn output from the string runtime (strideruntime_string.c,
+ * built with STRIDE_RT_NO_STDIO) goes to the serial port. */
+void stride_rt_platform_write(const char *data, int32_t length) {
+  for (int32_t i = 0; i < length; ++i) {
+    __stride_avr_serial_write_byte((uint8_t)data[i]);
+  }
+}
+
 /* ---- Helpers the comparison modules call ------------------------------- */
 
 /* Greater with a Real result (1 or 0). The name matches the JIT's helper;
