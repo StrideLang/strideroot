@@ -14,6 +14,7 @@ core AVR5 {
         size: "UInt16"
     }
     hardwareFloat: off
+    cacheLine: 0
     codegen: "llvm"
     frameworks: ["AVR"]
     meta: "8-bit AVR, 16-bit pointers, no FPU (avr5 architecture)"

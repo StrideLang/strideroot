@@ -366,6 +366,13 @@ type _CoreType {
 			required: off
 			meta: "llvm: Stride's built-in LLVM backend. external: Stride emits code for the core's cc tool."
 		},
+		typeProperty CacheLine {
+			name: "cacheLine"
+			allowedTypes: _IntLiteral
+			default: 0
+			required: off
+			meta: "Data cache line in bytes, 0 for a core without a data cache. Each domain's state starts on a cache line and is padded to whole lines, so domains run by different cores or threads never share one."
+		},
 		typeProperty Frameworks {
 			name: "frameworks"
 			allowedTypes: constrainedList { allowed: [_StringLiteral] }
