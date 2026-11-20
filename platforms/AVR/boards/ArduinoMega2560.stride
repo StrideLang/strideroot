@@ -1,0 +1,111 @@
+#
+# Arduino Mega 2560 (R3 and compatible clones) with the stk500v2 bootloader.
+#
+# A project uses a pin through a gpioPin in its own hardware file, which
+# names the label with this board's name: pin: ArduinoMega2560::D13. LED is a
+# second label for D13 (PB7), the on-board LED. D0 and D1 are the USB
+# serial port, which the runtime uses.
+#
+
+package ArduinoMega2560
+
+import ATmega2560
+
+hardwareBoard ArduinoMega2560 {
+    platform: AVR
+    overlays: ATmega2560
+    pins: [
+        pin D0 { port: PortE bit: 0 },
+        pin D1 { port: PortE bit: 1 },
+        pin D2 { port: PortE bit: 4 },
+        pin D3 { port: PortE bit: 5 },
+        pin D4 { port: PortG bit: 5 },
+        pin D5 { port: PortE bit: 3 },
+        pin D6 { port: PortH bit: 3 },
+        pin D7 { port: PortH bit: 4 },
+        pin D8 { port: PortH bit: 5 },
+        pin D9 { port: PortH bit: 6 },
+        pin D10 { port: PortB bit: 4 },
+        pin D11 { port: PortB bit: 5 },
+        pin D12 { port: PortB bit: 6 },
+        pin D13 { port: PortB bit: 7 },
+        pin D14 { port: PortJ bit: 1 },
+        pin D15 { port: PortJ bit: 0 },
+        pin D16 { port: PortH bit: 1 },
+        pin D17 { port: PortH bit: 0 },
+        pin D18 { port: PortD bit: 3 },
+        pin D19 { port: PortD bit: 2 },
+        pin D20 { port: PortD bit: 1 },
+        pin D21 { port: PortD bit: 0 },
+        pin D22 { port: PortA bit: 0 },
+        pin D23 { port: PortA bit: 1 },
+        pin D24 { port: PortA bit: 2 },
+        pin D25 { port: PortA bit: 3 },
+        pin D26 { port: PortA bit: 4 },
+        pin D27 { port: PortA bit: 5 },
+        pin D28 { port: PortA bit: 6 },
+        pin D29 { port: PortA bit: 7 },
+        pin D30 { port: PortC bit: 7 },
+        pin D31 { port: PortC bit: 6 },
+        pin D32 { port: PortC bit: 5 },
+        pin D33 { port: PortC bit: 4 },
+        pin D34 { port: PortC bit: 3 },
+        pin D35 { port: PortC bit: 2 },
+        pin D36 { port: PortC bit: 1 },
+        pin D37 { port: PortC bit: 0 },
+        pin D38 { port: PortD bit: 7 },
+        pin D39 { port: PortG bit: 2 },
+        pin D40 { port: PortG bit: 1 },
+        pin D41 { port: PortG bit: 0 },
+        pin D42 { port: PortL bit: 7 },
+        pin D43 { port: PortL bit: 6 },
+        pin D44 { port: PortL bit: 5 },
+        pin D45 { port: PortL bit: 4 },
+        pin D46 { port: PortL bit: 3 },
+        pin D47 { port: PortL bit: 2 },
+        pin D48 { port: PortL bit: 1 },
+        pin D49 { port: PortL bit: 0 },
+        pin D50 { port: PortB bit: 3 },
+        pin D51 { port: PortB bit: 2 },
+        pin D52 { port: PortB bit: 1 },
+        pin D53 { port: PortB bit: 0 },
+        pin A0 { port: PortF bit: 0 adc: 0 },
+        pin A1 { port: PortF bit: 1 adc: 1 },
+        pin A2 { port: PortF bit: 2 adc: 2 },
+        pin A3 { port: PortF bit: 3 adc: 3 },
+        pin A4 { port: PortF bit: 4 adc: 4 },
+        pin A5 { port: PortF bit: 5 adc: 5 },
+        pin A6 { port: PortF bit: 6 adc: 6 },
+        pin A7 { port: PortF bit: 7 adc: 7 },
+        pin A8 { port: PortK bit: 0 adc: 8 },
+        pin A9 { port: PortK bit: 1 adc: 9 },
+        pin A10 { port: PortK bit: 2 adc: 10 },
+        pin A11 { port: PortK bit: 3 adc: 11 },
+        pin A12 { port: PortK bit: 4 adc: 12 },
+        pin A13 { port: PortK bit: 5 adc: 13 },
+        pin A14 { port: PortK bit: 6 adc: 14 },
+        pin A15 { port: PortK bit: 7 adc: 15 },
+        pin LED { port: PortB bit: 7 }
+    ]
+    usb: ["2341:0010", "2341:0042", "2A03:0042", "1A86:7523"]
+    upload: {
+        method: "avrdude"
+        programmer: "wiring"
+        baud: 115200
+    }
+    image: [
+        step Hex { kind: "hex" }
+    ]
+    toolchain: {
+        cc: "AvrGcc"
+        ar: "AvrGcc"
+        ld: "AvrGcc"
+        objcopy: "AvrGcc"
+        size: "AvrGcc"
+        upload: "Avrdude"
+    }
+    memory: {
+        bootloader: 8192
+    }
+    meta: "Arduino Mega 2560: ATmega2560 at 16 MHz, USB serial, stk500v2 bootloader"
+}

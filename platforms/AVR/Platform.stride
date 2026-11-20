@@ -5,12 +5,14 @@
 #
 
 import ATmega328P
+import ATmega2560
 
 platform AVR {
     framework: "AVR"
     defaultDevice: ATmega328P
     supportedDevices: [
-        ATmega328P
+        ATmega328P,
+        ATmega2560
     ]
-    meta: "8-bit AVR microcontrollers (Arduino Uno and compatible boards)"
+    meta: "8-bit AVR microcontrollers (Arduino Uno, Mega 2560 and compatible boards)"
 }

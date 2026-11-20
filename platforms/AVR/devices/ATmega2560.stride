@@ -1,0 +1,229 @@
+#
+# ATmega2560 (Arduino Mega 2560).
+#
+# Register addresses are data-space addresses. Ports A to G are in the I/O
+# space (a constant-level write is one sbi/cbi); ports H to L are extended
+# I/O at 0x100 and up, reached with lds/sts.
+#
+
+package ATmega2560
+
+import Gpio
+import AVR6
+
+device ATmega2560 {
+    platform: AVR
+    overlays: AVR6
+    cpu: "atmega2560"
+    compilerFlags: "-mmcu=atmega2560"
+    clock: 16000000
+    memory: {
+        flash: 262144
+        ram: 8192
+        eeprom: 4096
+    }
+
+    # PINx (input), DDRx (direction, 1 = output) and PORTx (output, and the
+    # pull-up of an input) for each port. No set/clear registers.
+    ports: [
+        gpioPort PortA {
+            width: 8 input: 32 direction: 33 output: 34
+            fields: [
+                gpioField Direction { option: Gpio::_PinModes register: 33 bitsPerPin: 1
+                                      options: [Gpio::PinInput, Gpio::PinOutput] codes: [0, 1] },
+                gpioField PullUp { option: Gpio::_PinPulls register: 34 bitsPerPin: 1
+                                   options: [Gpio::PullNone, Gpio::PullUp] codes: [0, 1] }
+            ]
+        },
+        gpioPort PortB {
+            width: 8 input: 35 direction: 36 output: 37
+            fields: [
+                gpioField Direction { option: Gpio::_PinModes register: 36 bitsPerPin: 1
+                                      options: [Gpio::PinInput, Gpio::PinOutput] codes: [0, 1] },
+                gpioField PullUp { option: Gpio::_PinPulls register: 37 bitsPerPin: 1
+                                   options: [Gpio::PullNone, Gpio::PullUp] codes: [0, 1] }
+            ]
+        },
+        gpioPort PortC {
+            width: 8 input: 38 direction: 39 output: 40
+            fields: [
+                gpioField Direction { option: Gpio::_PinModes register: 39 bitsPerPin: 1
+                                      options: [Gpio::PinInput, Gpio::PinOutput] codes: [0, 1] },
+                gpioField PullUp { option: Gpio::_PinPulls register: 40 bitsPerPin: 1
+                                   options: [Gpio::PullNone, Gpio::PullUp] codes: [0, 1] }
+            ]
+        },
+        gpioPort PortD {
+            width: 8 input: 41 direction: 42 output: 43
+            fields: [
+                gpioField Direction { option: Gpio::_PinModes register: 42 bitsPerPin: 1
+                                      options: [Gpio::PinInput, Gpio::PinOutput] codes: [0, 1] },
+                gpioField PullUp { option: Gpio::_PinPulls register: 43 bitsPerPin: 1
+                                   options: [Gpio::PullNone, Gpio::PullUp] codes: [0, 1] }
+            ]
+        },
+        gpioPort PortE {
+            width: 8 input: 44 direction: 45 output: 46
+            fields: [
+                gpioField Direction { option: Gpio::_PinModes register: 45 bitsPerPin: 1
+                                      options: [Gpio::PinInput, Gpio::PinOutput] codes: [0, 1] },
+                gpioField PullUp { option: Gpio::_PinPulls register: 46 bitsPerPin: 1
+                                   options: [Gpio::PullNone, Gpio::PullUp] codes: [0, 1] }
+            ]
+        },
+        gpioPort PortF {
+            width: 8 input: 47 direction: 48 output: 49
+            fields: [
+                gpioField Direction { option: Gpio::_PinModes register: 48 bitsPerPin: 1
+                                      options: [Gpio::PinInput, Gpio::PinOutput] codes: [0, 1] },
+                gpioField PullUp { option: Gpio::_PinPulls register: 49 bitsPerPin: 1
+                                   options: [Gpio::PullNone, Gpio::PullUp] codes: [0, 1] }
+            ]
+        },
+        gpioPort PortG {
+            width: 8 input: 50 direction: 51 output: 52
+            fields: [
+                gpioField Direction { option: Gpio::_PinModes register: 51 bitsPerPin: 1
+                                      options: [Gpio::PinInput, Gpio::PinOutput] codes: [0, 1] },
+                gpioField PullUp { option: Gpio::_PinPulls register: 52 bitsPerPin: 1
+                                   options: [Gpio::PullNone, Gpio::PullUp] codes: [0, 1] }
+            ]
+        },
+        gpioPort PortH {
+            width: 8 input: 256 direction: 257 output: 258
+            fields: [
+                gpioField Direction { option: Gpio::_PinModes register: 257 bitsPerPin: 1
+                                      options: [Gpio::PinInput, Gpio::PinOutput] codes: [0, 1] },
+                gpioField PullUp { option: Gpio::_PinPulls register: 258 bitsPerPin: 1
+                                   options: [Gpio::PullNone, Gpio::PullUp] codes: [0, 1] }
+            ]
+        },
+        gpioPort PortJ {
+            width: 8 input: 259 direction: 260 output: 261
+            fields: [
+                gpioField Direction { option: Gpio::_PinModes register: 260 bitsPerPin: 1
+                                      options: [Gpio::PinInput, Gpio::PinOutput] codes: [0, 1] },
+                gpioField PullUp { option: Gpio::_PinPulls register: 261 bitsPerPin: 1
+                                   options: [Gpio::PullNone, Gpio::PullUp] codes: [0, 1] }
+            ]
+        },
+        gpioPort PortK {
+            width: 8 input: 262 direction: 263 output: 264
+            fields: [
+                gpioField Direction { option: Gpio::_PinModes register: 263 bitsPerPin: 1
+                                      options: [Gpio::PinInput, Gpio::PinOutput] codes: [0, 1] },
+                gpioField PullUp { option: Gpio::_PinPulls register: 264 bitsPerPin: 1
+                                   options: [Gpio::PullNone, Gpio::PullUp] codes: [0, 1] }
+            ]
+        },
+        gpioPort PortL {
+            width: 8 input: 265 direction: 266 output: 267
+            fields: [
+                gpioField Direction { option: Gpio::_PinModes register: 266 bitsPerPin: 1
+                                      options: [Gpio::PinInput, Gpio::PinOutput] codes: [0, 1] },
+                gpioField PullUp { option: Gpio::_PinPulls register: 267 bitsPerPin: 1
+                                   options: [Gpio::PullNone, Gpio::PullUp] codes: [0, 1] }
+            ]
+        }
+    ]
+
+    # No pull-down, drive or slew control; open drain is done in software
+    # with the direction register. Unlike the ATmega328P, only some pins
+    # have a pin-change interrupt, so interrupt kinds are listed per pin.
+    gpio: gpioCapabilities {
+        emulated: [Gpio::OutputOpenDrain]
+        interrupts: [Gpio::InterruptNone]
+    }
+
+    # What each chip pin adds. A peripheral takes its pin when it is enabled,
+    # so no route needs a select code. Timer0 is the runtime's tick, so its
+    # PWM outputs (PB7 OC0A, PG5 OC0B) are not offered, and USART0 (PE0, PE1)
+    # is the runtime's serial port.
+    pinFeatures: [
+        pinFeatures PB0 { port: PortB bit: 0 routes: [pinRoute { function: Spi0Cs }] interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PB1 { port: PortB bit: 1 routes: [pinRoute { function: Spi0Sck }] interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PB2 { port: PortB bit: 2 routes: [pinRoute { function: Spi0Sdo }] interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PB3 { port: PortB bit: 3 routes: [pinRoute { function: Spi0Sdi }] interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PB4 { port: PortB bit: 4 routes: [pinRoute { function: Pwm2A }] interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PB5 { port: PortB bit: 5 routes: [pinRoute { function: Pwm1A }] interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PB6 { port: PortB bit: 6 routes: [pinRoute { function: Pwm1B }] interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PB7 { port: PortB bit: 7 routes: [pinRoute { function: Pwm1C }] interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PD0 { port: PortD bit: 0 routes: [pinRoute { function: I2c0Scl }] interrupts: [Gpio::InterruptRising, Gpio::InterruptFalling, Gpio::InterruptBothEdges, Gpio::InterruptLevelLow] },  # INT0
+        pinFeatures PD1 { port: PortD bit: 1 routes: [pinRoute { function: I2c0Sda }] interrupts: [Gpio::InterruptRising, Gpio::InterruptFalling, Gpio::InterruptBothEdges, Gpio::InterruptLevelLow] },  # INT1
+        pinFeatures PD2 { port: PortD bit: 2 routes: [pinRoute { function: Uart1Rx }] interrupts: [Gpio::InterruptRising, Gpio::InterruptFalling, Gpio::InterruptBothEdges, Gpio::InterruptLevelLow] },  # INT2
+        pinFeatures PD3 { port: PortD bit: 3 routes: [pinRoute { function: Uart1Tx }] interrupts: [Gpio::InterruptRising, Gpio::InterruptFalling, Gpio::InterruptBothEdges, Gpio::InterruptLevelLow] },  # INT3
+        pinFeatures PE0 { port: PortE bit: 0 routes: [pinRoute { function: Uart0Rx }] interrupts: [Gpio::InterruptBothEdges] reservedBy: "Usart0" },
+        pinFeatures PE1 { port: PortE bit: 1 routes: [pinRoute { function: Uart0Tx }] reservedBy: "Usart0" },
+        pinFeatures PE3 { port: PortE bit: 3 routes: [pinRoute { function: Pwm3A }] },
+        pinFeatures PE4 { port: PortE bit: 4 routes: [pinRoute { function: Pwm3B }] interrupts: [Gpio::InterruptRising, Gpio::InterruptFalling, Gpio::InterruptBothEdges, Gpio::InterruptLevelLow] },  # INT4
+        pinFeatures PE5 { port: PortE bit: 5 routes: [pinRoute { function: Pwm3C }] interrupts: [Gpio::InterruptRising, Gpio::InterruptFalling, Gpio::InterruptBothEdges, Gpio::InterruptLevelLow] },  # INT5
+        pinFeatures PE6 { port: PortE bit: 6 interrupts: [Gpio::InterruptRising, Gpio::InterruptFalling, Gpio::InterruptBothEdges, Gpio::InterruptLevelLow] },  # INT6
+        pinFeatures PE7 { port: PortE bit: 7 interrupts: [Gpio::InterruptRising, Gpio::InterruptFalling, Gpio::InterruptBothEdges, Gpio::InterruptLevelLow] },  # INT7
+        pinFeatures PF0 { port: PortF bit: 0 analog: 0 },
+        pinFeatures PF1 { port: PortF bit: 1 analog: 1 },
+        pinFeatures PF2 { port: PortF bit: 2 analog: 2 },
+        pinFeatures PF3 { port: PortF bit: 3 analog: 3 },
+        pinFeatures PF4 { port: PortF bit: 4 analog: 4 },
+        pinFeatures PF5 { port: PortF bit: 5 analog: 5 },
+        pinFeatures PF6 { port: PortF bit: 6 analog: 6 },
+        pinFeatures PF7 { port: PortF bit: 7 analog: 7 },
+        pinFeatures PH0 { port: PortH bit: 0 routes: [pinRoute { function: Uart2Rx }] },
+        pinFeatures PH1 { port: PortH bit: 1 routes: [pinRoute { function: Uart2Tx }] },
+        pinFeatures PH3 { port: PortH bit: 3 routes: [pinRoute { function: Pwm4A }] },
+        pinFeatures PH4 { port: PortH bit: 4 routes: [pinRoute { function: Pwm4B }] },
+        pinFeatures PH5 { port: PortH bit: 5 routes: [pinRoute { function: Pwm4C }] },
+        pinFeatures PH6 { port: PortH bit: 6 routes: [pinRoute { function: Pwm2B }] },
+        pinFeatures PJ0 { port: PortJ bit: 0 routes: [pinRoute { function: Uart3Rx }] interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PJ1 { port: PortJ bit: 1 routes: [pinRoute { function: Uart3Tx }] interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PJ2 { port: PortJ bit: 2 interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PJ3 { port: PortJ bit: 3 interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PJ4 { port: PortJ bit: 4 interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PJ5 { port: PortJ bit: 5 interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PJ6 { port: PortJ bit: 6 interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PK0 { port: PortK bit: 0 analog: 8 interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PK1 { port: PortK bit: 1 analog: 9 interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PK2 { port: PortK bit: 2 analog: 10 interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PK3 { port: PortK bit: 3 analog: 11 interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PK4 { port: PortK bit: 4 analog: 12 interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PK5 { port: PortK bit: 5 analog: 13 interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PK6 { port: PortK bit: 6 analog: 14 interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PK7 { port: PortK bit: 7 analog: 15 interrupts: [Gpio::InterruptBothEdges] },
+        pinFeatures PL3 { port: PortL bit: 3 routes: [pinRoute { function: Pwm5A }] },
+        pinFeatures PL4 { port: PortL bit: 4 routes: [pinRoute { function: Pwm5B }] },
+        pinFeatures PL5 { port: PortL bit: 5 routes: [pinRoute { function: Pwm5C }] }
+    ]
+
+    tickTimer: "Timer0"
+    runtimeReserves: ["Timer0", "Usart0"]
+    meta: "8-bit AVR, 256 KB flash, 8 KB RAM, 4 KB EEPROM, 86 GPIO, 4 USARTs"
+}
+
+# Pin functions of the chip, for gpioPin function: ATmega2560::Uart1Tx.
+uartRx Uart0Rx { peripheral: "Usart0" }
+uartTx Uart0Tx { peripheral: "Usart0" }
+uartRx Uart1Rx { peripheral: "Usart1" }
+uartTx Uart1Tx { peripheral: "Usart1" }
+uartRx Uart2Rx { peripheral: "Usart2" }
+uartTx Uart2Tx { peripheral: "Usart2" }
+uartRx Uart3Rx { peripheral: "Usart3" }
+uartTx Uart3Tx { peripheral: "Usart3" }
+pwmOutput Pwm1A { peripheral: "Timer1" channel: 0 }
+pwmOutput Pwm1B { peripheral: "Timer1" channel: 1 }
+pwmOutput Pwm1C { peripheral: "Timer1" channel: 2 }
+pwmOutput Pwm2A { peripheral: "Timer2" channel: 0 }
+pwmOutput Pwm2B { peripheral: "Timer2" channel: 1 }
+pwmOutput Pwm3A { peripheral: "Timer3" channel: 0 }
+pwmOutput Pwm3B { peripheral: "Timer3" channel: 1 }
+pwmOutput Pwm3C { peripheral: "Timer3" channel: 2 }
+pwmOutput Pwm4A { peripheral: "Timer4" channel: 0 }
+pwmOutput Pwm4B { peripheral: "Timer4" channel: 1 }
+pwmOutput Pwm4C { peripheral: "Timer4" channel: 2 }
+pwmOutput Pwm5A { peripheral: "Timer5" channel: 0 }
+pwmOutput Pwm5B { peripheral: "Timer5" channel: 1 }
+pwmOutput Pwm5C { peripheral: "Timer5" channel: 2 }
+spiSck Spi0Sck { peripheral: "Spi0" }
+spiSdo Spi0Sdo { peripheral: "Spi0" }
+spiSdi Spi0Sdi { peripheral: "Spi0" }
+spiCs Spi0Cs { peripheral: "Spi0" }
+i2cSda I2c0Sda { peripheral: "Twi0" }
+i2cScl I2c0Scl { peripheral: "Twi0" }

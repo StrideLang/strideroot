@@ -1,0 +1,24 @@
+#
+# AVR6 core family: 8-bit AVR with more than 128 KB of flash, so a 3-byte
+# program counter (EIJMP/EICALL), and a hardware multiplier (ATmega2560,
+# ATmega1280).
+#
+# Devices overlay this core and add their memory, clock and peripherals.
+#
+
+package AVR6
+
+core AVR6 {
+    triple: "avr"
+    pointerBits: 16
+    types: {
+        int: "Int16"
+        real: "Float32"
+        size: "UInt16"
+    }
+    hardwareFloat: off
+    cacheLine: 0
+    codegen: "llvm"
+    frameworks: ["AVR"]
+    meta: "8-bit AVR, 16-bit data pointers, 3-byte program counter, no FPU (avr6 architecture)"
+}

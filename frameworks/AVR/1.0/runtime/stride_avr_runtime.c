@@ -68,6 +68,16 @@ int32_t AvrLoopDomain_init(void *state) __attribute__((weak));
 int32_t AvrLoopDomain_process(void *state) __attribute__((weak));
 extern uint8_t __stride_AvrLoopDomain_state[] __attribute__((weak));
 
+/* USART0's vectors: chips with one USART (ATmega328P) name them USART_*,
+ * chips with several (ATmega2560) USART0_*. */
+#if defined(USART0_RX_vect)
+#define STRIDE_USART_RX_vect USART0_RX_vect
+#define STRIDE_USART_UDRE_vect USART0_UDRE_vect
+#else
+#define STRIDE_USART_RX_vect USART_RX_vect
+#define STRIDE_USART_UDRE_vect USART_UDRE_vect
+#endif
+
 /* ---- Tick (Timer0) ---------------------------------------------------- */
 
 static volatile uint32_t s_millis;
@@ -120,10 +130,20 @@ void __stride_avr_sleep_ms(uint32_t ms) {
 
 /* ---- Digital pins ------------------------------------------------------ */
 
-static const uint8_t s_outputRegs[STRIDE_PIN_COUNT] = STRIDE_PIN_OUTPUT_REGS;
-static const uint8_t s_directionRegs[STRIDE_PIN_COUNT] =
+/* Registers above the 8-bit data space (ATmega2560's ports H to L) need
+ * 16-bit tables; stride_board.h says so with STRIDE_PIN_REG_WIDE. */
+#ifdef STRIDE_PIN_REG_WIDE
+typedef uint16_t stride_pin_reg_t;
+#else
+typedef uint8_t stride_pin_reg_t;
+#endif
+
+static const stride_pin_reg_t s_outputRegs[STRIDE_PIN_COUNT] =
+    STRIDE_PIN_OUTPUT_REGS;
+static const stride_pin_reg_t s_directionRegs[STRIDE_PIN_COUNT] =
     STRIDE_PIN_DIRECTION_REGS;
-static const uint8_t s_inputRegs[STRIDE_PIN_COUNT] = STRIDE_PIN_INPUT_REGS;
+static const stride_pin_reg_t s_inputRegs[STRIDE_PIN_COUNT] =
+    STRIDE_PIN_INPUT_REGS;
 static const uint8_t s_bits[STRIDE_PIN_COUNT] = STRIDE_PIN_BITS;
 
 #define REG8(address) (*(volatile uint8_t *)(uint16_t)(address))
@@ -192,7 +212,7 @@ static void serial_start(void) {
   UCSR0B = (1 << RXEN0) | (1 << TXEN0) | (1 << RXCIE0);
 }
 
-ISR(USART_UDRE_vect) {
+ISR(STRIDE_USART_UDRE_vect) {
   if (s_txHead == s_txTail) {
     UCSR0B &= (uint8_t)~(1 << UDRIE0);
     return;
@@ -201,7 +221,7 @@ ISR(USART_UDRE_vect) {
   s_txTail = (uint8_t)((s_txTail + 1) & (STRIDE_SERIAL_TX_SIZE - 1));
 }
 
-ISR(USART_RX_vect) {
+ISR(STRIDE_USART_RX_vect) {
   uint8_t byte = UDR0;
   uint8_t next = (uint8_t)((s_rxHead + 1) & (STRIDE_SERIAL_RX_SIZE - 1));
   if (next != s_rxTail) { /* drop the byte when the buffer is full */
