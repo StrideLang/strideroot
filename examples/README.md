@@ -17,13 +17,15 @@ examples/
 ```
 
 The program is the file named after its folder. Its other files are found
-because imports look next to the program first.
+because imports look next to the program first. A project can carry hardware
+files for several boards (`BlinkRig.stride`, `BlinkRigMega.stride`); the
+examples test builds the program once for each.
 
 ## Examples
 
 | System | Project | Shows |
 |---|---|---|
-| AVR (Arduino Uno) | [PortableBlink](AVR/PortableBlink) | Pins through a hardware file (`gpioPin`) and `DigitalIO`, the standard loop and timer domains, a cooperative `Sleep`, open drain and active-low pins |
+| AVR (Arduino Uno, Mega 2560) | [PortableBlink](AVR/PortableBlink) | Pins through a hardware file (`gpioPin`) and `DigitalIO`, one program on two boards, the standard loop and timer domains, a cooperative `Sleep`, open drain and active-low pins, with wiring diagrams |
 
 ## Systems
 

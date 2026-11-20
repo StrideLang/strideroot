@@ -7,15 +7,25 @@ uses pins without naming a board.
 | File | What it is |
 |---|---|
 | `PortableBlink.stride` | The program. It uses `BlinkRig::Status`, `BlinkRig::Button` and `BlinkRig::Relay` through `DigitalIO::Led`, `DigitalIn` and `DigitalOut`, in the standard `PlatformLoopDomain` and `PlatformTimerDomain`. |
-| `BlinkRig.stride` | The project's hardware file. It overlays `ArduinoUno` and declares how each pin is used (`gpioPin`). This is the only file that names the board. |
+| `BlinkRig.stride` | The project's hardware file for an Arduino Uno. It overlays `ArduinoUno` and declares how each pin is used (`gpioPin`). This is the only file that names the board. |
+| `BlinkRigMega.stride` | The same signals on an Arduino Mega 2560. |
+| `wiring-uno.svg`, `wiring-mega.svg` | How to connect the parts. |
 
 ## Wiring
 
-| Signal | Uno pin | Wiring |
-|---|---|---|
-| `Status` | `LED` (D13) | The on-board LED |
-| `Button` | D2 | A push button to GND. The internal pull-up holds D2 high. |
-| `Relay` | D7 | The input of an active-low relay module. It is driven low while the button is pressed and released otherwise. |
+![Wiring on an Arduino Uno](wiring-uno.svg)
+
+| Signal | Uno | Mega 2560 | Wiring |
+|---|---|---|---|
+| `Status` | `LED` (D13, PB5) | `LED` (D13, PB7) | The on-board LED marked L. Nothing to wire. |
+| `Button` | D2 (PD2) | D2 (PE4) | A push button between D2 and GND. No resistor: the chip's internal pull-up holds D2 high, so a press reads low. |
+| `Relay` | D7 (PD7) | D7 (PH4) | The IN pin of an active-low relay module. Its VCC goes to 5V and its GND to GND. D7 pulls IN low while the button is pressed and lets it go otherwise. |
+
+A 4-leg tactile button connects the two legs on each long side, so wire
+diagonally opposite legs. The program doesn't debounce the button, so the
+relay may chatter for a few milliseconds when it is pressed or released.
+
+![Wiring on an Arduino Mega 2560](wiring-mega.svg)
 
 ## Build and flash
 
@@ -27,6 +37,18 @@ stride flash PortableBlink.stride --port=COM3
 `stride build` finds `BlinkRig` next to the program first, then the board it
 overlays in `platforms/AVR/boards`. It needs avr-gcc, which the Arduino IDE
 installs (`stride doctor` shows where it was found).
+
+### On an Arduino Mega 2560
+
+Change the two hardware lines at the top of `PortableBlink.stride`:
+
+```stride
+use AVR version 1.0 on BlinkRigMega
+import BlinkRigMega as BlinkRig
+```
+
+The rest of the program stays as it is: `BlinkRig::Status` now means
+`BlinkRigMega.stride`'s `Status`. Build and flash the same way.
 
 ## What the compiler does with it
 
@@ -45,7 +67,9 @@ installs (`stride doctor` shows where it was found).
 
 ## Porting it
 
-Move the signals to other pins, or to another AVR board, by editing
-`BlinkRig.stride`: change `overlays:` and the `pin:` labels. The program does
-not change. For a board on another platform, also change the `use` line of
-`PortableBlink.stride`.
+Move the signals to other pins by editing the `pin:` labels in the hardware
+file. For another board, copy `BlinkRig.stride` the way `BlinkRigMega.stride`
+does: overlay the new board, use its labels, and point the program's `use`
+line and `import ... as BlinkRig` at the new file. On the Mega, D7 is on port
+H, which sits above the I/O space, so its writes are `lds`/`sts` rather than
+`sbi`/`cbi`.

@@ -1,0 +1,6 @@
+# Build outputs of `stride build` run inside an example
+*.hex
+*.elf
+*.layout.json
+*_build/
+.variant_*.stride

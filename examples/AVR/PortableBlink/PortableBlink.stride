@@ -15,13 +15,13 @@ use AVR version 1.0 on BlinkRig
 import DigitalIO
 import BlinkRig
 
-# The main loop blinks Status twice a second. Sleep suspends only the loop:
+# The main loop blinks Status once a second. Sleep suspends only the loop:
 # the timer keeps running while it sleeps.
 switch Blink { default: off domain: PlatformLoopDomain }
 
 Blink >> Not() >> Blink;
 Blink >> DigitalIO::Led(pin: BlinkRig::Status);
-0.25 >> Sleep(domain: PlatformLoopDomain);
+0.5 >> Sleep(domain: PlatformLoopDomain);
 
 # The timer polls the button 1000 times a second and drives the relay while
 # it is pressed.
@@ -29,3 +29,4 @@ switch Pressed { default: off domain: PlatformTimerDomain }
 
 BlinkRig::Button >> DigitalIO::DigitalIn() >> Pressed;
 Pressed >> DigitalIO::DigitalOut(pin: BlinkRig::Relay);
+
