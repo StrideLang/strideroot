@@ -5,6 +5,8 @@
 # Devices overlay this core and add their memory, clock and peripherals.
 #
 
+package AVR5
+
 core AVR5 {
     triple: "avr"
     pointerBits: 16

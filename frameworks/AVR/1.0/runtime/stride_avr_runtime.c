@@ -102,6 +102,16 @@ void __stride_avr_tick_sleep(uint32_t ticks) {
   s_avrTickSleepTicks = ticks;
 }
 
+/* Loop-domain sleep: AvrLoopDomain is skipped until s_loopWakeMillis, while
+ * main() keeps processing ticks. Set by Sleep(domain: AvrLoopDomain). */
+static bool s_loopSleeping;
+static uint32_t s_loopWakeMillis;
+
+void __stride_avr_loop_sleep(uint32_t ms) {
+  s_loopWakeMillis = __stride_avr_millis() + ms;
+  s_loopSleeping = ms > 0;
+}
+
 void __stride_avr_sleep_ms(uint32_t ms) {
   uint32_t start = __stride_avr_millis();
   while ((uint32_t)(__stride_avr_millis() - start) < ms) {
@@ -292,7 +302,11 @@ int main(void) {
       }
     }
 
-    if (AvrLoopDomain_process) {
+    if (s_loopSleeping &&
+        (int32_t)(__stride_avr_millis() - s_loopWakeMillis) >= 0) {
+      s_loopSleeping = false;
+    }
+    if (!s_loopSleeping && AvrLoopDomain_process) {
       AvrLoopDomain_process(__stride_AvrLoopDomain_state);
     }
   }

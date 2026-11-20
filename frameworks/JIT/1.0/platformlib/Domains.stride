@@ -19,6 +19,33 @@ _domainDefinition RootDomain {
 	domainFunctionCode: ''
 }
 
+# The standard domains (PlatformLoopDomain, PlatformTimerDomain,
+# PlatformAudioDomain). The host calls their _process functions: a test steps
+# the loop and ticks the timer as it needs.
+_domainDefinition JitLoopDomain {
+	framework: _JitFramework
+	rate: 0
+	substitutions: [ ]
+	domainIncludes: []
+	domainFunctionCode: ''
+}
+
+_domainDefinition JitTimerDomain {
+	framework: _JitFramework
+	rate: 1000
+	substitutions: [ ]
+	domainIncludes: []
+	domainFunctionCode: ''
+}
+
+_domainDefinition JitAudioDomain {
+	framework: _JitFramework
+	rate: 48000
+	substitutions: [ ]
+	domainIncludes: []
+	domainFunctionCode: ''
+}
+
 platformModule __JitSleep {
 	inputs: [Real]
 	outputs: []

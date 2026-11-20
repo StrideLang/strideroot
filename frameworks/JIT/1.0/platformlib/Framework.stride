@@ -13,3 +13,26 @@ alias PlatformRate {
     entity: -1
 }
 
+
+# Standard platform domains. On the desktop the host steps them: a test or an
+# application calls <Domain>_process, so all of them are cooperative.
+
+alias PlatformLoopDomain {
+    entity: JitLoopDomain
+}
+
+alias PlatformTimerDomain {
+    entity: JitTimerDomain
+}
+
+alias PlatformTimerRate {
+    entity: 1000
+}
+
+alias PlatformAudioDomain {
+    entity: JitAudioDomain
+}
+
+alias PlatformAudioRate {
+    entity: 48000
+}

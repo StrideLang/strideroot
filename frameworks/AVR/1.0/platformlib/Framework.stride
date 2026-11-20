@@ -20,3 +20,22 @@ alias PlatformDomain {
 alias PlatformRate {
     entity: 1000
 }
+
+# Standard platform domains. Programs that use these instead of AVR's own
+# domain names run unchanged on other frameworks that provide them.
+
+# Runs again as soon as it finishes, like Arduino's loop(). Sleep suspends
+# only this domain.
+alias PlatformLoopDomain {
+    entity: AvrLoopDomain
+}
+
+# Runs periodically from a hardware timer at PlatformTimerRate. On AVR it is
+# cooperative: it runs from main() between loop iterations.
+alias PlatformTimerDomain {
+    entity: AvrTickDomain
+}
+
+alias PlatformTimerRate {
+    entity: 1000
+}

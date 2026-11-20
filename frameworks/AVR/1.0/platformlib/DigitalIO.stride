@@ -1,9 +1,33 @@
-# Digital pins, by Arduino pin number (D13 is 13, A0 is 14).
-#
-# These call the C runtime, which maps a pin number to its port and bit with
-# the table it is built with for the board. A later version emits the
-# register access as LLVM IR instead, so a constant pin becomes a single
-# sbi/cbi instruction; programs written against these modules don't change.
+# GPIO register access for the portable DigitalIO library modules
+# (DigitalIO::DigitalOut, DigitalIn, Led). The compiler fills in each pin's
+# addresses and masks from the board, so these are LLVM IR with constant
+# operands: a pin write becomes a single sbi/cbi instruction. AVR's GPIO
+# registers are 8 bits wide.
+
+platformModule _GpioWrite {
+    inputs: [Switch, UInt16, UInt16, UInt8, UInt8, Switch]
+    outputs: []
+    processing: "llvm::gpio write i8 %%intokens:0%%, %%intokens:1%%, %%intokens:2%%, %%intokens:3%%, %%intokens:4%%, %%intokens:5%%"
+    inherits: [_Signal]
+}
+
+platformModule _GpioRead {
+    inputs: [UInt16, UInt8]
+    outputs: [Switch]
+    processing: "%%outtokens:0%% = llvm::gpio read i8 %%intokens:0%%, %%intokens:1%%"
+    inherits: [_Signal]
+}
+
+platformModule _GpioModify {
+    inputs: [UInt16, UInt8, UInt8, Switch]
+    outputs: []
+    processing: "llvm::gpio modify i8 %%intokens:0%%, %%intokens:1%%, %%intokens:2%%, %%intokens:3%%"
+    inherits: [_Signal]
+}
+
+# Deprecated: digital pins by Arduino pin number (D13 is 13, A0 is 14),
+# through the C runtime's pin tables. Use a gpioPin with DigitalIO::DigitalOut
+# and DigitalIO::DigitalIn instead, which work on any board.
 
 # Pin mode: 0 input, 1 output, 2 input with pull-up.
 platformModule __AvrPinMode {

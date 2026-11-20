@@ -5,6 +5,11 @@
 # what LLVM's volatile loads and stores use on AVR.
 #
 
+package ATmega328P
+
+import Gpio
+import AVR5
+
 device ATmega328P {
     platform: AVR
     overlays: AVR5
@@ -16,12 +21,88 @@ device ATmega328P {
         ram: 2048
         eeprom: 1024
     }
+
+    # Each port has PINx (input), DDRx (direction, 1 = output) and PORTx
+    # (output, and the pull-up of an input). There are no set/clear
+    # registers: a pin write is a read-modify-write, which LLVM turns into a
+    # single sbi/cbi for a constant pin.
     ports: [
-        gpioPort B { input: 35 direction: 36 output: 37 },
-        gpioPort C { input: 38 direction: 39 output: 40 },
-        gpioPort D { input: 41 direction: 42 output: 43 }
+        gpioPort PortB {
+            width: 8 input: 35 direction: 36 output: 37
+            fields: [
+                gpioField Direction { option: Gpio::_PinModes register: 36 bitsPerPin: 1
+                                      options: [Gpio::PinInput, Gpio::PinOutput] codes: [0, 1] },
+                gpioField PullUp { option: Gpio::_PinPulls register: 37 bitsPerPin: 1
+                                   options: [Gpio::PullNone, Gpio::PullUp] codes: [0, 1] }
+            ]
+        },
+        gpioPort PortC {
+            width: 8 input: 38 direction: 39 output: 40
+            fields: [
+                gpioField Direction { option: Gpio::_PinModes register: 39 bitsPerPin: 1
+                                      options: [Gpio::PinInput, Gpio::PinOutput] codes: [0, 1] },
+                gpioField PullUp { option: Gpio::_PinPulls register: 40 bitsPerPin: 1
+                                   options: [Gpio::PullNone, Gpio::PullUp] codes: [0, 1] }
+            ]
+        },
+        gpioPort PortD {
+            width: 8 input: 41 direction: 42 output: 43
+            fields: [
+                gpioField Direction { option: Gpio::_PinModes register: 42 bitsPerPin: 1
+                                      options: [Gpio::PinInput, Gpio::PinOutput] codes: [0, 1] },
+                gpioField PullUp { option: Gpio::_PinPulls register: 43 bitsPerPin: 1
+                                   options: [Gpio::PullNone, Gpio::PullUp] codes: [0, 1] }
+            ]
+        }
     ]
+
+    # No pull-down, no drive or slew control. Open drain is done in software
+    # with the direction register; every pin has a pin-change interrupt.
+    gpio: gpioCapabilities {
+        emulated: [Gpio::OutputOpenDrain]
+        interrupts: [Gpio::InterruptNone, Gpio::InterruptBothEdges]
+    }
+
+    # What each chip pin adds. A peripheral takes its pin when it is enabled,
+    # so no route needs a select code. Timer0 is the runtime's tick, so its
+    # PWM outputs (PD5, PD6) are not offered.
+    pinFeatures: [
+        pinFeatures PB1 { port: PortB bit: 1 routes: [pinRoute { function: Pwm1A }] },
+        pinFeatures PB2 { port: PortB bit: 2 routes: [pinRoute { function: Pwm1B }, pinRoute { function: Spi0Cs }] },
+        pinFeatures PB3 { port: PortB bit: 3 routes: [pinRoute { function: Pwm2A }, pinRoute { function: Spi0Sdo }] },
+        pinFeatures PB4 { port: PortB bit: 4 routes: [pinRoute { function: Spi0Sdi }] },
+        pinFeatures PB5 { port: PortB bit: 5 routes: [pinRoute { function: Spi0Sck }] },
+        pinFeatures PC0 { port: PortC bit: 0 analog: 0 },
+        pinFeatures PC1 { port: PortC bit: 1 analog: 1 },
+        pinFeatures PC2 { port: PortC bit: 2 analog: 2 },
+        pinFeatures PC3 { port: PortC bit: 3 analog: 3 },
+        pinFeatures PC4 { port: PortC bit: 4 analog: 4 routes: [pinRoute { function: I2c0Sda }] },
+        pinFeatures PC5 { port: PortC bit: 5 analog: 5 routes: [pinRoute { function: I2c0Scl }] },
+        pinFeatures PD0 { port: PortD bit: 0 routes: [pinRoute { function: Uart0Rx }] reservedBy: "Usart0" },
+        pinFeatures PD1 { port: PortD bit: 1 routes: [pinRoute { function: Uart0Tx }] reservedBy: "Usart0" },
+        pinFeatures PD2 { port: PortD bit: 2
+                          interrupts: [Gpio::InterruptRising, Gpio::InterruptFalling, Gpio::InterruptLevelLow] },
+        pinFeatures PD3 { port: PortD bit: 3 routes: [pinRoute { function: Pwm2B }]
+                          interrupts: [Gpio::InterruptRising, Gpio::InterruptFalling, Gpio::InterruptLevelLow] }
+    ]
+
     tickTimer: "Timer0"
     runtimeReserves: ["Timer0", "Usart0"]
     meta: "8-bit AVR, 32 KB flash, 2 KB RAM, 1 KB EEPROM"
 }
+
+# Pin functions of the chip, for gpioPin function: ATmega328P::Uart0Tx.
+uartRx Uart0Rx { peripheral: "Usart0" }
+uartTx Uart0Tx { peripheral: "Usart0" }
+pwmOutput Pwm0A { peripheral: "Timer0" channel: 0 }
+pwmOutput Pwm0B { peripheral: "Timer0" channel: 1 }
+pwmOutput Pwm1A { peripheral: "Timer1" channel: 0 }
+pwmOutput Pwm1B { peripheral: "Timer1" channel: 1 }
+pwmOutput Pwm2A { peripheral: "Timer2" channel: 0 }
+pwmOutput Pwm2B { peripheral: "Timer2" channel: 1 }
+spiSck Spi0Sck { peripheral: "Spi0" }
+spiSdo Spi0Sdo { peripheral: "Spi0" }
+spiSdi Spi0Sdi { peripheral: "Spi0" }
+spiCs Spi0Cs { peripheral: "Spi0" }
+i2cSda I2c0Sda { peripheral: "Twi0" }
+i2cScl I2c0Scl { peripheral: "Twi0" }

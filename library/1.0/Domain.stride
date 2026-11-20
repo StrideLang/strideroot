@@ -200,6 +200,27 @@ type _DomainDefinition {
 			required: off
 			meta: "State machines executed continuously within this domain."
 		},
+		typeProperty SleepModule {
+			name: "sleepModule"
+			allowedTypes: constrainedEntity { allowed: [_Any, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "A platformModule that suspends only this domain. It takes one integer input: the number of ticks to sleep, at sleepRate ticks per second. Sleep(domain: ThisDomain) calls it. Without it, Sleep counts ticks for a subdomain, or blocks."
+		},
+		typeProperty SleepRate {
+			name: "sleepRate"
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _RealLiteral, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "Ticks per second of sleepModule's input. The domain's rate when absent."
+		},
+		typeProperty Execution {
+			name: "execution"
+			allowedTypes: constrainedEntity { allowed: [_DomainExecution, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "How this domain runs relative to the others: ExecutionCooperative, ExecutionInterrupt, ExecutionThread, ExecutionInline or ExecutionHardware. See _DomainExecution. none means ExecutionCooperative."
+		},
 		typeProperty PreSubdomains {
 			name: "preSubdomains"
 			allowedTypes: constrainedList { allowed: [_DomainDefinition, _StringLiteral] }
@@ -255,4 +276,36 @@ module Sleep {
     streams: [
     ]
     meta: 'Suspends the specified domain (and all parent synchronous domains) for the given duration in seconds: 0.5 >> Sleep(domain: MyDomain);'
+}
+
+# How a domain runs relative to the other domains (_domainDefinition's
+# execution property). A typeClass of constants: a schema property with
+# allowedTypes: _DomainExecution accepts exactly these names.
+constant ExecutionCooperative {
+	value: 0
+	meta: "Runs on the same thread as its sibling domains, between their process calls. A long computation in a sibling delays it; it can share signals with siblings without synchronization."
+}
+
+constant ExecutionInterrupt {
+	value: 1
+	meta: "Runs from an interrupt handler and preempts cooperative domains. Shared state and read-modify-write registers need care."
+}
+
+constant ExecutionThread {
+	value: 2
+	meta: "Runs on its own OS thread or core. Shared signals go through synchronization declarations."
+}
+
+constant ExecutionInline {
+	value: 3
+	meta: "Runs inside its parent's process call (preSubdomains, postSubdomains) and shares the parent's timing."
+}
+
+constant ExecutionHardware {
+	value: 4
+	meta: "Runs in hardware without the CPU, such as an FPGA clock domain, a PIO state machine or a DMA stream."
+}
+
+typeClass _DomainExecution {
+	types: [ExecutionCooperative, ExecutionInterrupt, ExecutionThread, ExecutionInline, ExecutionHardware]
 }

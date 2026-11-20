@@ -1,3 +1,5 @@
+import Gpio
+
 # Buses ------------------
 
 busType ST_AHB {
@@ -147,7 +149,7 @@ register ST_GPIO_MODER_A {
 }
 
 hwGenericMapping ST_GPIO_PIN_MODE {
-    generic: GENERIC_GPIO_PIN_MODE
+    generic: Gpio::_PinModes
     size: 2
     values: [0, 1, 2, 3]
 }
@@ -184,7 +186,7 @@ register ST_GPIO_OTYPER {
 }
 
 hwGenericMapping ST_GPIO_PIN_OUTPUT_TYPE {
-    generic: GENERIC_GPIO_PIN_OUTPUT_TYPE
+    generic: Gpio::_PinOutputTypes
     size: 1
     values: [0, 1]
 }
@@ -226,7 +228,7 @@ register ST_GPIO_PUPDR {
 }
 
 hwGenericMapping ST_GPIO_PIN_PULL_UP_DOWN {
-    generic: GENERIC_GPIO_PIN_PULL_UP_DOWN
+    generic: Gpio::_PinPulls
     size: 2
     values: [0, 1, 2]
 }

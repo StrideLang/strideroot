@@ -1,0 +1,25 @@
+# GPIO register access for the portable DigitalIO library modules
+# (DigitalIO::DigitalOut, DigitalIn, Led). On the desktop the registers are
+# simulated (strideruntime_gpio.h): a program for a board runs unchanged, and
+# a test can set its inputs and read its outputs. Registers are 32 bits wide.
+
+platformModule _GpioWrite {
+    inputs: [Switch, UInt32, UInt32, UInt32, UInt32, Switch]
+    outputs: []
+    processing: "@__stride_jit_gpio_write"
+    inherits: [_Signal]
+}
+
+platformModule _GpioRead {
+    inputs: [UInt32, UInt32]
+    outputs: [Switch]
+    processing: "@__stride_jit_gpio_read"
+    inherits: [_Signal]
+}
+
+platformModule _GpioModify {
+    inputs: [UInt32, UInt32, UInt32, Switch]
+    outputs: []
+    processing: "@__stride_jit_gpio_modify"
+    inherits: [_Signal]
+}

@@ -1,0 +1,506 @@
+#
+# Stride GPIO Package
+#
+# The vocabulary for configuring pins: each option is a group of constants
+# (a typeClass), so a schema property with allowedTypes: Gpio::_PinPulls
+# accepts exactly Gpio::PullNone, Gpio::PullUp, Gpio::PullDown and
+# Gpio::PullBusKeeper.
+#
+# A project's hardware file declares how it uses each board pin:
+#
+#   import Gpio
+#   import ArduinoUno
+#
+#   gpioPin Button {
+#       pin: ArduinoUno::D2
+#       mode: Gpio::PinInput
+#       pull: Gpio::PullUp
+#       activeLow: on
+#   }
+#
+# A device maps these constants to its own register codes with gpioField, so
+# the values below never reach hardware. Member order matters: it is the
+# order of the positional values in older hwGenericMapping declarations.
+#
+# Vendor terms: mode is ST MODER, AVR DDR, RP2040 OE/FUNCSEL, SAMD PMUXEN and
+# nRF DIR; outputType is ST OTYPER and nRF drive modes; pull is ST PUPDR,
+# AVR PORT, RP2040 PUE/PDE; drive is RP2040 DRIVE, ESP32 drive levels and
+# SAMD DRVSTR; slew is ST OSPEEDR and RP2040 SLEWFAST; ioStandard is an FPGA
+# IOSTANDARD.
+#
+
+package Gpio
+
+# ---- Mode -------------------------------------------------------------------
+
+constant PinInput {
+	value: 0
+	meta: "Digital input"
+}
+
+constant PinOutput {
+	value: 1
+	meta: "Digital output (push-pull unless outputType says otherwise)"
+}
+
+constant PinFunction {
+	value: 2
+	meta: "Routed to a peripheral signal named by function: ST alternate function, RP2040 function select, SAMD peripheral function"
+}
+
+constant PinAnalog {
+	value: 3
+	meta: "Analog: an ADC input or DAC output"
+}
+
+constant PinDisabled {
+	value: 4
+	meta: "Unused: input buffer off where the device allows, for low power"
+}
+
+typeClass _PinModes {
+	types: [PinInput, PinOutput, PinFunction, PinAnalog, PinDisabled]
+}
+
+# ---- Output type ------------------------------------------------------------
+
+constant OutputPushPull {
+	value: 0
+	meta: "Drives both high and low"
+}
+
+constant OutputOpenDrain {
+	value: 1
+	meta: "Drives low only; high is released (needs a pull-up)"
+}
+
+constant OutputOpenSource {
+	value: 2
+	meta: "Drives high only; low is released (needs a pull-down)"
+}
+
+typeClass _PinOutputTypes {
+	types: [OutputPushPull, OutputOpenDrain, OutputOpenSource]
+}
+
+# ---- Pull -------------------------------------------------------------------
+
+constant PullNone {
+	value: 0
+	meta: "No pull resistor"
+}
+
+constant PullUp {
+	value: 1
+	meta: "Internal pull-up resistor"
+}
+
+constant PullDown {
+	value: 2
+	meta: "Internal pull-down resistor"
+}
+
+constant PullBusKeeper {
+	value: 3
+	meta: "Weakly holds the last driven level (RP2040 with both pulls on, FPGA KEEPER)"
+}
+
+typeClass _PinPulls {
+	types: [PullNone, PullUp, PullDown, PullBusKeeper]
+}
+
+# ---- Drive strength ---------------------------------------------------------
+
+constant DriveDefault {
+	value: 0
+	meta: "The device's reset drive strength"
+}
+
+constant DriveLow {
+	value: 1
+	meta: "Weakest drive (RP2040 2 mA, ESP32 level 0)"
+}
+
+constant DriveMedium {
+	value: 2
+	meta: "RP2040 4 mA, ESP32 level 1"
+}
+
+constant DriveHigh {
+	value: 3
+	meta: "RP2040 8 mA, ESP32 level 2, nRF high drive"
+}
+
+constant DriveMax {
+	value: 4
+	meta: "Strongest drive (RP2040 12 mA, ESP32 level 3)"
+}
+
+typeClass _PinDrives {
+	types: [DriveDefault, DriveLow, DriveMedium, DriveHigh, DriveMax]
+}
+
+# ---- Slew rate --------------------------------------------------------------
+
+constant SlewDefault {
+	value: 0
+	meta: "The device's reset slew rate"
+}
+
+constant SlewSlow {
+	value: 1
+	meta: "Slowest edges, least noise (ST low speed, RP2040 slow)"
+}
+
+constant SlewMedium {
+	value: 2
+	meta: "ST medium speed"
+}
+
+constant SlewFast {
+	value: 3
+	meta: "ST high speed, RP2040 fast"
+}
+
+constant SlewMax {
+	value: 4
+	meta: "ST very high speed"
+}
+
+typeClass _PinSlews {
+	types: [SlewDefault, SlewSlow, SlewMedium, SlewFast, SlewMax]
+}
+
+# ---- Interrupt trigger --------------------------------------------------------
+
+constant InterruptNone {
+	value: 0
+	meta: "No interrupt"
+}
+
+constant InterruptRising {
+	value: 1
+	meta: "Low to high edge"
+}
+
+constant InterruptFalling {
+	value: 2
+	meta: "High to low edge"
+}
+
+constant InterruptBothEdges {
+	value: 3
+	meta: "Any edge (AVR pin change)"
+}
+
+constant InterruptLevelLow {
+	value: 4
+	meta: "While the pin is low"
+}
+
+constant InterruptLevelHigh {
+	value: 5
+	meta: "While the pin is high"
+}
+
+typeClass _PinInterrupts {
+	types: [InterruptNone, InterruptRising, InterruptFalling, InterruptBothEdges, InterruptLevelLow, InterruptLevelHigh]
+}
+
+# ---- I/O standard (FPGA) ------------------------------------------------------
+
+constant IoDefault {
+	value: 0
+	meta: "The device's default I/O standard; the only one an MCU lists"
+}
+
+constant IoLvcmos33 {
+	value: 1
+	meta: "3.3 V LVCMOS"
+}
+
+constant IoLvcmos25 {
+	value: 2
+	meta: "2.5 V LVCMOS"
+}
+
+constant IoLvcmos18 {
+	value: 3
+	meta: "1.8 V LVCMOS"
+}
+
+constant IoLvcmos12 {
+	value: 4
+	meta: "1.2 V LVCMOS"
+}
+
+constant IoLvttl {
+	value: 5
+	meta: "LVTTL"
+}
+
+constant IoSstl15 {
+	value: 6
+	meta: "SSTL 1.5 V (DDR3)"
+}
+
+constant IoLvds {
+	value: 7
+	meta: "LVDS differential pair: name the N pin with pairedWith"
+}
+
+constant IoTmds {
+	value: 8
+	meta: "TMDS differential pair (DVI, HDMI): name the N pin with pairedWith"
+}
+
+typeClass _PinIoStandards {
+	types: [IoDefault, IoLvcmos33, IoLvcmos25, IoLvcmos18, IoLvcmos12, IoLvttl, IoSstl15, IoLvds, IoTmds]
+}
+
+# ---- How a port is written, and reached ----------------------------------------
+
+constant WriteReadModify {
+	value: 0
+	meta: "No set/clear registers: a write reads, changes one bit and writes back (sbi/cbi on AVR)"
+}
+
+constant WriteSetClear {
+	value: 1
+	meta: "Separate set and clear registers (STM32 BSRR, nRF OUTSET/OUTCLR, RP2040 SIO): one store, atomic"
+}
+
+constant WriteToggleOnly {
+	value: 2
+	meta: "Only a toggle register is atomic"
+}
+
+typeClass _PortWriteStyles {
+	types: [WriteReadModify, WriteSetClear, WriteToggleOnly]
+}
+
+constant AccessRegisters {
+	value: 0
+	meta: "Memory-mapped registers the GPIO modules write directly"
+}
+
+constant AccessDriver {
+	value: 1
+	meta: "Reached through a driver: an I2C or SPI expander, Linux GPIO. Not supported by the GPIO modules yet"
+}
+
+typeClass _PortAccess {
+	types: [AccessRegisters, AccessDriver]
+}
+
+# ---- Pin functions -------------------------------------------------------------
+#
+# Every signal a pin can be routed to is a declaration of one of these kinds,
+# all inheriting _PinFunctionType. Devices declare their own instances:
+#
+#   uartTx Uart0Tx { peripheral: "Usart0" }
+#
+# and a pin offers them through pinRoute entries in the device's pinFeatures.
+
+type _PinFunctionType {
+	typeName: "pinFunction"
+	properties: [
+		typeProperty Peripheral {
+			name: "peripheral"
+			allowedTypes: _StringLiteral
+			required: on
+			meta: "The peripheral instance the signal belongs to, as named in the device runtimeReserves, such as Usart0"
+		}
+	]
+	inherits: [_Base]
+	meta: "Base type of every pin function"
+}
+
+type _UartTxFunction { typeName: "uartTx" properties: [] inherits: [_PinFunctionType] meta: "UART transmit" }
+type _UartRxFunction { typeName: "uartRx" properties: [] inherits: [_PinFunctionType] meta: "UART receive" }
+type _UartRtsFunction { typeName: "uartRts" properties: [] inherits: [_PinFunctionType] meta: "UART request to send" }
+type _UartCtsFunction { typeName: "uartCts" properties: [] inherits: [_PinFunctionType] meta: "UART clear to send" }
+type _SpiSckFunction { typeName: "spiSck" properties: [] inherits: [_PinFunctionType] meta: "SPI clock" }
+type _SpiSdoFunction { typeName: "spiSdo" properties: [] inherits: [_PinFunctionType] meta: "SPI serial data out of the controller (formerly MOSI, also COPI)" }
+type _SpiSdiFunction { typeName: "spiSdi" properties: [] inherits: [_PinFunctionType] meta: "SPI serial data into the controller (formerly MISO, also CIPO)" }
+type _SpiCsFunction { typeName: "spiCs" properties: [] inherits: [_PinFunctionType] meta: "SPI chip select" }
+type _I2cSdaFunction { typeName: "i2cSda" properties: [] inherits: [_PinFunctionType] meta: "I2C data" }
+type _I2cSclFunction { typeName: "i2cScl" properties: [] inherits: [_PinFunctionType] meta: "I2C clock" }
+
+type _PwmOutputFunction {
+	typeName: "pwmOutput"
+	properties: [
+		typeProperty Channel {
+			name: "channel"
+			allowedTypes: _IntLiteral
+			default: 0
+			required: off
+			meta: "The timer channel"
+		}
+	]
+	inherits: [_PinFunctionType]
+	meta: "PWM output of a timer"
+}
+
+type _TimerCaptureFunction { typeName: "timerCapture" properties: [] inherits: [_PinFunctionType] meta: "Timer input capture" }
+type _I2sSckFunction { typeName: "i2sSck" properties: [] inherits: [_PinFunctionType] meta: "I2S bit clock" }
+type _I2sWsFunction { typeName: "i2sWs" properties: [] inherits: [_PinFunctionType] meta: "I2S word select (LR clock)" }
+type _I2sSdFunction { typeName: "i2sSd" properties: [] inherits: [_PinFunctionType] meta: "I2S serial data" }
+type _I2sMclkFunction { typeName: "i2sMclk" properties: [] inherits: [_PinFunctionType] meta: "I2S master clock for a codec" }
+type _PdmClkFunction { typeName: "pdmClk" properties: [] inherits: [_PinFunctionType] meta: "PDM microphone clock" }
+type _PdmDataFunction { typeName: "pdmData" properties: [] inherits: [_PinFunctionType] meta: "PDM microphone data" }
+type _SpdifOutFunction { typeName: "spdifOut" properties: [] inherits: [_PinFunctionType] meta: "S/PDIF output" }
+type _DacOutputFunction { typeName: "dacOutput" properties: [] inherits: [_PinFunctionType] meta: "DAC output routed to a pin" }
+
+type _PioFunction {
+	typeName: "pioFunction"
+	properties: [
+		typeProperty Block {
+			name: "block"
+			allowedTypes: _IntLiteral
+			default: 0
+			required: off
+			meta: "The PIO block"
+		}
+	]
+	inherits: [_PinFunctionType]
+	meta: "RP2040/RP2350 programmable I/O"
+}
+
+type _ClockOutputFunction { typeName: "clockOutput" properties: [] inherits: [_PinFunctionType] meta: "A clock routed to a pin" }
+type _CanTxFunction { typeName: "canTx" properties: [] inherits: [_PinFunctionType] meta: "CAN transmit" }
+type _CanRxFunction { typeName: "canRx" properties: [] inherits: [_PinFunctionType] meta: "CAN receive" }
+type _UsbDpFunction { typeName: "usbDp" properties: [] inherits: [_PinFunctionType] meta: "USB D+" }
+type _UsbDmFunction { typeName: "usbDm" properties: [] inherits: [_PinFunctionType] meta: "USB D-" }
+
+# ---- Hardware description schema ------------------------------------------------
+#
+# Device files describe their GPIO registers with gpioPort and gpioField, and
+# what each chip pin can do with pinFeatures. Board files map printed labels
+# to chip pins with pin. Projects say how they use a pin with gpioPin.
+# Options default to none here; the hardware resolver applies the defaults
+# (OutputPushPull, PullNone, ...) so that no unqualified name is filled into
+# a user's file.
+
+type _PinType {
+	typeName: "pin"
+	properties: [
+		typeProperty Port { name: "port" allowedTypes: _Any default: none required: off meta: "The device gpioPort, e.g. PortB" },
+		typeProperty Bit { name: "bit" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "The bit in the port" },
+		typeProperty Number { name: "number" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "The pin number, when the label does not give it (D13 is 13)" },
+		typeProperty Adc { name: "adc" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "ADC channel" },
+		typeProperty PackagePin { name: "packagePin" allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] } default: none required: off meta: "FPGA package pin such as H17, instead of port and bit" }
+	]
+	inherits: [_Base]
+	meta: "A printed board label mapped to a chip pin. Two labels may name one chip pin."
+}
+
+type _GpioFieldType {
+	typeName: "gpioField"
+	properties: [
+		typeProperty Option { name: "option" allowedTypes: _Any required: on meta: "The option this field sets, as its typeClass: Gpio::_PinModes, Gpio::_PinPulls, or Gpio::_PinFunctionType for function select" },
+		typeProperty Register { name: "register" allowedTypes: _IntLiteral required: on meta: "Address of the register (of pin 0's register when pinStride is set)" },
+		typeProperty RegisterHigh { name: "registerHigh" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "Second register for fields that spill over, such as STM32 AFRH" },
+		typeProperty BitsPerPin { name: "bitsPerPin" allowedTypes: _IntLiteral default: 1 required: off meta: "Field width; the field of bit n starts at n * bitsPerPin" },
+		typeProperty Shift { name: "shift" allowedTypes: _IntLiteral default: 0 required: off meta: "Extra offset of the field inside each per-pin register (RP2040 PADS bits)" },
+		typeProperty PinStride { name: "pinStride" allowedTypes: _IntLiteral default: 0 required: off meta: "Bytes between per-pin registers (RP2040, nRF); 0 when fields are packed into one port register" },
+		typeProperty Options { name: "options" allowedTypes: constrainedList { allowed: [_Any] } default: [] required: off meta: "Option values, parallel to codes" },
+		typeProperty Codes { name: "codes" allowedTypes: constrainedList { allowed: [_IntLiteral] } default: [] required: off meta: "Register codes, parallel to options" }
+	]
+	inherits: [_Base]
+	meta: "Maps one option to one register field. A value is supported on a device exactly when some field has a code for it."
+}
+
+type _GpioPortType {
+	typeName: "gpioPort"
+	properties: [
+		typeProperty Width { name: "width" allowedTypes: _IntLiteral default: 8 required: off meta: "Register width in bits: 8, 16 or 32" },
+		typeProperty Output { name: "output" allowedTypes: _IntLiteral required: on meta: "Output data register" },
+		typeProperty Input { name: "input" allowedTypes: _IntLiteral required: on meta: "Input data register" },
+		typeProperty Direction { name: "direction" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "Direction register, 1 bit per pin, 1 = output (AVR DDR)" },
+		typeProperty OutputSet { name: "outputSet" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "Register whose 1 bits set outputs" },
+		typeProperty OutputClear { name: "outputClear" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "Register whose 1 bits clear outputs (may equal outputSet, with setShift and clearShift)" },
+		typeProperty SetShift { name: "setShift" allowedTypes: _IntLiteral default: 0 required: off meta: "Bit offset of the set half (STM32 BSRR: 0)" },
+		typeProperty ClearShift { name: "clearShift" allowedTypes: _IntLiteral default: 0 required: off meta: "Bit offset of the clear half (STM32 BSRR: 16)" },
+		typeProperty OutputToggle { name: "outputToggle" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "Register whose 1 bits toggle outputs" },
+		typeProperty DirectionSet { name: "directionSet" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "Register whose 1 bits make pins outputs" },
+		typeProperty DirectionClear { name: "directionClear" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "Register whose 1 bits make pins inputs" },
+		typeProperty Enable { name: "enable" allowedTypes: _Any default: none required: off meta: "Clock gate written before the port is used: { register: bit: }" },
+		typeProperty Access { name: "access" allowedTypes: constrainedEntity { allowed: [_PortAccess, _NoneLiteral] } default: none required: off meta: "AccessRegisters (default) or AccessDriver" },
+		typeProperty Fields { name: "fields" allowedTypes: constrainedList { allowed: [_GpioFieldType] } default: [] required: off meta: "Configuration fields: mode, pull, drive, slew, function select" }
+	]
+	inherits: [_Base]
+	meta: "A GPIO port of a device"
+}
+
+type _PinRouteType {
+	typeName: "pinRoute"
+	properties: [
+		typeProperty Function { name: "function" allowedTypes: _PinFunctionType required: on meta: "The function this pin can carry" },
+		typeProperty Select { name: "select" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "Code for the function-select field (STM32 AF number)" },
+		typeProperty Register { name: "register" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "Peripheral-side routing register (nRF PSEL, ESP32 matrix): the pin number is written there" }
+	]
+	inherits: [_Base]
+	meta: "A function a pin can be routed to"
+}
+
+type _PinFeaturesType {
+	typeName: "pinFeatures"
+	properties: [
+		typeProperty Port { name: "port" allowedTypes: _Any required: on meta: "The device gpioPort" },
+		typeProperty Bit { name: "bit" allowedTypes: _IntLiteral required: on meta: "The bit in the port" },
+		typeProperty Modes { name: "modes" allowedTypes: constrainedList { allowed: [_PinModes] } default: [] required: off meta: "Modes this pin adds to the device's" },
+		typeProperty Analog { name: "analog" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "ADC or DAC channel; adds PinAnalog" },
+		typeProperty Interrupts { name: "interrupts" allowedTypes: constrainedList { allowed: [_PinInterrupts] } default: [] required: off meta: "Interrupt kinds this pin adds (AVR INT0 on PD2)" },
+		typeProperty Routes { name: "routes" allowedTypes: constrainedList { allowed: [_PinRouteType] } default: [] required: off meta: "Functions this pin can carry" },
+		typeProperty ReservedBy { name: "reservedBy" allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] } default: none required: off meta: "Peripheral the runtime uses this pin for, such as Usart0" }
+	]
+	inherits: [_Base]
+	meta: "What one chip pin can do beyond the device's defaults"
+}
+
+type _GpioCapabilityType {
+	typeName: "gpioCapabilities"
+	properties: [
+		typeProperty Emulated { name: "emulated" allowedTypes: constrainedList { allowed: [_Any] } default: [] required: off meta: "Values supported in software rather than by a field, such as Gpio::OutputOpenDrain on AVR" },
+		typeProperty Interrupts { name: "interrupts" allowedTypes: constrainedList { allowed: [_PinInterrupts] } default: [] required: off meta: "Interrupt kinds every pin supports" },
+		typeProperty AnyPinRoutes { name: "anyPinRoutes" allowedTypes: constrainedList { allowed: [_PinRouteType] } default: [] required: off meta: "Functions any pin can carry (ESP32 GPIO matrix)" }
+	]
+	inherits: [_Base]
+	meta: "Device-wide GPIO capabilities that no gpioField expresses"
+}
+
+type _GpioPinType {
+	typeName: "gpioPin"
+	properties: [
+		typeProperty Pin { name: "pin" allowedTypes: _Any required: on meta: "The board pin label, such as ArduinoUno::D2" },
+		typeProperty Mode { name: "mode" allowedTypes: _PinModes required: on meta: "What drives the pin" },
+		typeProperty OutputType { name: "outputType" allowedTypes: constrainedEntity { allowed: [_PinOutputTypes, _NoneLiteral] } default: none required: off meta: "OutputPushPull when none" },
+		typeProperty Pull { name: "pull" allowedTypes: constrainedEntity { allowed: [_PinPulls, _NoneLiteral] } default: none required: off meta: "PullNone when none" },
+		typeProperty Drive { name: "drive" allowedTypes: constrainedEntity { allowed: [_PinDrives, _NoneLiteral] } default: none required: off meta: "DriveDefault when none" },
+		typeProperty Slew { name: "slew" allowedTypes: constrainedEntity { allowed: [_PinSlews, _NoneLiteral] } default: none required: off meta: "SlewDefault when none" },
+		typeProperty Hysteresis { name: "hysteresis" allowedTypes: constrainedEntity { allowed: [_SwitchLiteral, _NoneLiteral] } default: none required: off meta: "Schmitt trigger input; the device default when none" },
+		typeProperty ActiveLow { name: "activeLow" allowedTypes: _SwitchLiteral default: off required: off meta: "Inverts the logical value" },
+		typeProperty Initial { name: "initial" allowedTypes: _SwitchLiteral default: off required: off meta: "Logical (active) level of an output at startup" },
+		typeProperty Interrupt { name: "interrupt" allowedTypes: constrainedEntity { allowed: [_PinInterrupts, _NoneLiteral] } default: none required: off meta: "Interrupt trigger. Validated; code generation is a follow-up" },
+		typeProperty Function { name: "function" allowedTypes: constrainedEntity { allowed: [_PinFunctionType, _NoneLiteral] } default: none required: off meta: "The peripheral signal for PinFunction" },
+		typeProperty IoStandard { name: "ioStandard" allowedTypes: constrainedEntity { allowed: [_PinIoStandards, _NoneLiteral] } default: none required: off meta: "FPGA I/O standard; IoDefault when none" },
+		typeProperty PairedWith { name: "pairedWith" allowedTypes: _Any default: none required: off meta: "N pin of a differential pair" },
+		typeProperty WriteStyle { name: "writeStyle" allowedTypes: _Any default: none required: off public: on writeable: off meta: "Resolved: Gpio::WriteSetClear, WriteToggleOnly or WriteReadModify" },
+		typeProperty Width { name: "width" allowedTypes: _Any default: none required: off public: on writeable: off meta: "Resolved: register width in bits" },
+		typeProperty OutAddress { name: "outAddress" allowedTypes: _Any default: none required: off public: on writeable: off meta: "Resolved: output data register" },
+		typeProperty SetAddress { name: "setAddress" allowedTypes: _Any default: none required: off public: on writeable: off meta: "Resolved: register that sets the pin" },
+		typeProperty ClearAddress { name: "clearAddress" allowedTypes: _Any default: none required: off public: on writeable: off meta: "Resolved: register that clears the pin" },
+		typeProperty SetMask { name: "setMask" allowedTypes: _Any default: none required: off public: on writeable: off meta: "Resolved: value written to setAddress" },
+		typeProperty ClearMask { name: "clearMask" allowedTypes: _Any default: none required: off public: on writeable: off meta: "Resolved: value written to clearAddress" },
+		typeProperty OutMask { name: "outMask" allowedTypes: _Any default: none required: off public: on writeable: off meta: "Resolved: the pin's bit in the output register" },
+		typeProperty InAddress { name: "inAddress" allowedTypes: _Any default: none required: off public: on writeable: off meta: "Resolved: input data register" },
+		typeProperty InMask { name: "inMask" allowedTypes: _Any default: none required: off public: on writeable: off meta: "Resolved: the pin's bit in the input register" },
+		typeProperty DirAddress { name: "dirAddress" allowedTypes: _Any default: none required: off public: on writeable: off meta: "Resolved: direction register, for emulated open drain" },
+		typeProperty DirMask { name: "dirMask" allowedTypes: _Any default: none required: off public: on writeable: off meta: "Resolved: the pin's bit in the direction register" },
+		typeProperty Invert { name: "invert" allowedTypes: _Any default: none required: off public: on writeable: off meta: "Resolved: activeLow done in software" },
+		typeProperty OpenDrainEmulated { name: "openDrainEmulated" allowedTypes: _Any default: none required: off public: on writeable: off meta: "Resolved: open drain done with the direction register" }
+	]
+	inherits: [_Base]
+	meta: "How a project uses one board pin. The hardware resolver checks it against the device and fills in the resolved properties, which the GPIO modules read."
+}

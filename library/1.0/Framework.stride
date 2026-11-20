@@ -301,7 +301,21 @@ type _DeviceType {
 			allowedTypes: constrainedList { allowed: [_Any] }
 			default: []
 			required: off
-			meta: "GPIO ports as named entries: gpioPort B { input: direction: output: } with data-space register addresses"
+			meta: "GPIO ports as named entries: gpioPort PortB { input: direction: output: fields: [...] } with register addresses (see Gpio.stride)"
+		},
+		typeProperty Gpio {
+			name: "gpio"
+			allowedTypes: _Any
+			default: none
+			required: off
+			meta: "Device-wide GPIO capabilities no gpioField expresses: gpioCapabilities { emulated: interrupts: anyPinRoutes: }"
+		},
+		typeProperty PinFeatures {
+			name: "pinFeatures"
+			allowedTypes: constrainedList { allowed: [_Any] }
+			default: []
+			required: off
+			meta: "What each chip pin adds to the device's GPIO: pinFeatures PD2 { port: PortD bit: 2 interrupts: [...] routes: [...] }"
 		},
 		typeProperty TickTimer {
 			name: "tickTimer"
@@ -392,8 +406,9 @@ type _HardwareBoardType {
 		typeProperty Platform {
 			name: "platform"
 			allowedTypes: _Any
-			required: on
-			meta: "Parent platform reference (e.g. AVR)"
+			default: none
+			required: off
+			meta: "Parent platform reference (e.g. AVR). A board that overlays another board inherits it."
 		},
 		typeProperty Overlays {
 			name: "overlays"

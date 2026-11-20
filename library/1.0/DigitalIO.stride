@@ -1,0 +1,109 @@
+#
+# Stride DigitalIO Package
+#
+# Digital pins that work on any board. A project declares how it uses each
+# board pin with a gpioPin in its hardware file (see Gpio.stride), and the
+# program uses these modules with that gpioPin:
+#
+#   import DigitalIO
+#   import BlinkRig
+#
+#   Blink >> DigitalIO::Led(pin: BlinkRig::Status);
+#   BlinkRig::Button >> DigitalIO::DigitalIn() >> Pressed;
+#   Pressed >> DigitalIO::DigitalOut(pin: BlinkRig::Relay);
+#
+# The compiler checks pin: against the board, sets every gpioPin up once at
+# startup (level, pull, then direction, so outputs never glitch) and fills in
+# the register addresses and masks below, so programs never write them. The
+# register access is the framework's _GpioWrite and _GpioRead: on AVR a
+# constant pin write is a single sbi/cbi instruction.
+#
+
+package DigitalIO
+
+module DigitalOut {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "On drives the pin to its active level (high, or low for an activeLow pin)"
+        },
+        propertyInputPort SetAddressPort { name: "setAddress" entity: SetAddress meta: "Filled in from pin: by the compiler" },
+        propertyInputPort ClearAddressPort { name: "clearAddress" entity: ClearAddress meta: "Filled in from pin: by the compiler" },
+        propertyInputPort SetMaskPort { name: "setMask" entity: SetMask meta: "Filled in from pin: by the compiler" },
+        propertyInputPort ClearMaskPort { name: "clearMask" entity: ClearMask meta: "Filled in from pin: by the compiler" },
+        propertyInputPort ReadModifyPort { name: "readModify" entity: ReadModify meta: "Filled in from pin: by the compiler" },
+        propertyInputPort InvertPort { name: "invert" entity: Invert meta: "Filled in from pin: by the compiler" }
+    ]
+    entities: [
+        switch Input { domain: InputPort.domain default: off },
+        signal SetAddress { type: Int domain: InputPort.domain default: 0 },
+        signal ClearAddress { type: Int domain: InputPort.domain default: 0 },
+        signal SetMask { type: Int domain: InputPort.domain default: 0 },
+        signal ClearMask { type: Int domain: InputPort.domain default: 0 },
+        switch ReadModify { domain: InputPort.domain default: on },
+        switch Invert { domain: InputPort.domain default: off },
+        switch Level { domain: InputPort.domain default: off }
+    ]
+    streams: [
+        [Input, Invert] >> Xor() >> Level;
+        [Level, SetAddress, ClearAddress, SetMask, ClearMask, ReadModify] >> _GpioWrite();
+    ]
+    meta: "Drives a gpioPin: On >> DigitalIO::DigitalOut(pin: Rig::Relay). The pin's mode must be Gpio::PinOutput."
+}
+
+module Led {
+    ports: [
+        mainInputPort InputPort {
+            name: "input"
+            entity: Input
+            meta: "On lights the LED"
+        },
+        propertyInputPort SetAddressPort { name: "setAddress" entity: SetAddress meta: "Filled in from pin: by the compiler" },
+        propertyInputPort ClearAddressPort { name: "clearAddress" entity: ClearAddress meta: "Filled in from pin: by the compiler" },
+        propertyInputPort SetMaskPort { name: "setMask" entity: SetMask meta: "Filled in from pin: by the compiler" },
+        propertyInputPort ClearMaskPort { name: "clearMask" entity: ClearMask meta: "Filled in from pin: by the compiler" },
+        propertyInputPort ReadModifyPort { name: "readModify" entity: ReadModify meta: "Filled in from pin: by the compiler" },
+        propertyInputPort InvertPort { name: "invert" entity: Invert meta: "Filled in from pin: by the compiler" }
+    ]
+    entities: [
+        switch Input { domain: InputPort.domain default: off },
+        signal SetAddress { type: Int domain: InputPort.domain default: 0 },
+        signal ClearAddress { type: Int domain: InputPort.domain default: 0 },
+        signal SetMask { type: Int domain: InputPort.domain default: 0 },
+        signal ClearMask { type: Int domain: InputPort.domain default: 0 },
+        switch ReadModify { domain: InputPort.domain default: on },
+        switch Invert { domain: InputPort.domain default: off },
+        switch Level { domain: InputPort.domain default: off }
+    ]
+    streams: [
+        [Input, Invert] >> Xor() >> Level;
+        [Level, SetAddress, ClearAddress, SetMask, ClearMask, ReadModify] >> _GpioWrite();
+    ]
+    meta: "Lights an LED on a gpioPin: Blink >> DigitalIO::Led(pin: Rig::Status). An LED wired to light when its pin is low has activeLow: on in its gpioPin. Brightness through PWM will come here."
+}
+
+module DigitalIn {
+    ports: [
+        mainOutputPort OutputPort {
+            name: "output"
+            entity: Output
+            meta: "On while the pin is at its active level (high, or low for an activeLow pin)"
+        },
+        propertyInputPort InAddressPort { name: "inAddress" entity: InAddress meta: "Filled in from pin: by the compiler" },
+        propertyInputPort InMaskPort { name: "inMask" entity: InMask meta: "Filled in from pin: by the compiler" },
+        propertyInputPort InvertPort { name: "invert" entity: Invert meta: "Filled in from pin: by the compiler" }
+    ]
+    entities: [
+        signal InAddress { type: Int domain: OutputPort.domain default: 0 },
+        signal InMask { type: Int domain: OutputPort.domain default: 0 },
+        switch Invert { domain: OutputPort.domain default: off },
+        switch Raw { domain: OutputPort.domain default: off },
+        switch Output { domain: OutputPort.domain default: off }
+    ]
+    streams: [
+        [InAddress, InMask] >> _GpioRead() >> Raw;
+        [Raw, Invert] >> Xor() >> Output;
+    ]
+    meta: "Reads a gpioPin: Rig::Button >> DigitalIO::DigitalIn() >> Pressed, or DigitalIO::DigitalIn(pin: Rig::Button) >> Pressed."
+}
