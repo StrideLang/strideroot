@@ -1,0 +1,47 @@
+#
+# BlinkRig: how this project is wired to an Arduino Uno.
+#
+# This is the only file that names the board. To move the project to another
+# board, change `overlays:` and the `pin:` labels here; PortableBlink.stride
+# stays as it is (only its `use` line changes if the platform does).
+#
+#   D2  -- push button -- GND      (the internal pull-up holds D2 high)
+#   LED -- the Uno's on-board LED  (D13)
+#   D7  -- input of an active-low relay module: driven low while the button
+#          is pressed, released otherwise (open drain)
+#
+
+package BlinkRig
+
+import Gpio
+import ArduinoUno
+
+hardwareBoard BlinkRig {
+    overlays: ArduinoUno
+}
+
+# Pressed pulls D2 to ground, so the button is active low.
+gpioPin Button {
+    pin: ArduinoUno::D2
+    mode: Gpio::PinInput
+    pull: Gpio::PullUp
+    activeLow: on
+}
+
+gpioPin Status {
+    pin: ArduinoUno::LED
+    mode: Gpio::PinOutput
+    initial: off
+}
+
+# Open drain: the ATmega328P has no open-drain output, so the compiler
+# emulates it with the direction register (driven low or released). The
+# module switches on when its input is low, so the pin is active low, and it
+# starts off (released).
+gpioPin Relay {
+    pin: ArduinoUno::D7
+    mode: Gpio::PinOutput
+    outputType: Gpio::OutputOpenDrain
+    activeLow: on
+    initial: off
+}
