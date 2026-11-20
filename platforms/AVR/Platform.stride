@@ -1,7 +1,7 @@
 #
 # AVR platform: 8-bit AVR microcontrollers programmed without the Arduino
 # build system. Boards live in boards/, devices in devices/, and the core
-# families they overlay in strideroot/cores/.
+# families they overlay (AVR5, AVR6) in cores/.
 #
 
 import ATmega328P

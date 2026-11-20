@@ -12,7 +12,7 @@
 | **`systems/`** | Target system definitions (`Desktop`, `DesktopAudio`, `DesktopFunctions`, `JIT`, `AVR`, `Pico`, `SaturnM7`, `Wiring`, `TestSystem`). |
 | **`frameworks/`** | Runtime and build frameworks (`JIT`, `Cpp`, `RtAudio`, `DesktopTemplate`, `AVR`, `Pico`, `STM32F7`, `Wiring`, `TestFramework`). |
 | **`platforms/`** | Hardware and platform abstractions (`AVR`, `JIT`, `Pico`, `ST`, `Test`, `generic`). |
-| **`cores/`** | Processor core definitions (e.g., `AVR5.stride`). |
+| **`cores/`** | Processor core definitions shared by several platforms. A core only one platform uses lives in `platforms/<P>/cores/` (e.g., `platforms/AVR/cores/AVR5.stride`), which is searched first. |
 | **`tools/`** | External toolchain and firmware definitions (`Arduino`, `ArmCrosscompiler`, `CMake`, `Cpp`, `Git`, `OpenOCD`, `STM32F7_Firmware`). |
 
 ---
