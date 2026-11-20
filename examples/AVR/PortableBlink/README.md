@@ -4,6 +4,7 @@ Blinks an Arduino Uno's on-board LED from the main loop, and drives a relay
 module from a button polled by a 1 kHz timer. It shows how a Stride program
 uses pins without naming a board.
 
+
 | File | What it is |
 |---|---|
 | `PortableBlink.stride` | The program. It uses `BlinkRig::Status`, `BlinkRig::Button` and `BlinkRig::Relay` through `DigitalIO::Led`, `DigitalIn` and `DigitalOut`, in the standard `PlatformLoopDomain` and `PlatformTimerDomain`. |
@@ -61,7 +62,9 @@ The rest of the program stays as it is: `BlinkRig::Status` now means
   never clicks at reset.
 - **Turns each pin access into direct register access** at constant
   addresses, with no runtime calls. The startup writes are single
-  `sbi`/`cbi` instructions. A blink is a read-modify-write of PORTB.
+  `sbi`/`cbi` instructions. A write of a level known only at run time, such
+  as the blink or the relay, is a read-modify-write: `in`, `andi`, `or`,
+  `out`.
 - **Sleeps cooperatively.** `Sleep(domain: PlatformLoopDomain)` suspends
   only the loop, so the timer keeps polling the button while the LED waits.
 
@@ -70,6 +73,13 @@ The rest of the program stays as it is: `BlinkRig::Status` now means
 Move the signals to other pins by editing the `pin:` labels in the hardware
 file. For another board, copy `BlinkRig.stride` the way `BlinkRigMega.stride`
 does: overlay the new board, use its labels, and point the program's `use`
-line and `import ... as BlinkRig` at the new file. On the Mega, D7 is on port
-H, which sits above the I/O space, so its writes are `lds`/`sts` rather than
-`sbi`/`cbi`.
+line and `import ... as BlinkRig` at the new file.
+
+On the Mega, D7 is on port H, whose registers sit in the extended I/O space
+(0x100 to 0x102). `sbi`/`cbi` and `in`/`out` reach only the low I/O space, so
+port H is read and written with `lds`/`sts`. Each relay write takes two more
+cycles and two more words of flash than on the Uno, and the startup writes
+become `lds`, `ori` or `andi`, `sts` instead of one `sbi`/`cbi`. Such a
+read-modify-write can be interrupted between its read and its write. That is
+safe here, because the timer domain runs from the main loop and no interrupt
+writes PORTH.
