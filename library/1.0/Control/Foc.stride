@@ -2,7 +2,7 @@
 # Stride Standard Library - Control Package: Field-Oriented Control (FOC) Transforms
 #
 
-package Control
+package Control::Foc
 
 # Clarke Transform: Converts 3-phase currents [Ia, Ib, Ic] into 2-phase stationary frame [Ialpha, Ibeta]
 module Clarke {
