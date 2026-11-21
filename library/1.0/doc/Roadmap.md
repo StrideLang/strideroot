@@ -5,12 +5,10 @@ Status: **done** (committed, not yet compiled), **open**, **decision** (needs yo
 
 ## Phase 0 - Verify what exists (blocking)
 
-Nothing from the cleanup has been compiled or run.
-
-1. Build `stridetest` and run `stridetest strideroot/library/1.0/tests/`.
-2. Rebuild `stridec` (the one in `build/bin` fails on the current `Callable.stride`).
-3. Fix what the guesses got wrong: array-valued assertions, qualified targets in `functionTest`, `Wedge` loop counters, `Transform`/`MatMul` indexing.
-4. Regenerate `stridedoc` output (it still uses `Inverse`, `Cross`, the old filter stubs).
+1. Build `stridetest` and run `stridetest strideroot/library/1.0/tests/`: **done**. On 2026-11-20 all 22 test files pass, 136/136 tests (Release, each file run on its own).
+2. Rebuild `stridec` (the one in `build/bin` fails on the current `Callable.stride`): open.
+3. Fix what the guesses got wrong: array-valued assertions, qualified targets in `functionTest`, `Wedge` loop counters, `Transform`/`MatMul` indexing: **done**.
+4. Regenerate `stridedoc` output (it still uses `Inverse`, `Cross`, the old filter stubs): open.
 
 Exit: every test file passes or has a documented, intentional failure (see Phase 1).
 
@@ -23,7 +21,7 @@ Exit: every test file passes or has a documented, intentional failure (see Phase
 | Duplicates: `Level`/`Pan`, `_CodeGenerator`, `Watch`, `testing/1.0` | done |
 | `Clip` vs `Clamp` | open: kept because `tests/data/platform/06_Clip.stride` uses it. Migrate that test data, then remove |
 | Empty `Error` module | accepted (special compiler treatment) |
-| Intrinsics with no framework definition: `__Pow`, `__Exp`, `__Console*`, `__Midi*`, `__Serial*`, `__ExitDomain` | open, deferred by you. `Pow`/`Exp` are used by `Norm`, `Smooth`, `Debounce` tests, so those tests fail until defined |
+| Intrinsics with no framework definition: `__Pow`, `__Exp`, `__Console*`, `__Midi*`, `__Serial*`, `__ExitDomain` | `__Pow`/`__Exp`: done (the `Norm`, `Smooth`, `Debounce` tests pass). The rest: open, deferred by you |
 | Framework coverage: `__Abs`, `__Floor`, `_RandomInt` only in JIT; `__And` only in JIT and Cpp | open, deferred |
 | Tests for every package | mostly done. Missing: IO (Console, Midi), Generators other than `Oscillator` (needs timing spec for triggers), Framework/QualityPolicy schema |
 
