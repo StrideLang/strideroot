@@ -52,8 +52,9 @@ loop TimerPrescalerSelect {
 		[TimerPrescalerSelect_Top, 1] >> GreaterOrEqual() >> TimerPrescalerSelect_AboveZero;
 		[TimerPrescalerSelect_Top, TimerPrescalerSelect_MaxTop] >> LessOrEqual() >> TimerPrescalerSelect_Holds;
 		[TimerPrescalerSelect_AboveZero, TimerPrescalerSelect_Holds] >> And() >> TimerPrescalerSelect_Fits;
-		[TimerPrescalerSelect_Fits, TimerPrescalerSelect_Candidate, TimerPrescalerSelect_Output]
-			>> __Select() >> TimerPrescalerSelect_Output;
+		TimerPrescalerSelect_Output
+			>> Select(condition: TimerPrescalerSelect_Fits whenOn: TimerPrescalerSelect_Candidate)
+			>> TimerPrescalerSelect_Output;
 		TimerPrescalerSelect_Index + 1 >> TimerPrescalerSelect_Index;
 		[ TimerPrescalerSelect_Index, PrescalersPort.size ] >> Equal() >> TimerPrescalerSelect_Done;
 	]
