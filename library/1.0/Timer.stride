@@ -1,0 +1,104 @@
+# Timer.stride
+#
+# Configuring hardware timers while compiling. A timer counts the clock
+# divided by a prescaler and fires every top + 1 counts, so it fires at
+#
+#     clock / (prescaler * (top + 1))   times a second.
+#
+# These are pure, so constants filled with them are computed while
+# compiling, on the host, and compileChecks can check the result:
+#
+#   constant TickPrescalers[5] { value: [1, 8, 64, 256, 1024] type: UInt32 }
+#   constant TickPrescaler { type: Int }
+#   constant TickTop { type: UInt32 }
+#   TimerPrescalerSelect(clock: PlatformClockFrequency rate: 1000
+#                        maxTop: 255 prescalers: TickPrescalers) >> TickPrescaler;
+#   TimerTop(clock: PlatformClockFrequency rate: 1000
+#            prescaler: TickPrescalers[TickPrescaler]) >> TickTop;
+
+# The index of the smallest prescaler whose top fits the timer (1 to maxTop),
+# or -1 when none fits. The prescalers are listed smallest first.
+loop TimerPrescalerSelect {
+	ports: [
+		mainOutputPort OutputPort { entity: TimerPrescalerSelect_Output }
+		propertyInputPort ClockPort { name: "clock" entity: TimerPrescalerSelect_Clock meta: "The clock the timer divides, in Hz" }
+		propertyInputPort RatePort { name: "rate" entity: TimerPrescalerSelect_Rate meta: "How often the timer fires, in Hz" }
+		propertyInputPort MaxTopPort { name: "maxTop" entity: TimerPrescalerSelect_MaxTop meta: "The largest top the timer holds: 255 for 8 bits" }
+		propertyInputPort PrescalersPort { name: "prescalers" entity: TimerPrescalerSelect_Prescalers meta: "The prescalers, smallest first" }
+	]
+	entities: [
+		signal TimerPrescalerSelect_Output { default: -1 type: Int reset: TimerPrescalerSelect_Reset }
+		signal TimerPrescalerSelect_Clock { type: UInt32 }
+		signal TimerPrescalerSelect_Rate { type: UInt32 }
+		signal TimerPrescalerSelect_MaxTop { type: UInt32 }
+		signal TimerPrescalerSelect_Prescalers[PrescalersPort.size] { type: UInt32 }
+		# Counts down the prescalers, so the last one that fits is the smallest
+		signal TimerPrescalerSelect_Index { default: 0 type: Int reset: TimerPrescalerSelect_Reset }
+		signal TimerPrescalerSelect_Candidate { default: 0 type: Int }
+		signal TimerPrescalerSelect_Top { default: 0 type: UInt32 }
+		switch TimerPrescalerSelect_AboveZero { default: off }
+		switch TimerPrescalerSelect_Holds { default: off }
+		switch TimerPrescalerSelect_Fits { default: off }
+		switch TimerPrescalerSelect_Done { default: off }
+		trigger TimerPrescalerSelect_Reset {}
+	]
+	onExecution: TimerPrescalerSelect_Reset
+	terminateWhen: TimerPrescalerSelect_Done
+	streams: [
+		PrescalersPort.size - 1 - TimerPrescalerSelect_Index >> TimerPrescalerSelect_Candidate;
+		TimerTop(clock: TimerPrescalerSelect_Clock rate: TimerPrescalerSelect_Rate
+		         prescaler: TimerPrescalerSelect_Prescalers[TimerPrescalerSelect_Candidate])
+			>> TimerPrescalerSelect_Top;
+		[TimerPrescalerSelect_Top, 1] >> GreaterOrEqual() >> TimerPrescalerSelect_AboveZero;
+		[TimerPrescalerSelect_Top, TimerPrescalerSelect_MaxTop] >> LessOrEqual() >> TimerPrescalerSelect_Holds;
+		[TimerPrescalerSelect_AboveZero, TimerPrescalerSelect_Holds] >> And() >> TimerPrescalerSelect_Fits;
+		[TimerPrescalerSelect_Fits, TimerPrescalerSelect_Candidate, TimerPrescalerSelect_Output]
+			>> __Select() >> TimerPrescalerSelect_Output;
+		TimerPrescalerSelect_Index + 1 >> TimerPrescalerSelect_Index;
+		[ TimerPrescalerSelect_Index, PrescalersPort.size ] >> Equal() >> TimerPrescalerSelect_Done;
+	]
+	meta: "The index of the smallest prescaler whose top fits the timer, or -1: TimerPrescalerSelect(clock: rate: maxTop: prescalers:) >> Index."
+}
+
+# The top that makes the rate nearest: round(clock / (prescaler * rate)) - 1
+module TimerTop {
+	ports: [
+		mainOutputPort OutputPort { entity: TimerTop_Output }
+		propertyInputPort ClockPort { name: "clock" entity: TimerTop_Clock meta: "The clock the timer divides, in Hz" }
+		propertyInputPort RatePort { name: "rate" entity: TimerTop_Rate meta: "How often the timer fires, in Hz" }
+		propertyInputPort PrescalerPort { name: "prescaler" entity: TimerTop_Prescaler meta: "The prescaler" }
+	]
+	entities: [
+		signal TimerTop_Output { type: UInt32 }
+		signal TimerTop_Clock { type: UInt32 }
+		signal TimerTop_Rate { type: UInt32 }
+		signal TimerTop_Prescaler { type: UInt32 }
+		signal TimerTop_Counts { type: UInt32 }
+	]
+	streams: [
+		TimerTop_Prescaler * TimerTop_Rate >> TimerTop_Counts;
+		(TimerTop_Clock + TimerTop_Counts / 2) / TimerTop_Counts - 1 >> TimerTop_Output;
+	]
+	meta: "The top that makes a timer's rate nearest the one asked for: TimerTop(clock: rate: prescaler:) >> Top."
+}
+
+# How often a timer fires: clock / (prescaler * (top + 1))
+module TimerRate {
+	ports: [
+		mainOutputPort OutputPort { entity: TimerRate_Output }
+		propertyInputPort ClockPort { name: "clock" entity: TimerRate_Clock meta: "The clock the timer divides, in Hz" }
+		propertyInputPort PrescalerPort { name: "prescaler" entity: TimerRate_Prescaler meta: "The prescaler" }
+		propertyInputPort TopPort { name: "top" entity: TimerRate_Top meta: "The top" }
+	]
+	entities: [
+		signal TimerRate_Output { type: Real }
+		signal TimerRate_Clock { type: UInt32 }
+		signal TimerRate_Prescaler { type: UInt32 }
+		signal TimerRate_Top { type: UInt32 }
+	]
+	streams: [
+		# In Real, so the rate keeps its fraction
+		TimerRate_Clock * 1.0 / (TimerRate_Prescaler * (TimerRate_Top + 1)) >> TimerRate_Output;
+	]
+	meta: "How often a timer fires, in Hz: TimerRate(clock: prescaler: top:) >> Rate."
+}

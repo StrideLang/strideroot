@@ -1,0 +1,49 @@
+# CompileCheck.stride
+#
+# A condition the compiler checks while compiling. Each stream in
+# `condition` computes a Switch from constants: the compiler writes it to a
+# hidden constant, runs it with the constant fills (in memory, on the host)
+# and reports the check when a condition is off. A check never runs on the
+# target: a condition that reads anything not known while compiling is an
+# error.
+#
+#   compileCheck TickRateFits {
+#       condition: [ [TickTop, 255] >> LessOrEqual(); ]
+#       message: 'The tick rate needs a compare value above 255'
+#       values: [ TickTop ]
+#   }
+
+type _CompileCheck {
+	typeName: "compileCheck"
+	properties: [
+		typeProperty Condition {
+			name: "condition"
+			# _Any: the compiler moves the streams out and lists the constants
+			# they write instead
+			allowedTypes: constrainedList { allowed: [_StreamType, _Any] }
+			required: on
+			meta: "Streams without a destination, each computing a Switch from constants. The check passes when all are on."
+		},
+		typeProperty Message {
+			name: "message"
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral] }
+			required: on
+			meta: "What the error or warning says when a condition is off."
+		},
+		typeProperty Values {
+			name: "values"
+			allowedTypes: constrainedList { allowed: [_Any] }
+			default: []
+			required: off
+			meta: "Constants whose values the report lists, to show why the check failed."
+		},
+		typeProperty Severity {
+			name: "severity"
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral] }
+			default: 'error'
+			required: off
+			meta: "'error' stops the compile; 'warning' only reports."
+		}
+	]
+	inherits: [_Base]
+}
