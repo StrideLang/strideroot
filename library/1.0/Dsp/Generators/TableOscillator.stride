@@ -101,7 +101,7 @@ module TableOscillator {
         Frequency * TableSize / OutputPort.rate >> PhaseInc;
         SineTable[Phase] * Amplitude >> Output;
         Phase + PhaseInc >> Phase;
-        [Phase, TableSize] >> Greater() >> PhaseOverflow >> WrapPhase();
+        [Phase, TableSize] >> GreaterOrEqual() >> PhaseOverflow >> WrapPhase();
     ]
     meta: "1024-sample wavetable sine oscillator with bipolar output [-1.0, 1.0] scaled by amplitude."
 }

@@ -2,7 +2,7 @@
 # Stride Standard Library - Control Package: Hysteresis (Schmitt Trigger)
 #
 
-package Control
+package Control::Hysteresis
 
 module Hysteresis {
     ports: [

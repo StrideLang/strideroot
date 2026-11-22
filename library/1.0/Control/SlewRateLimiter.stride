@@ -2,7 +2,7 @@
 # Stride Standard Library - Control Package: Slew Rate Limiter
 #
 
-package Control
+package Control::SlewRateLimiter
 
 module SlewRateLimiter {
     ports: [

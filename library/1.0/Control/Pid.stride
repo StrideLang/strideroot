@@ -2,7 +2,7 @@
 # Stride Standard Library - Control Package: PID Controller
 #
 
-package Control
+package Control::Pid
 
 module Pid {
     ports: [
