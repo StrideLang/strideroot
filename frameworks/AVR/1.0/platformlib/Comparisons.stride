@@ -97,6 +97,49 @@ platformModule NotEqual@Double_Bool {
     inherits: [_Signal]
 }
 
+# Unsigned: UInt8 to UInt32 compare as integers instead of as reals
+platformModule Greater@UInt32_Bool {
+    inputs: [UInt32, UInt32]
+    outputs: [Switch]
+    processing: "%%outtokens:0%% = llvm::icmp ugt %%intokens:0%%, %%intokens:1%%"
+    inherits: [_Signal]
+}
+
+platformModule GreaterOrEqual@UInt32_Bool {
+    inputs: [UInt32, UInt32]
+    outputs: [Switch]
+    processing: "%%outtokens:0%% = llvm::icmp uge %%intokens:0%%, %%intokens:1%%"
+    inherits: [_Signal]
+}
+
+platformModule Equal@UInt32_Bool {
+    inputs: [UInt32, UInt32]
+    outputs: [Switch]
+    processing: "%%outtokens:0%% = llvm::icmp eq %%intokens:0%%, %%intokens:1%%"
+    inherits: [_Signal]
+}
+
+platformModule Less@UInt32_Bool {
+    inputs: [UInt32, UInt32]
+    outputs: [Switch]
+    processing: "%%outtokens:0%% = llvm::icmp ult %%intokens:0%%, %%intokens:1%%"
+    inherits: [_Signal]
+}
+
+platformModule LessOrEqual@UInt32_Bool {
+    inputs: [UInt32, UInt32]
+    outputs: [Switch]
+    processing: "%%outtokens:0%% = llvm::icmp ule %%intokens:0%%, %%intokens:1%%"
+    inherits: [_Signal]
+}
+
+platformModule NotEqual@UInt32_Bool {
+    inputs: [UInt32, UInt32]
+    outputs: [Switch]
+    processing: "%%outtokens:0%% = llvm::icmp ne %%intokens:0%%, %%intokens:1%%"
+    inherits: [_Signal]
+}
+
 platformModule And@Bool_Bool {
     inputs: [Switch, Switch]
     outputs: [Switch]
@@ -252,6 +295,49 @@ platformModule __NotEqual@Double_Bool {
     inputs: [Real, Real]
     outputs: [Switch]
     processing: "%%outtokens:0%% = llvm::fcmp one %%intokens:0%%, %%intokens:1%%"
+    inherits: [_Signal]
+}
+
+# Unsigned: UInt8 to UInt32 compare as integers instead of as reals
+platformModule __Greater@UInt32_Bool {
+    inputs: [UInt32, UInt32]
+    outputs: [Switch]
+    processing: "%%outtokens:0%% = llvm::icmp ugt %%intokens:0%%, %%intokens:1%%"
+    inherits: [_Signal]
+}
+
+platformModule __GreaterOrEqual@UInt32_Bool {
+    inputs: [UInt32, UInt32]
+    outputs: [Switch]
+    processing: "%%outtokens:0%% = llvm::icmp uge %%intokens:0%%, %%intokens:1%%"
+    inherits: [_Signal]
+}
+
+platformModule __Equal@UInt32_Bool {
+    inputs: [UInt32, UInt32]
+    outputs: [Switch]
+    processing: "%%outtokens:0%% = llvm::icmp eq %%intokens:0%%, %%intokens:1%%"
+    inherits: [_Signal]
+}
+
+platformModule __Less@UInt32_Bool {
+    inputs: [UInt32, UInt32]
+    outputs: [Switch]
+    processing: "%%outtokens:0%% = llvm::icmp ult %%intokens:0%%, %%intokens:1%%"
+    inherits: [_Signal]
+}
+
+platformModule __LessOrEqual@UInt32_Bool {
+    inputs: [UInt32, UInt32]
+    outputs: [Switch]
+    processing: "%%outtokens:0%% = llvm::icmp ule %%intokens:0%%, %%intokens:1%%"
+    inherits: [_Signal]
+}
+
+platformModule __NotEqual@UInt32_Bool {
+    inputs: [UInt32, UInt32]
+    outputs: [Switch]
+    processing: "%%outtokens:0%% = llvm::icmp ne %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
 
