@@ -28,11 +28,12 @@ module Select {
         }
     ]
     entities: [
-        signal Input     { domain: OutputPort.domain }
-        signal Output    { domain: OutputPort.domain }
+        # The values have the input's type, so an Int Select stays Int
+        signal Input     { type: InputPort.type domain: OutputPort.domain }
+        signal Output    { type: InputPort.type domain: OutputPort.domain }
         switch Condition { domain: OutputPort.domain }
-        signal WhenOn    { domain: OutputPort.domain }
-        signal WhenOff   { domain: OutputPort.domain default: Input }
+        signal WhenOn    { type: InputPort.type domain: OutputPort.domain }
+        signal WhenOff   { type: InputPort.type domain: OutputPort.domain default: Input }
     ]
     streams: [
         [Condition, WhenOn, WhenOff] >> __Select() >> Output;
