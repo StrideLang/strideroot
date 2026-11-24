@@ -1,0 +1,37 @@
+#
+# BlinkRigSTM32F746GDiscovery: PortableBlink wired to an STM32F746G-DISCO.
+#
+#   BUTTON -- on-board user button (PI11), active high
+#   LED    -- on-board green user LED (LD1, PI1)
+#   D7     -- relay module input (PI3), hardware open drain, active low
+#
+
+package BlinkRigSTM32F746GDiscovery
+
+import Gpio
+import STM32F746GDiscovery
+
+hardwareBoard BlinkRigSTM32F746GDiscovery {
+    overlays: STM32F746GDiscovery
+}
+
+gpioPin Button {
+    pin: STM32F746GDiscovery::BUTTON
+    mode: Gpio::PinInput
+    pull: Gpio::PullNone
+    activeLow: off
+}
+
+gpioPin Status {
+    pin: STM32F746GDiscovery::LED
+    mode: Gpio::PinOutput
+    initial: off
+}
+
+gpioPin Relay {
+    pin: STM32F746GDiscovery::D7
+    mode: Gpio::PinOutput
+    outputType: Gpio::OutputOpenDrain
+    activeLow: on
+    initial: off
+}

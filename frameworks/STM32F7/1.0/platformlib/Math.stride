@@ -1,24 +1,66 @@
+# Math from newlib libm (float variants for Float32 Real).
 
-#platformModule _Floor {
-#    inputs: ["real"]
-#	outputs: ["real"] # FIXME shoudl be "int"
-#    include: ["cmath"]
-#    processing: "std::floor(%%intokens:0%%)"
-#    inherits: ['signal']
-#}
-## Power function
-#platformModule _Power {
-#	outputs: ["real"]
-#    include: ["cmath"]	
-#    processing: "std::pow(%%intokens:0%%, %%intokens:1%%)"
-#    inherits: ['signal']
-#}
-#
-## Power to e
-#platformModule _Exp {
-#    inputs: ["real"]
-#	outputs: ["real"]
-#    include: ["cmath"]
-#    processing: "std::exp(%%intokens:0%%)"
-#    inherits: ['signal']
-#}
+platformModule __Abs {
+    inputs: [Real]
+    outputs: [Real]
+    resources: [_STM32MathLib]
+    linkTo: ["m"]
+    processing: "@fabsf"
+    inherits: [_Signal]
+}
+
+platformModule __Floor {
+    inputs: [Real]
+    outputs: [Real]
+    resources: [_STM32MathLib]
+    linkTo: ["m"]
+    processing: "@floorf"
+    inherits: [_Signal]
+}
+
+# e raised to the input
+platformModule __Exp {
+    inputs: [Real]
+    outputs: [Real]
+    resources: [_STM32MathLib]
+    linkTo: ["m"]
+    processing: "@expf"
+    inherits: [_Signal]
+}
+
+# First input raised to the second input
+platformModule __Pow {
+    inputs: [Real, Real]
+    outputs: [Real]
+    resources: [_STM32MathLib]
+    linkTo: ["m"]
+    processing: "@powf"
+    inherits: [_Signal]
+}
+
+platformModule __Sin {
+    inputs: [Real]
+    outputs: [Real]
+    resources: [_STM32MathLib]
+    linkTo: ["m"]
+    processing: "@sinf"
+    inherits: [_Signal]
+}
+
+platformModule __Cos {
+    inputs: [Real]
+    outputs: [Real]
+    resources: [_STM32MathLib]
+    linkTo: ["m"]
+    processing: "@cosf"
+    inherits: [_Signal]
+}
+
+platformModule __Tan {
+    inputs: [Real]
+    outputs: [Real]
+    resources: [_STM32MathLib]
+    linkTo: ["m"]
+    processing: "@tanf"
+    inherits: [_Signal]
+}

@@ -1,0 +1,43 @@
+#
+# STMicroelectronics STM32F7 Platform Definition
+#
+
+import QualityPolicy
+import STM32F769BI
+import STM32F767ZI
+import STM32F746NG
+
+platform STM32F7 {
+    framework: "STM32F7"
+    defaultDevice: STM32F769BI
+    supportedDevices: [
+        STM32F769BI,
+        STM32F767ZI,
+        STM32F746NG
+    ]
+
+    # Baseline platform policies for all STM32F7 devices (hardware FPU)
+    platformPolicies: [
+        policyBinding [] {
+            policy: QualityPolicy::Optimal
+            function: [ Sin,        Cos,        Tan        ]
+            target:   [ Sin@Direct, Cos@Direct, Tan@Direct ]
+        },
+        policyBinding [] {
+            policy: QualityPolicy::Fast
+            function: [ Sin,       Cos       ]
+            target:   [ Sin@Poly5, Cos@Poly5 ]
+        },
+        policyBinding [] {
+            policy: QualityPolicy::Accurate
+            function: [ Sin,        Cos        ]
+            target:   [ Sin@Direct, Cos@Direct ]
+        },
+        policyBinding [] {
+            policy: QualityPolicy::Compact
+            function: [ Sin,        Cos        ]
+            target:   [ Sin@Direct, Cos@Direct ]
+        }
+    ]
+    meta: "STMicroelectronics STM32F7 ARM Cortex-M7 family platform support"
+}

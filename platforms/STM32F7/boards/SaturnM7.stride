@@ -1,0 +1,61 @@
+#
+# Saturn M7 (STM32F769BI).
+#
+# A project uses a pin through a gpioPin in its own hardware file:
+#   gpioPin Status { pin: SaturnM7::LED mode: Gpio::PinOutput }
+#
+
+package SaturnM7
+
+import STM32F769BI
+
+hardwareBoard SaturnM7 {
+    platform: STM32F7
+    overlays: STM32F769BI
+    pins: [
+        pin PA0 { port: GPIOA bit: 0 analog: 0 },
+        pin PA1 { port: GPIOA bit: 1 analog: 1 },
+        pin PA2 { port: GPIOA bit: 2 analog: 2 },
+        pin PA3 { port: GPIOA bit: 3 analog: 3 },
+        pin PA4 { port: GPIOA bit: 4 analog: 4 },
+        pin PA5 { port: GPIOA bit: 5 analog: 5 },
+        pin PA6 { port: GPIOA bit: 6 analog: 6 },
+        pin PA7 { port: GPIOA bit: 7 analog: 7 },
+        pin PB0 { port: GPIOB bit: 0 analog: 8 },
+        pin PB1 { port: GPIOB bit: 1 analog: 9 },
+        pin PC0 { port: GPIOC bit: 0 analog: 10 },
+        pin PC1 { port: GPIOC bit: 1 analog: 11 },
+        pin PC2 { port: GPIOC bit: 2 analog: 12 },
+        pin PC3 { port: GPIOC bit: 3 analog: 13 },
+        pin PC4 { port: GPIOC bit: 4 analog: 14 },
+        pin PC5 { port: GPIOC bit: 5 analog: 15 },
+        pin PK0 { port: GPIOK bit: 0 },
+        pin PK1 { port: GPIOK bit: 1 },
+        pin PK2 { port: GPIOK bit: 2 },
+        pin PK3 { port: GPIOK bit: 3 },
+        pin LED { port: GPIOK bit: 3 }
+    ]
+    upload: {
+        method: "openocd"
+        probe: "openocd"
+        openocd: {
+            interface: "interface/ftdi/saturnM7-FT232H.cfg"
+            target: "target/stm32f7x.cfg"
+            speed: 4000
+            transport: "swd"
+        }
+    }
+    image: [
+        step Bin { kind: "bin" },
+        step Hex { kind: "hex" }
+    ]
+    toolchain: {
+        cc: "ArmCrosscompiler"
+        ar: "ArmCrosscompiler"
+        ld: "ArmCrosscompiler"
+        objcopy: "ArmCrosscompiler"
+        size: "ArmCrosscompiler"
+        upload: "OpenOCD"
+    }
+    meta: "Saturn M7: STM32F769BI Cortex-M7 at 216 MHz, 2 MB flash, 512 KB SRAM"
+}

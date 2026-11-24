@@ -1,0 +1,29 @@
+#
+# STM32F7 Hardware Resources
+#
+
+resource CortexM7HardwareFpuSp {
+    name: "ARM Cortex-M7 Single-Precision Hardware FPU"
+    substitutions: [
+        ["CFLAGS_FPU", "-mfpu=fpv5-sp-d16 -mfloat-abi=hard"]
+    ]
+    meta: "Single-precision hardware FPU present on STM32F74x/F75x devices"
+}
+
+resource CortexM7HardwareFpuDp {
+    name: "ARM Cortex-M7 Double-Precision Hardware FPU"
+    substitutions: [
+        ["CFLAGS_FPU", "-mfpu=fpv5-d16 -mfloat-abi=hard"]
+    ]
+    meta: "Single- and double-precision hardware FPU present on STM32F76x/F77x devices"
+}
+
+resource STM32F7ArtAccelerator {
+    name: "STM32F7 ART Accelerator and L1 Cache"
+    meta: "Adaptive Real-Time memory accelerator and 4 KB / 16 KB L1 I/D-cache"
+}
+
+resource STM32F7DspExtensions {
+    name: "ARMv7E-M DSP Extensions"
+    meta: "Single-cycle MAC and SIMD instructions for digital signal processing"
+}

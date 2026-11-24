@@ -1,0 +1,401 @@
+#
+# STMicroelectronics STM32F746NG Base Device Configuration
+#
+
+import Gpio
+import CortexM7
+import STM32F7Resources
+
+device STM32F746NG {
+    platform: STM32F7
+    overlays: CortexM7
+    cpu: "cortex-m7"
+    compilerFlags: "-march=armv7e-m -mcpu=cortex-m7 -mfpu=fpv5-sp-d16 -mfloat-abi=hard"
+    clock: 216000000
+    memory: {
+        flash: 1048576
+        ram: 327680
+    }
+    ports: [
+        gpioPort GPIOA {
+            width: 32
+            input: 0x40020010
+            output: 0x40020014
+            outputSet: 0x40020018
+            outputClear: 0x40020018
+            setShift: 0
+            clearShift: 16
+            enable: { register: 0x40023830 bit: 0 }
+            fields: [
+                gpioField Mode {
+                    option: Gpio::_PinModes
+                    register: 0x40020000
+                    bitsPerPin: 2
+                    options: [Gpio::PinInput, Gpio::PinOutput, Gpio::PinAnalog]
+                    codes: [0, 1, 3]
+                },
+                gpioField OutputType {
+                    option: Gpio::_PinOutputTypes
+                    register: 0x40020004
+                    bitsPerPin: 1
+                    options: [Gpio::OutputPushPull, Gpio::OutputOpenDrain]
+                    codes: [0, 1]
+                },
+                gpioField Pull {
+                    option: Gpio::_PinPulls
+                    register: 0x4002000C
+                    bitsPerPin: 2
+                    options: [Gpio::PullNone, Gpio::PullUp, Gpio::PullDown]
+                    codes: [0, 1, 2]
+                }
+            ]
+        },
+        gpioPort GPIOB {
+            width: 32
+            input: 0x40020410
+            output: 0x40020414
+            outputSet: 0x40020418
+            outputClear: 0x40020418
+            setShift: 0
+            clearShift: 16
+            enable: { register: 0x40023830 bit: 1 }
+            fields: [
+                gpioField Mode {
+                    option: Gpio::_PinModes
+                    register: 0x40020400
+                    bitsPerPin: 2
+                    options: [Gpio::PinInput, Gpio::PinOutput, Gpio::PinAnalog]
+                    codes: [0, 1, 3]
+                },
+                gpioField OutputType {
+                    option: Gpio::_PinOutputTypes
+                    register: 0x40020404
+                    bitsPerPin: 1
+                    options: [Gpio::OutputPushPull, Gpio::OutputOpenDrain]
+                    codes: [0, 1]
+                },
+                gpioField Pull {
+                    option: Gpio::_PinPulls
+                    register: 0x4002040C
+                    bitsPerPin: 2
+                    options: [Gpio::PullNone, Gpio::PullUp, Gpio::PullDown]
+                    codes: [0, 1, 2]
+                }
+            ]
+        },
+        gpioPort GPIOC {
+            width: 32
+            input: 0x40020810
+            output: 0x40020814
+            outputSet: 0x40020818
+            outputClear: 0x40020818
+            setShift: 0
+            clearShift: 16
+            enable: { register: 0x40023830 bit: 2 }
+            fields: [
+                gpioField Mode {
+                    option: Gpio::_PinModes
+                    register: 0x40020800
+                    bitsPerPin: 2
+                    options: [Gpio::PinInput, Gpio::PinOutput, Gpio::PinAnalog]
+                    codes: [0, 1, 3]
+                },
+                gpioField OutputType {
+                    option: Gpio::_PinOutputTypes
+                    register: 0x40020804
+                    bitsPerPin: 1
+                    options: [Gpio::OutputPushPull, Gpio::OutputOpenDrain]
+                    codes: [0, 1]
+                },
+                gpioField Pull {
+                    option: Gpio::_PinPulls
+                    register: 0x4002080C
+                    bitsPerPin: 2
+                    options: [Gpio::PullNone, Gpio::PullUp, Gpio::PullDown]
+                    codes: [0, 1, 2]
+                }
+            ]
+        },
+        gpioPort GPIOD {
+            width: 32
+            input: 0x40020C10
+            output: 0x40020C14
+            outputSet: 0x40020C18
+            outputClear: 0x40020C18
+            setShift: 0
+            clearShift: 16
+            enable: { register: 0x40023830 bit: 3 }
+            fields: [
+                gpioField Mode {
+                    option: Gpio::_PinModes
+                    register: 0x40020C00
+                    bitsPerPin: 2
+                    options: [Gpio::PinInput, Gpio::PinOutput, Gpio::PinAnalog]
+                    codes: [0, 1, 3]
+                },
+                gpioField OutputType {
+                    option: Gpio::_PinOutputTypes
+                    register: 0x40020C04
+                    bitsPerPin: 1
+                    options: [Gpio::OutputPushPull, Gpio::OutputOpenDrain]
+                    codes: [0, 1]
+                },
+                gpioField Pull {
+                    option: Gpio::_PinPulls
+                    register: 0x40020C0C
+                    bitsPerPin: 2
+                    options: [Gpio::PullNone, Gpio::PullUp, Gpio::PullDown]
+                    codes: [0, 1, 2]
+                }
+            ]
+        },
+        gpioPort GPIOE {
+            width: 32
+            input: 0x40021010
+            output: 0x40021014
+            outputSet: 0x40021018
+            outputClear: 0x40021018
+            setShift: 0
+            clearShift: 16
+            enable: { register: 0x40023830 bit: 4 }
+            fields: [
+                gpioField Mode {
+                    option: Gpio::_PinModes
+                    register: 0x40021000
+                    bitsPerPin: 2
+                    options: [Gpio::PinInput, Gpio::PinOutput, Gpio::PinAnalog]
+                    codes: [0, 1, 3]
+                },
+                gpioField OutputType {
+                    option: Gpio::_PinOutputTypes
+                    register: 0x40021004
+                    bitsPerPin: 1
+                    options: [Gpio::OutputPushPull, Gpio::OutputOpenDrain]
+                    codes: [0, 1]
+                },
+                gpioField Pull {
+                    option: Gpio::_PinPulls
+                    register: 0x4002100C
+                    bitsPerPin: 2
+                    options: [Gpio::PullNone, Gpio::PullUp, Gpio::PullDown]
+                    codes: [0, 1, 2]
+                }
+            ]
+        },
+        gpioPort GPIOF {
+            width: 32
+            input: 0x40021410
+            output: 0x40021414
+            outputSet: 0x40021418
+            outputClear: 0x40021418
+            setShift: 0
+            clearShift: 16
+            enable: { register: 0x40023830 bit: 5 }
+            fields: [
+                gpioField Mode {
+                    option: Gpio::_PinModes
+                    register: 0x40021400
+                    bitsPerPin: 2
+                    options: [Gpio::PinInput, Gpio::PinOutput, Gpio::PinAnalog]
+                    codes: [0, 1, 3]
+                },
+                gpioField OutputType {
+                    option: Gpio::_PinOutputTypes
+                    register: 0x40021404
+                    bitsPerPin: 1
+                    options: [Gpio::OutputPushPull, Gpio::OutputOpenDrain]
+                    codes: [0, 1]
+                },
+                gpioField Pull {
+                    option: Gpio::_PinPulls
+                    register: 0x4002140C
+                    bitsPerPin: 2
+                    options: [Gpio::PullNone, Gpio::PullUp, Gpio::PullDown]
+                    codes: [0, 1, 2]
+                }
+            ]
+        },
+        gpioPort GPIOG {
+            width: 32
+            input: 0x40021810
+            output: 0x40021814
+            outputSet: 0x40021818
+            outputClear: 0x40021818
+            setShift: 0
+            clearShift: 16
+            enable: { register: 0x40023830 bit: 6 }
+            fields: [
+                gpioField Mode {
+                    option: Gpio::_PinModes
+                    register: 0x40021800
+                    bitsPerPin: 2
+                    options: [Gpio::PinInput, Gpio::PinOutput, Gpio::PinAnalog]
+                    codes: [0, 1, 3]
+                },
+                gpioField OutputType {
+                    option: Gpio::_PinOutputTypes
+                    register: 0x40021804
+                    bitsPerPin: 1
+                    options: [Gpio::OutputPushPull, Gpio::OutputOpenDrain]
+                    codes: [0, 1]
+                },
+                gpioField Pull {
+                    option: Gpio::_PinPulls
+                    register: 0x4002180C
+                    bitsPerPin: 2
+                    options: [Gpio::PullNone, Gpio::PullUp, Gpio::PullDown]
+                    codes: [0, 1, 2]
+                }
+            ]
+        },
+        gpioPort GPIOH {
+            width: 32
+            input: 0x40021C10
+            output: 0x40021C14
+            outputSet: 0x40021C18
+            outputClear: 0x40021C18
+            setShift: 0
+            clearShift: 16
+            enable: { register: 0x40023830 bit: 7 }
+            fields: [
+                gpioField Mode {
+                    option: Gpio::_PinModes
+                    register: 0x40021C00
+                    bitsPerPin: 2
+                    options: [Gpio::PinInput, Gpio::PinOutput, Gpio::PinAnalog]
+                    codes: [0, 1, 3]
+                },
+                gpioField OutputType {
+                    option: Gpio::_PinOutputTypes
+                    register: 0x40021C04
+                    bitsPerPin: 1
+                    options: [Gpio::OutputPushPull, Gpio::OutputOpenDrain]
+                    codes: [0, 1]
+                },
+                gpioField Pull {
+                    option: Gpio::_PinPulls
+                    register: 0x40021C0C
+                    bitsPerPin: 2
+                    options: [Gpio::PullNone, Gpio::PullUp, Gpio::PullDown]
+                    codes: [0, 1, 2]
+                }
+            ]
+        },
+        gpioPort GPIOI {
+            width: 32
+            input: 0x40022010
+            output: 0x40022014
+            outputSet: 0x40022018
+            outputClear: 0x40022018
+            setShift: 0
+            clearShift: 16
+            enable: { register: 0x40023830 bit: 8 }
+            fields: [
+                gpioField Mode {
+                    option: Gpio::_PinModes
+                    register: 0x40022000
+                    bitsPerPin: 2
+                    options: [Gpio::PinInput, Gpio::PinOutput, Gpio::PinAnalog]
+                    codes: [0, 1, 3]
+                },
+                gpioField OutputType {
+                    option: Gpio::_PinOutputTypes
+                    register: 0x40022004
+                    bitsPerPin: 1
+                    options: [Gpio::OutputPushPull, Gpio::OutputOpenDrain]
+                    codes: [0, 1]
+                },
+                gpioField Pull {
+                    option: Gpio::_PinPulls
+                    register: 0x4002200C
+                    bitsPerPin: 2
+                    options: [Gpio::PullNone, Gpio::PullUp, Gpio::PullDown]
+                    codes: [0, 1, 2]
+                }
+            ]
+        },
+        gpioPort GPIOJ {
+            width: 32
+            input: 0x40022410
+            output: 0x40022414
+            outputSet: 0x40022418
+            outputClear: 0x40022418
+            setShift: 0
+            clearShift: 16
+            enable: { register: 0x40023830 bit: 9 }
+            fields: [
+                gpioField Mode {
+                    option: Gpio::_PinModes
+                    register: 0x40022400
+                    bitsPerPin: 2
+                    options: [Gpio::PinInput, Gpio::PinOutput, Gpio::PinAnalog]
+                    codes: [0, 1, 3]
+                },
+                gpioField OutputType {
+                    option: Gpio::_PinOutputTypes
+                    register: 0x40022404
+                    bitsPerPin: 1
+                    options: [Gpio::OutputPushPull, Gpio::OutputOpenDrain]
+                    codes: [0, 1]
+                },
+                gpioField Pull {
+                    option: Gpio::_PinPulls
+                    register: 0x4002240C
+                    bitsPerPin: 2
+                    options: [Gpio::PullNone, Gpio::PullUp, Gpio::PullDown]
+                    codes: [0, 1, 2]
+                }
+            ]
+        },
+        gpioPort GPIOK {
+            width: 32
+            input: 0x40022810
+            output: 0x40022814
+            outputSet: 0x40022818
+            outputClear: 0x40022818
+            setShift: 0
+            clearShift: 16
+            enable: { register: 0x40023830 bit: 10 }
+            fields: [
+                gpioField Mode {
+                    option: Gpio::_PinModes
+                    register: 0x40022800
+                    bitsPerPin: 2
+                    options: [Gpio::PinInput, Gpio::PinOutput, Gpio::PinAnalog]
+                    codes: [0, 1, 3]
+                },
+                gpioField OutputType {
+                    option: Gpio::_PinOutputTypes
+                    register: 0x40022804
+                    bitsPerPin: 1
+                    options: [Gpio::OutputPushPull, Gpio::OutputOpenDrain]
+                    codes: [0, 1]
+                },
+                gpioField Pull {
+                    option: Gpio::_PinPulls
+                    register: 0x4002280C
+                    bitsPerPin: 2
+                    options: [Gpio::PullNone, Gpio::PullUp, Gpio::PullDown]
+                    codes: [0, 1, 2]
+                }
+            ]
+        }
+    ]
+    gpio: gpioCapabilities {
+        interrupts: [Gpio::InterruptNone, Gpio::InterruptRising, Gpio::InterruptFalling, Gpio::InterruptBothEdges]
+    }
+    resources: [
+        CortexM7HardwareFpuSp,
+        STM32F7ArtAccelerator,
+        STM32F7DspExtensions
+    ]
+    upload: {
+        openocd: {
+            target: "target/stm32f7x.cfg"
+        }
+        probeRs: {
+            chip: "STM32F746NGHx"
+        }
+    }
+    meta: "STM32F746NG ARM Cortex-M7 @ 216 MHz, 1 MB flash, 320 KB SRAM, single-precision FPU"
+}

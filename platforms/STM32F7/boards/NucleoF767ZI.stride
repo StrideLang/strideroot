@@ -1,0 +1,74 @@
+#
+# STMicroelectronics NUCLEO-F767ZI (STM32F767ZI).
+#
+# A project uses a pin through a gpioPin in its own hardware file:
+#   gpioPin Status { pin: NucleoF767ZI::LED mode: Gpio::PinOutput }
+#
+
+package NucleoF767ZI
+
+import STM32F767ZI
+
+hardwareBoard NucleoF767ZI {
+    platform: STM32F7
+    overlays: STM32F767ZI
+    pins: [
+        pin PA0 { port: GPIOA bit: 0 analog: 0 },
+        pin PA1 { port: GPIOA bit: 1 analog: 1 },
+        pin PA2 { port: GPIOA bit: 2 analog: 2 },
+        pin PA3 { port: GPIOA bit: 3 analog: 3 },
+        pin PA4 { port: GPIOA bit: 4 analog: 4 },
+        pin PA5 { port: GPIOA bit: 5 analog: 5 },
+        pin PA6 { port: GPIOA bit: 6 analog: 6 },
+        pin PA7 { port: GPIOA bit: 7 analog: 7 },
+        pin PB0 { port: GPIOB bit: 0 analog: 8 },
+        pin PB1 { port: GPIOB bit: 1 analog: 9 },
+        pin PB7 { port: GPIOB bit: 7 },
+        pin PB14 { port: GPIOB bit: 14 },
+        pin PC0 { port: GPIOC bit: 0 analog: 10 },
+        pin PC1 { port: GPIOC bit: 1 analog: 11 },
+        pin PC2 { port: GPIOC bit: 2 analog: 12 },
+        pin PC3 { port: GPIOC bit: 3 analog: 13 },
+        pin PC13 { port: GPIOC bit: 13 },
+        pin PD14 { port: GPIOD bit: 14 },
+        pin PD15 { port: GPIOD bit: 15 },
+        pin PE9 { port: GPIOE bit: 9 },
+        pin PE11 { port: GPIOE bit: 11 },
+        pin PE13 { port: GPIOE bit: 13 },
+        pin PF12 { port: GPIOF bit: 12 },
+        pin PF13 { port: GPIOF bit: 13 },
+        pin PF14 { port: GPIOF bit: 14 },
+        pin PF15 { port: GPIOF bit: 15 },
+        pin PG9 { port: GPIOG bit: 9 },
+        pin PG14 { port: GPIOG bit: 14 },
+        pin LED { port: GPIOB bit: 0 },
+        pin LED1 { port: GPIOB bit: 0 },
+        pin LED2 { port: GPIOB bit: 7 },
+        pin LED3 { port: GPIOB bit: 14 },
+        pin BUTTON { port: GPIOC bit: 13 }
+    ]
+    usb: ["0483:374B", "0483:374E"]
+    upload: {
+        method: "openocd"
+        probe: "openocd"
+        openocd: {
+            interface: "interface/stlink.cfg"
+            target: "target/stm32f7x.cfg"
+            speed: 4000
+            transport: "hla_swd"
+        }
+    }
+    image: [
+        step Bin { kind: "bin" },
+        step Hex { kind: "hex" }
+    ]
+    toolchain: {
+        cc: "ArmCrosscompiler"
+        ar: "ArmCrosscompiler"
+        ld: "ArmCrosscompiler"
+        objcopy: "ArmCrosscompiler"
+        size: "ArmCrosscompiler"
+        upload: "OpenOCD"
+    }
+    meta: "STMicroelectronics NUCLEO-F767ZI: STM32F767ZI Cortex-M7 at 216 MHz, 2 MB flash, ST-Link"
+}

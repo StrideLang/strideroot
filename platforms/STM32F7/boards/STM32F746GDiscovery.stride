@@ -1,0 +1,97 @@
+#
+# STMicroelectronics STM32F746G-DISCO (STM32F746NG, MB1191).
+#
+# A project uses a pin through a gpioPin in its own hardware file:
+#   gpioPin Status { pin: STM32F746GDiscovery::LED mode: Gpio::PinOutput }
+#
+
+package STM32F746GDiscovery
+
+import STM32F746NG
+
+hardwareBoard STM32F746GDiscovery {
+    platform: STM32F7
+    overlays: STM32F746NG
+    pins: [
+        # STM32 pin names (Arduino Uno V3 header + on-board I/O)
+        pin PA0  { port: GPIOA bit: 0 analog: 0 },
+        pin PA8  { port: GPIOA bit: 8 },
+        pin PA9  { port: GPIOA bit: 9 },
+        pin PA15 { port: GPIOA bit: 15 },
+        pin PB4  { port: GPIOB bit: 4 },
+        pin PB7  { port: GPIOB bit: 7 },
+        pin PB8  { port: GPIOB bit: 8 },
+        pin PB9  { port: GPIOB bit: 9 },
+        pin PB14 { port: GPIOB bit: 14 },
+        pin PB15 { port: GPIOB bit: 15 },
+        pin PC6  { port: GPIOC bit: 6 },
+        pin PC7  { port: GPIOC bit: 7 },
+        pin PF6  { port: GPIOF bit: 6 analog: 4 },
+        pin PF7  { port: GPIOF bit: 7 analog: 5 },
+        pin PF8  { port: GPIOF bit: 8 analog: 6 },
+        pin PF9  { port: GPIOF bit: 9 analog: 7 },
+        pin PF10 { port: GPIOF bit: 10 analog: 8 },
+        pin PG6  { port: GPIOG bit: 6 },
+        pin PG7  { port: GPIOG bit: 7 },
+        pin PH6  { port: GPIOH bit: 6 },
+        pin PI0  { port: GPIOI bit: 0 },
+        pin PI1  { port: GPIOI bit: 1 },
+        pin PI2  { port: GPIOI bit: 2 },
+        pin PI3  { port: GPIOI bit: 3 },
+        pin PI11 { port: GPIOI bit: 11 },
+
+        # Arduino Uno V3 header aliases
+        pin A0 { port: GPIOA bit: 0 analog: 0 },
+        pin A1 { port: GPIOF bit: 10 analog: 8 },
+        pin A2 { port: GPIOF bit: 9 analog: 7 },
+        pin A3 { port: GPIOF bit: 8 analog: 6 },
+        pin A4 { port: GPIOF bit: 7 analog: 5 },
+        pin A5 { port: GPIOF bit: 6 analog: 4 },
+        pin D0 { port: GPIOC bit: 7 },
+        pin D1 { port: GPIOC bit: 6 },
+        pin D2 { port: GPIOG bit: 6 },
+        pin D3 { port: GPIOB bit: 4 },
+        pin D4 { port: GPIOG bit: 7 },
+        pin D5 { port: GPIOI bit: 0 },
+        pin D6 { port: GPIOH bit: 6 },
+        pin D7 { port: GPIOI bit: 3 },
+        pin D8 { port: GPIOI bit: 2 },
+        pin D9 { port: GPIOA bit: 15 },
+        pin D10 { port: GPIOA bit: 8 },
+        pin D11 { port: GPIOB bit: 15 },
+        pin D12 { port: GPIOB bit: 14 },
+        pin D13 { port: GPIOI bit: 1 },
+        pin D14 { port: GPIOB bit: 9 },
+        pin D15 { port: GPIOB bit: 8 },
+
+        # On-board user LED (LD1 green, active high), user button (B1), and ST-Link VCP
+        pin LED    { port: GPIOI bit: 1 },
+        pin BUTTON { port: GPIOI bit: 11 },
+        pin VCP_TX { port: GPIOA bit: 9 },
+        pin VCP_RX { port: GPIOB bit: 7 }
+    ]
+    usb: ["0483:374B", "0483:374E"]
+    upload: {
+        method: "openocd"
+        probe: "openocd"
+        openocd: {
+            interface: "interface/stlink.cfg"
+            target: "target/stm32f7x.cfg"
+            speed: 4000
+            transport: "hla_swd"
+        }
+    }
+    image: [
+        step Bin { kind: "bin" },
+        step Hex { kind: "hex" }
+    ]
+    toolchain: {
+        cc: "ArmCrosscompiler"
+        ar: "ArmCrosscompiler"
+        ld: "ArmCrosscompiler"
+        objcopy: "ArmCrosscompiler"
+        size: "ArmCrosscompiler"
+        upload: "OpenOCD"
+    }
+    meta: "STMicroelectronics STM32F746G-DISCO: STM32F746NG Cortex-M7 at 216 MHz, 1 MB flash, 320 KB SRAM, ST-Link"
+}

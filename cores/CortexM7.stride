@@ -1,0 +1,21 @@
+#
+# ARM Cortex-M7 core family (ARMv7E-M, 32-bit pointers, hardware FPU).
+#
+# Shared across platforms built on Cortex-M7 (such as STMicroelectronics STM32F7).
+# Devices overlay this core and add their memory, clock, and peripherals.
+#
+
+package CortexM7
+
+core CortexM7 {
+    triple: "thumbv7em-none-eabihf"
+    pointerBits: 32
+    types: {
+        int: "Int32"
+        real: "Float32"
+        size: "UInt32"
+    }
+    hardwareFloat: on
+    cacheLine: 32
+    meta: "ARM Cortex-M7 (ARMv7E-M), 32-bit pointers, hardware FPU, 32-byte cache line"
+}

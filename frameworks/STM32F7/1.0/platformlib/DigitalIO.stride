@@ -1,17 +1,34 @@
+# GPIO register access for the portable DigitalIO library modules
+# (DigitalIO::DigitalOut, DigitalIn, Led). The compiler fills in each pin's
+# addresses and masks from the board, so these are LLVM IR with constant
+# operands: a pin write becomes a single store to GPIOx_BSRR.
+# STM32F7 GPIO registers are 32 bits wide.
 
-platformEntity _DigitalOut {
-    typeName: "_digitalOutput"
-	inputs: ['bool']
-    include: ["gpio.h"]
-	domain: RootDomain
-    linkTo: []
-    declarations: []
-    initializations: ['MX_GPIO_Init();']
-    processing: "HAL_GPIO_WritePin(GPIOK, 1 << %%bundle_index%%, %%intokens:0%% ? GPIO_PIN_SET : GPIO_PIN_RESET);"
+platformModule _GpioWrite {
+    inputs: [Switch, UInt32, UInt32, UInt32, UInt32, Switch]
+    outputs: []
+    processing: "llvm::gpio write i32 %%intokens:0%%, %%intokens:1%%, %%intokens:2%%, %%intokens:3%%, %%intokens:4%%, %%intokens:5%%"
     inherits: [_Signal]
 }
 
-_digitalOutput DigitalOut[14] {
-    rate: RootDomainRate
-    domain: RootDomain
+platformModule _GpioRead {
+    inputs: [UInt32, UInt32]
+    outputs: [Switch]
+    processing: "%%outtokens:0%% = llvm::gpio read i32 %%intokens:0%%, %%intokens:1%%"
+    inherits: [_Signal]
+}
+
+platformModule _GpioModify {
+    inputs: [UInt32, UInt32, UInt32, Switch]
+    outputs: []
+    processing: "llvm::gpio modify i32 %%intokens:0%%, %%intokens:1%%, %%intokens:2%%, %%intokens:3%%"
+    inherits: [_Signal]
+}
+
+# Milliseconds since boot.
+platformModule __STM32F7Millis {
+    inputs: []
+    outputs: [UInt32]
+    processing: "@__stride_stm32f7_millis"
+    inherits: [_Signal]
 }

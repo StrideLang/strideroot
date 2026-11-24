@@ -1,0 +1,40 @@
+#
+# STM32F7 framework: Stride programs compiled by Stride's own LLVM backend for
+# STMicroelectronics STM32F7 boards (ARM Cortex-M7), linked against the
+# STM32F7 C runtime in ../runtime.
+#
+# platformModules are LLVM IR or calls into the C runtime in ../runtime,
+# which provides startup, main(), the 1 kHz SysTick timer, and serial I/O.
+#
+
+_frameworkDescription _STM32F7_Framework {
+    frameworkName: "STM32F7"
+    defaultDataType: Real
+}
+
+alias PlatformDomain {
+    entity: STM32F7TickDomain
+}
+
+alias PlatformRate {
+    entity: 1000
+}
+
+# Standard platform domains. Programs that use these instead of STM32F7's own
+# domain names run unchanged on other frameworks that provide them.
+
+# Runs again as soon as it finishes, like Arduino's loop(). Sleep suspends
+# only this domain.
+alias PlatformLoopDomain {
+    entity: STM32F7LoopDomain
+}
+
+# Runs periodically at PlatformTimerRate. Cooperative: runs from main()
+# between loop iterations.
+alias PlatformTimerDomain {
+    entity: STM32F7TickDomain
+}
+
+alias PlatformTimerRate {
+    entity: 1000
+}

@@ -1,58 +1,119 @@
-_frameworkDescription _STM32F7_Framework {
-    frameworkName: "STM32F7"
-  	defaultDataType: Real
+resource _RootContext {
+	dependsOn: []
+	exclusive: none
+	meta: 'The microcontroller running cooperatively on the Cortex-M7 core'
 }
 
-alias PlatformDomain {
-    entity: AudioDomain
+resource _STM32Processor {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'ARM Cortex-M7 CPU shared cooperatively by domains in main()'
 }
 
-alias PlatformRate {
-    entity: AudioRate
+resource _STM32FlashMemory {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'Internal Flash memory for code and constants'
 }
 
-synchronization GlobalSync {
-    readDomain: none
-    writeDomain: none
-    scheme: none
+resource _STM32Sram {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'Internal SRAM for domain state, globals, and stack'
 }
 
-constant RootDomainRate {
-	value: 1000
+resource _STM32Timer {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'Shared 1 kHz SysTick hardware timer for tick/millis'
 }
 
+resource _STM32Serial {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'Shared USART serial port'
+}
+
+resource _STM32Gpio {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'Shared GPIO ports and pins'
+}
+
+resource _STM32MathLib {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'C math library (libm)'
+}
+
+domainResource _DomainFunction {
+	exclusive: on
+	meta: 'Function the runtime calls from main()'
+}
+
+# Runs once, before the first tick.
 _domainDefinition RootDomain {
 	framework: _STM32F7_Framework
-	rate: RootDomainRate
-	substitutions: ["root_domain_rate", RootDomainRate]
-    domainIncludes: []
-    domainDeclarations: []
-    domainInitializationCode: '// STM32F7 init domain init
-//[[Initializations]]
-//[[/Initializations]]
-	'
-	domainProcessingCode: '
-	HAL_Delay(1000/%%root_domain_rate%%);
-	// STM32F7 init domain processing
+	requiresResources: [_RootContext, _STM32Processor, _STM32FlashMemory, _STM32Sram]
+	providesResources: [_DomainFunction]
+	rate: -1
+	substitutions: [ ]
+	domainIncludes: []
+	domainFunctionCode: ''
+}
 
-'
-domainFunctionCode: '
-// STM32F7 RootDomain template
-//[[Includes]]
-//[[/Includes]]
+# The 1 kHz tick loop. Child of RootDomain; the runtime calls
+# STM32F7TickDomain_process() once per 1 ms SysTick before STM32F7LoopDomain_process().
+_domainDefinition STM32F7TickDomain {
+	framework: _STM32F7_Framework
+	parentDomain: RootDomain
+	requiresResources: [_RootContext, _STM32Processor, _STM32FlashMemory, _STM32Sram, _STM32Timer]
+	providesResources: [_DomainFunction]
+	rate: 1000
+	execution: ExecutionCooperative
+	sleepModule: __STM32F7TickSleep
+	sleepRate: 1000
+	substitutions: [ ]
+	domainIncludes: []
+	domainFunctionCode: ''
+}
 
-//[[Declarations]]
-//[[/Declarations]]
+# Continuous main loop. Child of RootDomain; the runtime calls
+# STM32F7LoopDomain_process() on every iteration of the main() loop.
+_domainDefinition STM32F7LoopDomain {
+	framework: _STM32F7_Framework
+	parentDomain: RootDomain
+	requiresResources: [_RootContext, _STM32Processor, _STM32FlashMemory, _STM32Sram]
+	providesResources: [_DomainFunction]
+	rate: 0
+	execution: ExecutionCooperative
+	sleepModule: __STM32F7LoopSleep
+	sleepRate: 1000
+	substitutions: [ ]
+	domainIncludes: []
+	domainFunctionCode: ''
+}
 
-//[[Instances]]
-//[[/Instances]]
+# Suspends STM32F7TickDomain for the given number of 1 ms ticks.
+platformModule __STM32F7TickSleep {
+	inputs: [UInt32]
+	outputs: []
+	processing: "@__stride_stm32f7_tick_sleep"
+	inherits: [_Signal]
+}
 
-// ----
-	'
-    domainCleanupCode: '// STM32F7init domain cleanup
-	
-//[[Cleanup]]
-//[[/Cleanup]]
-	
-	'
+# Suspends STM32F7LoopDomain for the given number of milliseconds.
+platformModule __STM32F7LoopSleep {
+	inputs: [UInt32]
+	outputs: []
+	processing: "@__stride_stm32f7_loop_sleep"
+	inherits: [_Signal]
+}
+
+# Blocks for the given number of milliseconds.
+platformModule __STM32F7SleepMs {
+	inputs: [UInt32]
+	outputs: []
+	processing: "@__stride_stm32f7_sleep_ms"
+	inherits: [_Signal]
 }

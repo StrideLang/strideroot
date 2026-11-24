@@ -1,21 +1,37 @@
+# USART serial port for STM32F7.
 
-# Serial ------------------------
-
-# Serial domains
-_domainDefinition SerialInDomain {
-	framework: _STM32F7_Framework
-	globalsTag: "Includes"
-	declarationsTag: "Declarations"
-	processingTag: "SerialIn:Processing"
-	initializationTag: "Initialization"
-	cleanupTag: "Cleanup"
+platformModule __STM32F7SerialWriteByte {
+    inputs: [UInt8]
+    outputs: []
+    processing: "@__stride_stm32f7_serial_write_byte"
+    inherits: [_Signal]
 }
 
-_domainDefinition SerialOutDomain {
-	framework: _STM32F7_Framework
-	globalsTag: "Includes"
-	declarationsTag: "Declarations"
-	processingTag: "SerialOut:Processing"
-	initializationTag: "Initialization"
-	cleanupTag: "Cleanup"
+platformModule __STM32F7SerialPrintInt {
+    inputs: [Int]
+    outputs: []
+    processing: "@__stride_stm32f7_serial_print_int"
+    inherits: [_Signal]
+}
+
+platformModule __STM32F7SerialPrintReal {
+    inputs: [Real]
+    outputs: []
+    processing: "@__stride_stm32f7_serial_print_real"
+    inherits: [_Signal]
+}
+
+platformModule __STM32F7SerialNewLine {
+    inputs: []
+    outputs: []
+    processing: "@__stride_stm32f7_serial_newline"
+    inherits: [_Signal]
+}
+
+# The next received byte, or -1 when none has arrived.
+platformModule __STM32F7SerialReadByte {
+    inputs: []
+    outputs: [Int]
+    processing: "@__stride_stm32f7_serial_read_byte"
+    inherits: [_Signal]
 }
