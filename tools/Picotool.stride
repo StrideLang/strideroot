@@ -1,0 +1,20 @@
+toolTemplate PicotoolTemplate {
+    displayName: "Picotool"
+    output: Picotool
+    meta: "picotool for building and flashing Raspberry Pi Pico (RP2040/RP2350) firmware"
+    platforms: ['macOS', 'Windows', 'Linux']
+}
+
+toolSearch PicotoolSearch {
+    toolTemplate: PicotoolTemplate
+    rootPathRegex: ""
+    nameRegex: "picotool"
+    platforms: ['macOS', 'Linux']
+}
+
+toolSearch PicotoolSearch_Win {
+    toolTemplate: PicotoolTemplate
+    rootPathRegex: "~/.pico-sdk/picotool"
+    nameRegex: "picotool.exe"
+    platforms: ['Windows']
+}

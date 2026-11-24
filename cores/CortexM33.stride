@@ -1,0 +1,24 @@
+#
+# ARM Cortex-M33 core family (ARMv8-M Mainline, 32-bit pointers, single-precision FPU).
+#
+# Shared across platforms built on Cortex-M33 (such as Raspberry Pi RP2350).
+# Devices overlay this core and add their memory, clock, and peripherals.
+#
+
+package CortexM33
+
+import Codegen
+
+core CortexM33 {
+    triple: "thumbv8m.main-none-eabihf"
+    pointerBits: 32
+    types: {
+        int: "Int32"
+        real: "Float32"
+        size: "UInt32"
+    }
+    hardwareFloat: on
+    cacheLine: 0
+    codegen: Codegen::Llvm
+    meta: "ARM Cortex-M33 (ARMv8-M Mainline), 32-bit pointers, single-precision hardware FPU"
+}

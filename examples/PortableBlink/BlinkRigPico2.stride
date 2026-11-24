@@ -1,0 +1,37 @@
+#
+# BlinkRigPico2: the same project wired to a Raspberry Pi Pico 2 (RP2350).
+#
+#   GP2 -- push button -- GND      internal pull-up, active low
+#   LED -- the Pico 2's on-board LED (GP25)
+#   GP7 -- relay module input      open drain (emulated), active low
+#
+
+package BlinkRigPico2
+
+import Gpio
+import RaspberryPiPico2
+
+hardwareBoard BlinkRigPico2 {
+    overlays: RaspberryPiPico2
+}
+
+gpioPin Button {
+    pin: RaspberryPiPico2::GP2
+    mode: Gpio::PinInput
+    pull: Gpio::PullUp
+    activeLow: on
+}
+
+gpioPin Status {
+    pin: RaspberryPiPico2::LED
+    mode: Gpio::PinOutput
+    initial: off
+}
+
+gpioPin Relay {
+    pin: RaspberryPiPico2::GP7
+    mode: Gpio::PinOutput
+    outputType: Gpio::OutputOpenDrain
+    activeLow: on
+    initial: off
+}

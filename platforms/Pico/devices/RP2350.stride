@@ -2,15 +2,76 @@
 # Raspberry Pi Pico 2 - RP2350 Device Overlay
 #
 
+import Gpio
+import CortexM33
 import QualityPolicy
 import PicoResources
-import RP2040
 
 device RP2350 {
     platform: Pico
-    overlays: RP2040
+    overlays: CortexM33
+    cpu: "cortex-m33"
     compilerFlags: "-march=armv8-m.main -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard"
+    clock: 150000000
+    memory: {
+        flash: 4194304
+        ram: 532480
+    }
+    ports: [
+        gpioPort SIO {
+            width: 32
+            input: 0xD0000004
+            direction: 0xD0000030
+            output: 0xD0000010
+            outputSet: 0xD0000018
+            outputClear: 0xD0000020
+            outputToggle: 0xD0000028
+            directionSet: 0xD0000038
+            directionClear: 0xD0000040
+            fields: [
+                gpioField Function {
+                    option: Gpio::_PinFunctions
+                    register: 0x40028004
+                    pinStride: 8
+                    bitsPerPin: 5
+                    shift: 0
+                    options: [Gpio::PinGpio]
+                    codes: [5]
+                },
+                gpioField Direction {
+                    option: Gpio::_PinModes
+                    register: 0xD0000030
+                    bitsPerPin: 1
+                    options: [Gpio::PinInput, Gpio::PinOutput]
+                    codes: [0, 1]
+                },
+                gpioField Isolation {
+                    option: Gpio::_PinModes
+                    register: 0x40038004
+                    pinStride: 4
+                    bitsPerPin: 1
+                    shift: 8
+                    options: [Gpio::PinInput, Gpio::PinOutput]
+                    codes: [0, 0]
+                },
+                gpioField Pull {
+                    option: Gpio::_PinPulls
+                    register: 0x40038004
+                    pinStride: 4
+                    bitsPerPin: 2
+                    shift: 2
+                    options: [Gpio::PullNone, Gpio::PullDown, Gpio::PullUp]
+                    codes: [0, 1, 2]
+                }
+            ]
+        }
+    ]
+    gpio: gpioCapabilities {
+        emulated: [Gpio::OutputOpenDrain]
+        interrupts: [Gpio::InterruptNone, Gpio::InterruptRising, Gpio::InterruptFalling, Gpio::InterruptBothEdges]
+    }
     resources: [
+        PicoHardwareInterpolator,
         CortexM33HardwareFpu
     ]
     
@@ -22,5 +83,13 @@ device RP2350 {
             target:   [ Sin@Direct, Cos@Direct ]
         }
     ]
+    upload: {
+        openocd: {
+            target: "target/rp2350.cfg"
+        }
+        probeRs: {
+            chip: "RP2350"
+        }
+    }
     meta: "Dual ARM Cortex-M33 with hardware single-precision FPU and DSP instructions"
 }

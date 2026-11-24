@@ -1,0 +1,24 @@
+#
+# ARM Cortex-M0+ core family (ARMv6-M, 32-bit pointers, no hardware FPU).
+#
+# Shared across platforms built on Cortex-M0+ (such as Raspberry Pi RP2040).
+# Devices overlay this core and add their memory, clock, and peripherals.
+#
+
+package CortexM0Plus
+
+import Codegen
+
+core CortexM0Plus {
+    triple: "thumbv6m-none-eabi"
+    pointerBits: 32
+    types: {
+        int: "Int32"
+        real: "Float32"
+        size: "UInt32"
+    }
+    hardwareFloat: off
+    cacheLine: 0
+    codegen: Codegen::Llvm
+    meta: "ARM Cortex-M0+ (ARMv6-M), 32-bit pointers, no hardware FPU"
+}

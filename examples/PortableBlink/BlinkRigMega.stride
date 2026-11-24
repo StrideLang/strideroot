@@ -1,12 +1,13 @@
 #
 # BlinkRigMega: the same project wired to an Arduino Mega 2560.
 #
-# The signals and their labels are the same as BlinkRig.stride's; only the
-# board changes, and with it the chip pins behind the labels:
+# The signals are the same as BlinkRig.stride's, but they sit on other
+# pins: the button on D22 and the relay on D9. The program never names a
+# pin, so it doesn't change when they move:
 #
-#   D2  -- push button -- GND      PE4 (also INT4), internal pull-up
+#   D22 -- push button -- GND      PA0, internal pull-up
 #   LED -- the on-board LED        D13, PB7
-#   D7  -- relay module input      PH4, an extended I/O port: its writes are
+#   D9  -- relay module input      PH6, an extended I/O port: its writes are
 #                                  lds/sts rather than sbi/cbi
 #
 # To build PortableBlink for the Mega, change the top of PortableBlink.stride
@@ -29,7 +30,7 @@ hardwareBoard BlinkRigMega {
 }
 
 gpioPin Button {
-    pin: ArduinoMega2560::D2
+    pin: ArduinoMega2560::D22
     mode: Gpio::PinInput
     pull: Gpio::PullUp
     activeLow: on
@@ -42,7 +43,7 @@ gpioPin Status {
 }
 
 gpioPin Relay {
-    pin: ArduinoMega2560::D7
+    pin: ArduinoMega2560::D9
     mode: Gpio::PinOutput
     outputType: Gpio::OutputOpenDrain
     activeLow: on

@@ -1,59 +1,58 @@
-# Data types. The name of an integer type sets its sign: Int8..Int64 are
-# signed and UInt8..UInt64 unsigned. Int, UInt, Real and Size are
-# aliases of the fixed size types that this framework prefers.
+# Data types for the Pico LLVM framework.
+# Int, UInt, and Size are 32-bit; Real is Float32.
 
 frameworkDataType Int8 {
 	frameworkName: "int8_t"
-	includes: ["<cstdint>"]
+	includes: ["<stdint.h>"]
 	kind: "integer"
 	bits: 8
 }
 
 frameworkDataType Int16 {
 	frameworkName: "int16_t"
-	includes: ["<cstdint>"]
+	includes: ["<stdint.h>"]
 	kind: "integer"
 	bits: 16
 }
 
 frameworkDataType Int32 {
 	frameworkName: "int32_t"
-	includes: ["<cstdint>"]
+	includes: ["<stdint.h>"]
 	kind: "integer"
 	bits: 32
 }
 
 frameworkDataType Int64 {
 	frameworkName: "int64_t"
-	includes: ["<cstdint>"]
+	includes: ["<stdint.h>"]
 	kind: "integer"
 	bits: 64
 }
 
 frameworkDataType UInt8 {
 	frameworkName: "uint8_t"
-	includes: ["<cstdint>"]
+	includes: ["<stdint.h>"]
 	kind: "integer"
 	bits: 8
 }
 
 frameworkDataType UInt16 {
 	frameworkName: "uint16_t"
-	includes: ["<cstdint>"]
+	includes: ["<stdint.h>"]
 	kind: "integer"
 	bits: 16
 }
 
 frameworkDataType UInt32 {
 	frameworkName: "uint32_t"
-	includes: ["<cstdint>"]
+	includes: ["<stdint.h>"]
 	kind: "integer"
 	bits: 32
 }
 
 frameworkDataType UInt64 {
 	frameworkName: "uint64_t"
-	includes: ["<cstdint>"]
+	includes: ["<stdint.h>"]
 	kind: "integer"
 	bits: 64
 }
@@ -74,41 +73,36 @@ frameworkDataType Float64 {
 
 frameworkDataType Switch {
 	frameworkName: "bool"
-	includes: []
+	includes: ["<stdbool.h>"]
 	kind: "switch"
 }
 
 frameworkDataType String {
-	frameworkName: "std::string"
-	includes: ['string.h']
+	frameworkName: "StrideStringView"
+	includes: []
 	kind: "string"
 }
 
-# The sizes this framework prefers
+# Preferred sizes for Pico (32-bit ARM Cortex-M)
 
-# Signed integer of the size the framework prefers
 alias Int {
 	entity: Int32
 }
 
-# Unsigned integer of the size the framework prefers
 alias UInt {
 	entity: UInt32
 }
 
-# Floating point number of the size the framework prefers
 alias Real {
 	entity: Float32
 }
 
-# Unsigned integer for sizes and counts
 alias Size {
 	entity: UInt32
 }
 
 ### ----------------------
-# Type classes are schema types: allowedTypes lists them to accept any of
-# their members. The first member of 'types' is the default data type.
+# Type classes
 
 typeClass _NumericTypes {
 	types: [Real, Int, UInt, Size, Float32, Float64, Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64]

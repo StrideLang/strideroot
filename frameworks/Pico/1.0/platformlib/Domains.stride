@@ -1,80 +1,119 @@
-alias PlatformDomain {
-    entity: PicoTimerDomain
+resource _RootContext {
+	dependsOn: []
+	exclusive: none
+	meta: 'The microcontroller running cooperatively on Core 0'
 }
 
-constant PicoTimerDomainRate {
-    value: 1000
+resource _PicoProcessor {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'ARM Cortex-M CPU (Core 0) shared cooperatively by domains in main()'
 }
 
-synchronization GlobalSync {
-	# disable all connection code (stride:: access classes)
-    readDomain: none
-    writeDomain: none
-    scheme: none
+resource _PicoFlashMemory {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'Shared QSPI flash memory for code and constants'
 }
 
-# This RootDomain overrides the root domain in Cpp framework
+resource _PicoSram {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'Shared SRAM for domain state, globals, and stack'
+}
+
+resource _PicoTimer {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'Shared 1 kHz repeating hardware timer for tick/millis'
+}
+
+resource _PicoSerial {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'Shared USB CDC / UART stdio serial port'
+}
+
+resource _PicoGpio {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'Shared SIO GPIO ports and pins'
+}
+
+resource _PicoMathLib {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'C math library (libm)'
+}
+
+domainResource _DomainFunction {
+	exclusive: on
+	meta: 'Function the runtime calls from main()'
+}
+
+# Runs once, before the first tick.
 _domainDefinition RootDomain {
 	framework: _PicoFramework
-	requiresResources: [_RootContext]
-	providesResources: [_MainFunction]
-	rate: -1 # -1 is 'one-shot/final' domain
-    substitutions: [ ]
-    domainIncludes: ["<iostream>"]
-	domainFunctionCode: '
-// Hello Pico!
-//[[Includes]]
-//[[/Includes]]
-
-//[[Declarations]]
-//[[/Declarations]]
-
-//[[Instances]]
-//[[/Instances]]
-int main() {
-	stdio_init_all();
-//[[Initialization]]
-//[[/Initialization]]
-
-while(true) {
-    tight_loop_contents();
+	requiresResources: [_RootContext, _PicoProcessor, _PicoFlashMemory, _PicoSram]
+	providesResources: [_DomainFunction]
+	rate: -1
+	substitutions: [ ]
+	domainIncludes: []
+	domainFunctionCode: ''
 }
 
-//[[Cleanup]]
-//[[/Cleanup]]
-    return 0;
-}
-'
-}
-
-_domainDefinition PicoTimerDomain {
+# The 1 kHz tick loop. Child of RootDomain; the runtime calls
+# PicoTickDomain_process() once per 1 ms timer tick before PicoLoopDomain_process().
+_domainDefinition PicoTickDomain {
 	framework: _PicoFramework
-    rate: PicoTimerDomainRate
 	parentDomain: RootDomain
-    substitutions: ["domain_rate", PicoTimerDomain.rate ]
-    domainIncludes: ["pico/stdlib.h"]
-    domainDeclarations: []
-    domainInitializationCode: '	
-//[[Initialization]]
-//[[/Initialization]]
-    printf("init timer");
-	struct repeating_timer timer;
-	add_repeating_timer_ms(-(1000/%%domain_rate%%), repeating_timer_callback, NULL, &timer);
-'
-	domainFunctionCode: '// domain processing
-//[[Declarations]]
-//[[/Declarations]]
-bool repeating_timer_callback(struct repeating_timer *t)
-{
-//[[Processing]]
-//[[/Processing]]
-    return true;
+	requiresResources: [_RootContext, _PicoProcessor, _PicoFlashMemory, _PicoSram, _PicoTimer]
+	providesResources: [_DomainFunction]
+	rate: 1000
+	execution: ExecutionCooperative
+	sleepModule: __PicoTickSleep
+	sleepRate: 1000
+	substitutions: [ ]
+	domainIncludes: []
+	domainFunctionCode: ''
 }
-'
-	domainProcessingCode: '
-	'
-    domainCleanupCode: '// init domain cleanup
-//[[Cleanup]]
-//[[/Cleanup]]
-    '
+
+# Continuous main loop. Child of RootDomain; the runtime calls
+# PicoLoopDomain_process() on every iteration of the main() loop.
+_domainDefinition PicoLoopDomain {
+	framework: _PicoFramework
+	parentDomain: RootDomain
+	requiresResources: [_RootContext, _PicoProcessor, _PicoFlashMemory, _PicoSram]
+	providesResources: [_DomainFunction]
+	rate: 0
+	execution: ExecutionCooperative
+	sleepModule: __PicoLoopSleep
+	sleepRate: 1000
+	substitutions: [ ]
+	domainIncludes: []
+	domainFunctionCode: ''
+}
+
+# Suspends PicoTickDomain for the given number of 1 ms ticks.
+platformModule __PicoTickSleep {
+	inputs: [UInt32]
+	outputs: []
+	processing: "@__stride_pico_tick_sleep"
+	inherits: [_Signal]
+}
+
+# Suspends PicoLoopDomain for the given number of milliseconds.
+platformModule __PicoLoopSleep {
+	inputs: [UInt32]
+	outputs: []
+	processing: "@__stride_pico_loop_sleep"
+	inherits: [_Signal]
+}
+
+# Blocks for the given number of milliseconds.
+platformModule __PicoSleepMs {
+	inputs: [UInt32]
+	outputs: []
+	processing: "@__stride_pico_sleep_ms"
+	inherits: [_Signal]
 }

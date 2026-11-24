@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1010" height="600" viewBox="0 0 1010 600" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<title>PortableBlink schematic: Arduino Mega 2560</title>
+<rect width="1010" height="600" fill="#ffffff"/>
+<text x="40.0" y="38.0" font-size="20" font-weight="600" fill="#1b1b1b">PortableBlink schematic: Arduino Mega 2560</text>
+<text x="40.0" y="60.0" font-size="13" fill="#555555">Net names are the gpioPin names in BlinkRigMega.stride.</text>
+<rect x="40.0" y="90.0" width="410.0" height="430.0" rx="6" fill="none" stroke="#555555" stroke-width="1.5" stroke-dasharray="8 5"/>
+<text x="54.0" y="112.0" font-size="14" font-weight="700" fill="#1b1b1b">A1  Arduino Mega 2560</text>
+<rect x="80.0" y="140.0" width="190.0" height="320.0" rx="0" fill="#fbfbf6" stroke="#000" stroke-width="2"/>
+<text x="160.0" y="166.0" font-size="13" font-weight="700" fill="#1b1b1b">U1</text>
+<text x="160.0" y="184.0" font-size="13" fill="#1b1b1b">ATmega2560</text>
+<text x="140.0" y="156.0" font-size="11" text-anchor="middle" font-family="Consolas, Menlo, monospace" fill="#1b1b1b">VCC</text>
+<text x="140.0" y="452.0" font-size="11" text-anchor="middle" font-family="Consolas, Menlo, monospace" fill="#1b1b1b">GND</text>
+<polyline points="140.0,140.0 140.0,120.0 450.0,120.0" fill="none" stroke="#000" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="140.0" cy="120.0" r="4" fill="#000" stroke="none" stroke-width="1"/>
+<rect x="445.0" y="115.0" width="10.0" height="10.0" rx="0" fill="#ffffff" stroke="#000" stroke-width="1.6"/>
+<text x="441.0" y="113.0" font-size="12" font-weight="600" text-anchor="end" font-family="Consolas, Menlo, monospace" fill="#1b1b1b">5V</text>
+<polyline points="140.0,460.0 140.0,495.0 450.0,495.0" fill="none" stroke="#000" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="445.0" y="490.0" width="10.0" height="10.0" rx="0" fill="#ffffff" stroke="#000" stroke-width="1.6"/>
+<text x="441.0" y="488.0" font-size="12" font-weight="600" text-anchor="end" font-family="Consolas, Menlo, monospace" fill="#1b1b1b">GND</text>
+<text x="262.0" y="224.0" font-size="12" font-weight="600" text-anchor="end" font-family="Consolas, Menlo, monospace" fill="#1b1b1b">PA0</text>
+<line x1="270.0" y1="230.0" x2="292.0" y2="230.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<text x="262.0" y="324.0" font-size="12" font-weight="600" text-anchor="end" font-family="Consolas, Menlo, monospace" fill="#1b1b1b">PH6</text>
+<line x1="270.0" y1="330.0" x2="292.0" y2="330.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<text x="262.0" y="414.0" font-size="12" font-weight="600" text-anchor="end" font-family="Consolas, Menlo, monospace" fill="#1b1b1b">PB7</text>
+<line x1="270.0" y1="420.0" x2="292.0" y2="420.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<polyline points="206.0,210.0 206.0,202.0" fill="none" stroke="#666" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
+<line x1="198.0" y1="202.0" x2="214.0" y2="202.0" stroke="#666" stroke-width="1.6" stroke-linecap="round"/>
+<text x="206.0" y="197.0" font-size="10" text-anchor="middle" font-family="Consolas, Menlo, monospace" fill="#666">VCC</text>
+<polyline points="206.0,210.0 206.0,214.0 213.0,215.0 199.0,217.0 213.0,219.0 199.0,221.0 213.0,223.0 199.0,225.0 206.0,226.0 206.0,230.0" fill="none" stroke="#666" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
+<line x1="206.0" y1="230.0" x2="270.0" y2="230.0" stroke="#666" stroke-width="1.6" stroke-linecap="round"/>
+<circle cx="206.0" cy="230.0" r="3" fill="#666" stroke="none" stroke-width="1"/>
+<text x="194.0" y="232.0" font-size="10" text-anchor="end" fill="#666">internal</text>
+<text x="194.0" y="245.0" font-size="10" text-anchor="end" fill="#666">pull-up</text>
+<text x="194.0" y="258.0" font-size="10" text-anchor="end" fill="#666">20–50 kΩ</text>
+<line x1="292.0" y1="230.0" x2="450.0" y2="230.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<rect x="445.0" y="225.0" width="10.0" height="10.0" rx="0" fill="#ffffff" stroke="#000" stroke-width="1.6"/>
+<text x="441.0" y="223.0" font-size="12" font-weight="600" text-anchor="end" font-family="Consolas, Menlo, monospace" fill="#1b1b1b">D22</text>
+<line x1="292.0" y1="330.0" x2="450.0" y2="330.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<rect x="445.0" y="325.0" width="10.0" height="10.0" rx="0" fill="#ffffff" stroke="#000" stroke-width="1.6"/>
+<text x="441.0" y="323.0" font-size="12" font-weight="600" text-anchor="end" font-family="Consolas, Menlo, monospace" fill="#1b1b1b">D9</text>
+<text x="300.0" y="224.0" font-size="12" font-weight="700" font-family="Consolas, Menlo, monospace" fill="#1b4f8a">BUTTON</text>
+<text x="300.0" y="324.0" font-size="12" font-weight="700" font-family="Consolas, Menlo, monospace" fill="#1b4f8a">RELAY</text>
+<text x="300.0" y="414.0" font-size="12" font-weight="700" font-family="Consolas, Menlo, monospace" fill="#1b4f8a">STATUS</text>
+<text x="300.0" y="436.0" font-size="11" font-family="Consolas, Menlo, monospace" fill="#555555">D13</text>
+<line x1="292.0" y1="420.0" x2="360.0" y2="420.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<polygon points="360,406 360,434 386,420" fill="#fff" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+<text x="364.0" y="400.0" font-size="10" fill="#555555">buffer</text>
+<polyline points="386.0,420.0 396.8,420.0 399.5,413.0 404.9,427.0 410.3,413.0 415.7,427.0 421.1,413.0 426.5,427.0 429.2,420.0 440.0,420.0" fill="none" stroke="#000" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="413.0" y="408.0" font-size="11" text-anchor="middle" fill="#1b1b1b">1 kΩ</text>
+<line x1="440.0" y1="420.0" x2="460.0" y2="420.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="460.0" y1="420.0" x2="460.0" y2="448.5" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<polygon points="450.0,448.5 470.0,448.5 460.0,465.5" fill="none" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+<line x1="450.0" y1="465.5" x2="470.0" y2="465.5" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="460.0" y1="465.5" x2="460.0" y2="495.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="474.0" y1="451.5" x2="486.0" y2="443.5" stroke="#000" stroke-width="1.6" stroke-linecap="round"/>
+<polygon points="486.0,443.5 479.0,444.5 483.0,449.5" fill="#000"/>
+<line x1="474.0" y1="459.5" x2="486.0" y2="451.5" stroke="#000" stroke-width="1.6" stroke-linecap="round"/>
+<polygon points="486.0,451.5 479.0,452.5 483.0,457.5" fill="#000"/>
+<circle cx="460.0" cy="495.0" r="4" fill="#000" stroke="none" stroke-width="1"/>
+<text x="490.0" y="450.0" font-size="13" font-weight="700" fill="#1b1b1b">L</text>
+<line x1="450.0" y1="120.0" x2="490.0" y2="120.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="490.0" y1="120.0" x2="490.0" y2="106.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="480.0" y1="106.0" x2="500.0" y2="106.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<text x="490.0" y="100.0" font-size="13" font-weight="600" text-anchor="middle" fill="#1b1b1b">+5V</text>
+<line x1="450.0" y1="495.0" x2="490.0" y2="495.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="490.0" y1="495.0" x2="490.0" y2="509.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="478.0" y1="509.0" x2="502.0" y2="509.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="483.0" y1="514.0" x2="497.0" y2="514.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="488.0" y1="519.0" x2="492.0" y2="519.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="450.0" y1="230.0" x2="560.0" y2="230.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<circle cx="564.0" cy="230.0" r="4" fill="#fff" stroke="#000" stroke-width="2"/>
+<circle cx="616.0" cy="230.0" r="4" fill="#fff" stroke="#000" stroke-width="2"/>
+<line x1="558.0" y1="216.0" x2="622.0" y2="216.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="590.0" y1="216.0" x2="590.0" y2="204.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="581.0" y1="204.0" x2="599.0" y2="204.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<text x="590.0" y="194.0" font-size="13" font-weight="700" text-anchor="middle" fill="#1b1b1b">S1</text>
+<text x="590.0" y="254.0" font-size="11" text-anchor="middle" fill="#555555">push button</text>
+<line x1="620.0" y1="230.0" x2="650.0" y2="230.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="650.0" y1="230.0" x2="650.0" y2="244.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="638.0" y1="244.0" x2="662.0" y2="244.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="643.0" y1="249.0" x2="657.0" y2="249.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="648.0" y1="254.0" x2="652.0" y2="254.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<rect x="740.0" y="290.0" width="160.0" height="180.0" rx="0" fill="#f5f8fc" stroke="#000" stroke-width="2"/>
+<text x="820.0" y="264.0" font-size="13" font-weight="700" text-anchor="middle" fill="#1b1b1b">K1</text>
+<text x="820.0" y="280.0" font-size="11" text-anchor="middle" fill="#555555">relay module, 5 V</text>
+<text x="748.0" y="334.0" font-size="12" font-weight="600" font-family="Consolas, Menlo, monospace" fill="#1b1b1b">IN</text>
+<line x1="722.0" y1="330.0" x2="740.0" y2="330.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<text x="748.0" y="394.0" font-size="12" font-weight="600" font-family="Consolas, Menlo, monospace" fill="#1b1b1b">VCC</text>
+<line x1="722.0" y1="390.0" x2="740.0" y2="390.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<text x="748.0" y="444.0" font-size="12" font-weight="600" font-family="Consolas, Menlo, monospace" fill="#1b1b1b">GND</text>
+<line x1="722.0" y1="440.0" x2="740.0" y2="440.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<text x="748.0" y="456.0" font-size="10" fill="#555555">on when IN is low</text>
+<line x1="450.0" y1="330.0" x2="722.0" y2="330.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<polyline points="722.0,390.0 690.0,390.0" fill="none" stroke="#000" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<line x1="690.0" y1="390.0" x2="690.0" y2="376.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="680.0" y1="376.0" x2="700.0" y2="376.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<text x="690.0" y="370.0" font-size="13" font-weight="600" text-anchor="middle" fill="#1b1b1b">+5V</text>
+<line x1="722.0" y1="440.0" x2="712.0" y2="440.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="712.0" y1="440.0" x2="712.0" y2="454.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="700.0" y1="454.0" x2="724.0" y2="454.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="705.0" y1="459.0" x2="719.0" y2="459.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<line x1="710.0" y1="464.0" x2="714.0" y2="464.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<text x="894.0" y="314.0" font-size="10" text-anchor="end" fill="#555555">contacts</text>
+<line x1="900.0" y1="338.0" x2="924.0" y2="338.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<text x="928.0" y="342.0" font-size="11" font-family="Consolas, Menlo, monospace" fill="#1b1b1b">NO</text>
+<line x1="900.0" y1="374.0" x2="924.0" y2="374.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<text x="928.0" y="378.0" font-size="11" font-family="Consolas, Menlo, monospace" fill="#1b1b1b">COM</text>
+<line x1="900.0" y1="410.0" x2="924.0" y2="410.0" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+<text x="928.0" y="414.0" font-size="11" font-family="Consolas, Menlo, monospace" fill="#1b1b1b">NC</text>
+<line x1="900.0" y1="374.0" x2="860.0" y2="374.0" stroke="#000" stroke-width="1.6" stroke-linecap="round"/>
+<circle cx="858.0" cy="374.0" r="3" fill="#000" stroke="none" stroke-width="1"/>
+<line x1="858.0" y1="374.0" x2="894.0" y2="412.0" stroke="#000" stroke-width="1.6" stroke-linecap="round"/>
+<line x1="900.0" y1="410.0" x2="892.0" y2="410.0" stroke="#000" stroke-width="1.6" stroke-linecap="round"/>
+<line x1="900.0" y1="338.0" x2="890.0" y2="338.0" stroke="#000" stroke-width="1.6" stroke-linecap="round"/>
+<circle cx="888.0" cy="338.0" r="2.5" fill="#fff" stroke="#000" stroke-width="1.4"/>
+<text x="928.0" y="438.0" font-size="10" fill="#555555">to the load</text>
+<text x="40.0" y="550.0" font-size="13" fill="#1b1b1b">BUTTON: input with the internal pull-up, active low (pressed = 0 V).</text>
+<text x="40.0" y="570.0" font-size="13" fill="#1b1b1b">RELAY: open drain, emulated with the direction register: driven low or released. Active low.</text>
+<text x="40.0" y="590.0" font-size="13" fill="#1b1b1b">STATUS: the on-board LED L. No external parts.</text>
+</svg>

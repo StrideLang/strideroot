@@ -1,0 +1,55 @@
+#
+# PortableBlink: blinks the board's LED from the main loop, prints a tick count,
+# and follows a button from a 1 kHz timer.
+#
+# Nothing below the Board selection names a pin, a register or a platform
+# domain: the pins come from the selected BlinkRig file, and PlatformLoopDomain
+# / PlatformTimerDomain are the standard domains every LLVM framework provides.
+#
+#   stride build PortableBlink.stride                     # Arduino Uno (default)
+#   stride build PortableBlink.stride -D Board::Mega      # Arduino Mega 2560
+#   stride build PortableBlink.stride -D Board::Pico      # Raspberry Pi Pico
+#   stride build PortableBlink.stride -D Board::Pico2     # Raspberry Pi Pico 2
+#   stride flash PortableBlink.stride --port=COM3         # Flash AVR via serial
+#   stride flash PortableBlink.stride -D Board::Pico2     # Flash Pico 2 via picotool
+#   stride flash PortableBlink.stride -D Board::Pico2 --probe  # Flash via SWD
+#
+
+feature Board {
+    variants: [Uno, Mega, Pico, Pico2]
+    default: Uno
+}
+
+@with(Board::Uno)   use AVR version 1.0 on BlinkRig
+@with(Board::Mega)  use AVR version 1.0 on BlinkRigMega
+@with(Board::Pico)  use Pico version 1.0 on BlinkRigPico
+@with(Board::Pico2) use Pico version 1.0 on BlinkRigPico2
+
+import DigitalIO
+import Strings
+@with(Board::Uno)   import BlinkRig
+@with(Board::Mega)  import BlinkRigMega as BlinkRig
+@with(Board::Pico)  import BlinkRigPico as BlinkRig
+@with(Board::Pico2) import BlinkRigPico2 as BlinkRig
+
+# The main loop blinks Status once a second and prints the tick count.
+# Sleep suspends only the loop: the timer keeps running while it sleeps.
+switch Blink { default: off domain: PlatformLoopDomain }
+signal Count { type: Int default: 0 domain: PlatformLoopDomain }
+string Line { maxSize: 24 domain: PlatformLoopDomain }
+
+Blink >> Not() >> Blink;
+Blink >> DigitalIO::Led(pin: BlinkRig::Status);
+
+(Count + 1) >> Count;
+[ "tick: {}", Count ] >> Format() >> Line;
+Line >> PrintLn();
+
+0.5 >> Sleep(domain: PlatformLoopDomain);
+
+# The timer polls the button 1000 times a second and drives the relay while
+# it is pressed.
+switch Pressed { default: off domain: PlatformTimerDomain }
+
+BlinkRig::Button >> DigitalIO::DigitalIn() >> Pressed;
+Pressed >> DigitalIO::DigitalOut(pin: BlinkRig::Relay);

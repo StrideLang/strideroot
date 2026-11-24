@@ -1,9 +1,0 @@
-platformOperator StringAdd {
-    type: "+"
-    leftTypes: [String] 
-    rightTypes: [String]
-    outTypes: [String]
-    preProcessing: "// String add pre"
-    processing: "%%intokens:0%% + %%intokens:1%%"
-    postProcessing: "// String add post"
-}

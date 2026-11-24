@@ -25,7 +25,7 @@ examples test builds the program once for each.
 
 | System | Project | Shows |
 |---|---|---|
-| AVR (Arduino Uno, Mega 2560) | [PortableBlink](AVR/PortableBlink) | Pins through a hardware file (`gpioPin`) and `DigitalIO`, one program on two boards, the standard loop and timer domains, a cooperative `Sleep`, open drain and active-low pins, with wiring diagrams |
+| AVR & Pico (Arduino Uno, Mega 2560, Raspberry Pi Pico, Pico 2) | [PortableBlink](PortableBlink) | Pins through hardware files (`gpioPin`) and `DigitalIO`, one program across 4 boards via `feature Board`, `Format`/`PrintLn` serial output, standard loop and timer domains, cooperative `Sleep`, open drain and active-low pins, with wiring diagrams |
 
 ## Systems
 

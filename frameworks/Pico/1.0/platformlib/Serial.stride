@@ -1,0 +1,37 @@
+# USB CDC / UART stdio serial port (via pico-sdk stdio_init_all).
+
+platformModule __PicoSerialWriteByte {
+    inputs: [UInt8]
+    outputs: []
+    processing: "@__stride_pico_serial_write_byte"
+    inherits: [_Signal]
+}
+
+platformModule __PicoSerialPrintInt {
+    inputs: [Int]
+    outputs: []
+    processing: "@__stride_pico_serial_print_int"
+    inherits: [_Signal]
+}
+
+platformModule __PicoSerialPrintReal {
+    inputs: [Real]
+    outputs: []
+    processing: "@__stride_pico_serial_print_real"
+    inherits: [_Signal]
+}
+
+platformModule __PicoSerialNewLine {
+    inputs: []
+    outputs: []
+    processing: "@__stride_pico_serial_newline"
+    inherits: [_Signal]
+}
+
+# The next received byte, or -1 when none has arrived.
+platformModule __PicoSerialReadByte {
+    inputs: []
+    outputs: [Int]
+    processing: "@__stride_pico_serial_read_byte"
+    inherits: [_Signal]
+}

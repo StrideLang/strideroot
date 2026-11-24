@@ -2,16 +2,84 @@
 # Raspberry Pi Pico - RP2040 Base Device Configuration
 #
 
+import Gpio
+import CortexM0Plus
 import QualityPolicy
 import PicoResources
 
 device RP2040 {
     platform: Pico
+    overlays: CortexM0Plus
+    cpu: "cortex-m0plus"
     compilerFlags: "-march=armv6-m -mcpu=cortex-m0plus -mthumb"
+    clock: 125000000
+    memory: {
+        flash: 2097152
+        ram: 270336
+    }
+    ports: [
+        gpioPort SIO {
+            width: 32
+            input: 0xD0000004
+            direction: 0xD0000020
+            output: 0xD0000010
+            outputSet: 0xD0000014
+            outputClear: 0xD0000018
+            outputToggle: 0xD000001C
+            directionSet: 0xD0000024
+            directionClear: 0xD0000028
+            fields: [
+                gpioField Function {
+                    option: Gpio::_PinFunctions
+                    register: 0x40014004
+                    pinStride: 8
+                    bitsPerPin: 5
+                    shift: 0
+                    options: [Gpio::PinGpio]
+                    codes: [5]
+                },
+                gpioField Direction {
+                    option: Gpio::_PinModes
+                    register: 0xD0000020
+                    bitsPerPin: 1
+                    options: [Gpio::PinInput, Gpio::PinOutput]
+                    codes: [0, 1]
+                },
+                gpioField Pull {
+                    option: Gpio::_PinPulls
+                    register: 0x4001C004
+                    pinStride: 4
+                    bitsPerPin: 2
+                    shift: 2
+                    options: [Gpio::PullNone, Gpio::PullDown, Gpio::PullUp]
+                    codes: [0, 1, 2]
+                }
+            ]
+        }
+    ]
+    gpio: gpioCapabilities {
+        emulated: [Gpio::OutputOpenDrain]
+        interrupts: [Gpio::InterruptNone, Gpio::InterruptRising, Gpio::InterruptFalling, Gpio::InterruptBothEdges]
+    }
     resources: [
         PicoBootromFloat,
-        PicoHardwareInterpolator
+        PicoHardwareInterpolator,
+        _Pio0,
+        _Pio0_Sm0,
+        _Pio0_Sm1,
+        _Pio0_Sm2,
+        _Pio0_Sm3,
+        _PioRegX,
+        _PioRegY
     ]
     # Inherits all default platformPolicies from platform Pico
+    upload: {
+        openocd: {
+            target: "target/rp2040.cfg"
+        }
+        probeRs: {
+            chip: "RP2040"
+        }
+    }
     meta: "Dual ARM Cortex-M0+ microcontroller without hardware FPU"
 }

@@ -1,0 +1,72 @@
+#
+# Raspberry Pi Pico (RP2040).
+#
+# A project uses a pin through a gpioPin in its own hardware file:
+#   gpioPin Status { pin: RaspberryPiPico::LED mode: Gpio::PinOutput }
+#
+
+package RaspberryPiPico
+
+import RP2040
+
+hardwareBoard RaspberryPiPico {
+    platform: Pico
+    overlays: RP2040
+    pins: [
+        pin GP0 { port: SIO bit: 0 },
+        pin GP1 { port: SIO bit: 1 },
+        pin GP2 { port: SIO bit: 2 },
+        pin GP3 { port: SIO bit: 3 },
+        pin GP4 { port: SIO bit: 4 },
+        pin GP5 { port: SIO bit: 5 },
+        pin GP6 { port: SIO bit: 6 },
+        pin GP7 { port: SIO bit: 7 },
+        pin GP8 { port: SIO bit: 8 },
+        pin GP9 { port: SIO bit: 9 },
+        pin GP10 { port: SIO bit: 10 },
+        pin GP11 { port: SIO bit: 11 },
+        pin GP12 { port: SIO bit: 12 },
+        pin GP13 { port: SIO bit: 13 },
+        pin GP14 { port: SIO bit: 14 },
+        pin GP15 { port: SIO bit: 15 },
+        pin GP16 { port: SIO bit: 16 },
+        pin GP17 { port: SIO bit: 17 },
+        pin GP18 { port: SIO bit: 18 },
+        pin GP19 { port: SIO bit: 19 },
+        pin GP20 { port: SIO bit: 20 },
+        pin GP21 { port: SIO bit: 21 },
+        pin GP22 { port: SIO bit: 22 },
+        pin GP25 { port: SIO bit: 25 },
+        pin GP26 { port: SIO bit: 26 analog: 0 },
+        pin GP27 { port: SIO bit: 27 analog: 1 },
+        pin GP28 { port: SIO bit: 28 analog: 2 },
+        pin LED { port: SIO bit: 25 }
+    ]
+    usb: ["2E8A:0003", "2E8A:000A"]
+    upload: {
+        method: "picotool"
+        probe: "openocd"
+        picotool: {
+            board: "pico"
+            preparePrompt: "1. Unplug the USB cable (or hold RUN/reset).\n  2. Hold down the white BOOTSEL button.\n  3. Plug the USB cable back in, then release BOOTSEL."
+        }
+        openocd: {
+            interface: "interface/cmsis-dap.cfg"
+            target: "target/rp2040.cfg"
+            speed: 5000
+            transport: "swd"
+        }
+    }
+    image: [
+        step Uf2 { kind: "uf2" }
+    ]
+    toolchain: {
+        cc: "ArmCrosscompiler"
+        ar: "ArmCrosscompiler"
+        ld: "ArmCrosscompiler"
+        objcopy: "ArmCrosscompiler"
+        size: "ArmCrosscompiler"
+        upload: "Picotool"
+    }
+    meta: "Raspberry Pi Pico: RP2040 dual Cortex-M0+ at 125 MHz, 2 MB flash, USB"
+}
