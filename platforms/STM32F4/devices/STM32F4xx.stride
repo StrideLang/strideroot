@@ -1,0 +1,133 @@
+#
+# STMicroelectronics STM32F4 family: what every STM32F4 device shares. A chip
+# overlays it and states only what differs (memory, package, its probe-rs
+# name), plus clock, clocks and clockLimits when its line runs at another
+# speed (F401 84 MHz, F411 100 MHz, F42x/F446 180 MHz). Addresses from RM0090.
+#
+# Chain: STM32F407VG -> STM32F4xx -> CortexM4. See platforms/AGENTS.md.
+#
+
+import Gpio
+import Peripheral
+import CortexM4
+import STM32F4Resources
+
+device STM32F4xx {
+    platform: STM32F4
+    overlays: CortexM4
+    cpu: "cortex-m4"
+    fpu: "fpv4-sp-d16"
+
+    # 168 MHz from the internal 16 MHz oscillator: 16 MHz / pllM 16 * pllN 336
+    # / pllP 2. APB1 runs at 42 MHz, APB2 at 84 MHz, the PLL's Q output at
+    # 48 MHz. A board with a crystal sets clocks: { source: "hse" hse: <Hz>
+    # pllM: <Hz / 1 MHz> }. The build checks clocks against clockLimits and
+    # that they make `clock`. flashFlags: FLASH_ACR PRFTEN | ICEN | DCEN.
+    # voltageScale: PWR_CR VOS for scale 1 (one bit on F405/F407; 0xC000 on
+    # F42x/F446).
+    clock: 168000000
+    clocks: {
+        source: "hsi"
+        hsi: 16000000
+        pll: on
+        pllM: 16
+        pllN: 336
+        pllP: 2
+        pllQ: 7
+        ahbDivider: 1
+        apb1Divider: 4
+        apb2Divider: 2
+        flashFlags: 0x0700
+        voltageScale: 0x4000
+    }
+    clockLimits: {
+        sysclk: { max: 168000000 }
+        ahb: { max: 168000000 }
+        apb1: { max: 42000000 }
+        apb2: { max: 84000000 }
+        vcoIn: { min: 950000 max: 2100000 }
+        vcoOut: { min: 100000000 max: 432000000 }
+        pllM: { min: 2 max: 63 }
+        pllN: { min: 50 max: 432 }
+        pllP: { values: [2, 4, 6, 8] }
+        pllQ: { min: 2 max: 15 }
+        flashLatency: { stepHz: 30000000 max: 7 }
+    }
+
+    # stm32.gpio.v2 registers, as offsets from each port's base (RM0090 8.4,
+    # RM0385 6.4): MODER 0x00, OTYPER 0x04, PUPDR 0x0C, IDR 0x10, ODR 0x14,
+    # BSRR 0x18 (set in bits 0-15, reset in 16-31). The runtime sets AFRL/AFRH
+    # (0x20/0x24) for the console.
+    gpioLayout: {
+        width: 32
+        input: 0x10
+        output: 0x14
+        outputSet: 0x18
+        outputClear: 0x18
+        setShift: 0
+        clearShift: 16
+        fields: [
+            gpioField Mode {
+                option: Gpio::_PinModes
+                register: 0x00
+                bitsPerPin: 2
+                options: [Gpio::PinInput, Gpio::PinOutput, Gpio::PinAnalog]
+                codes: [0, 1, 3]
+            },
+            gpioField OutputType {
+                option: Gpio::_PinOutputTypes
+                register: 0x04
+                bitsPerPin: 1
+                options: [Gpio::OutputPushPull, Gpio::OutputOpenDrain]
+                codes: [0, 1]
+            },
+            gpioField Pull {
+                option: Gpio::_PinPulls
+                register: 0x0C
+                bitsPerPin: 2
+                options: [Gpio::PullNone, Gpio::PullUp, Gpio::PullDown]
+                codes: [0, 1, 2]
+            }
+        ]
+    }
+    ports: [
+        gpioPort GPIOA @ 0x40020000 { enable: { register: 0x40023830 bit: 0 } },
+        gpioPort GPIOB @ 0x40020400 { enable: { register: 0x40023830 bit: 1 } },
+        gpioPort GPIOC @ 0x40020800 { enable: { register: 0x40023830 bit: 2 } },
+        gpioPort GPIOD @ 0x40020C00 { enable: { register: 0x40023830 bit: 3 } },
+        gpioPort GPIOE @ 0x40021000 { enable: { register: 0x40023830 bit: 4 } },
+        gpioPort GPIOF @ 0x40021400 { enable: { register: 0x40023830 bit: 5 } },
+        gpioPort GPIOG @ 0x40021800 { enable: { register: 0x40023830 bit: 6 } },
+        gpioPort GPIOH @ 0x40021C00 { enable: { register: 0x40023830 bit: 7 } },
+        gpioPort GPIOI @ 0x40022000 { enable: { register: 0x40023830 bit: 8 } }
+    ]
+
+    # Instances at their base addresses. ip names the register design,
+    # so one driver serves every chip that has it.
+    peripherals: [
+        uart USART1 @ 0x40011000 { ip: "stm32.usart.v1" bus: "apb2" enable: { register: 0x40023844 bit: 4 } },
+        uart USART2 @ 0x40004400 { ip: "stm32.usart.v1" bus: "apb1" enable: { register: 0x40023840 bit: 17 } },
+        uart USART3 @ 0x40004800 { ip: "stm32.usart.v1" bus: "apb1" enable: { register: 0x40023840 bit: 18 } },
+        uart UART4 @ 0x40004C00 { ip: "stm32.usart.v1" bus: "apb1" enable: { register: 0x40023840 bit: 19 } },
+        uart UART5 @ 0x40005000 { ip: "stm32.usart.v1" bus: "apb1" enable: { register: 0x40023840 bit: 20 } },
+        uart USART6 @ 0x40011400 { ip: "stm32.usart.v1" bus: "apb2" enable: { register: 0x40023844 bit: 5 } },
+        spi SPI1 @ 0x40013000 { ip: "stm32.spi.v1" bus: "apb2" enable: { register: 0x40023844 bit: 12 } },
+        spi SPI2 @ 0x40003800 { ip: "stm32.spi.v1" bus: "apb1" enable: { register: 0x40023840 bit: 14 } alsoAs: ["i2s"] },
+        spi SPI3 @ 0x40003C00 { ip: "stm32.spi.v1" bus: "apb1" enable: { register: 0x40023840 bit: 15 } alsoAs: ["i2s"] },
+        i2c I2C1 @ 0x40005400 { ip: "stm32.i2c.v1" bus: "apb1" enable: { register: 0x40023840 bit: 21 } },
+        i2c I2C2 @ 0x40005800 { ip: "stm32.i2c.v1" bus: "apb1" enable: { register: 0x40023840 bit: 22 } },
+        i2c I2C3 @ 0x40005C00 { ip: "stm32.i2c.v1" bus: "apb1" enable: { register: 0x40023840 bit: 23 } }
+    ]
+
+    resources: [
+        CortexM4HardwareFpuSp,
+        STM32F4ArtAccelerator,
+        STM32F4DspExtensions
+    ]
+    upload: {
+        openocd: {
+            target: "target/stm32f4x.cfg"
+        }
+    }
+    meta: "STM32F4 family: Cortex-M4F, up to 168 MHz on F405/F407"
+}

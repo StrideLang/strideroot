@@ -1,0 +1,97 @@
+#
+# Stride Peripheral Package
+#
+# The vocabulary for a device's peripheral instances. A device lists them
+# with their base address after @:
+#
+#   import Peripheral
+#
+#   device STM32F4xx {
+#       peripherals: [
+#           uart USART2 @ 0x40004400 {
+#               ip: "stm32.usart.v1"
+#               bus: "apb1"
+#               enable: { register: 0x40023840 bit: 17 }
+#           },
+#           i2c I2C1 @ 0x40005400 { ip: "stm32.i2c.v1" bus: "apb1" enable: { register: 0x40023840 bit: 21 } }
+#       ]
+#   }
+#
+# The entity type says what the peripheral does (uart, spi, i2c, ...), so
+# portable libraries find "a UART" on any chip. `ip` says which register-level
+# design it is, so a driver is written once per ip and works on every chip
+# that has it: drivers and code generation never name a chip. A board picks
+# instances for its roles, e.g. console: { peripheral: USART2 ... }.
+#
+# Naming ip: "<vendor>.<block>.v<n>", e.g. "stm32.usart.v1" (F1/F2/F4) and
+# "stm32.usart.v2" (F0/F3/F7/L4/H7), "nrf.uarte.v1", "rp.pl011.v1". Two
+# instances share an ip only when the same driver drives both unchanged.
+#
+# A peripheral that can do two jobs (STM32 SPI2 is also I2S2) is declared
+# once, as its main kind, and lists the others in `alsoAs`.
+#
+
+package Peripheral
+
+type _PeripheralType {
+	typeName: "peripheral"
+	properties: [
+		typeProperty Ip { name: "ip" allowedTypes: _StringLiteral required: on meta: "Register-level design and version, e.g. 'stm32.usart.v1'. Drivers are written per ip." },
+		typeProperty Bus { name: "bus" allowedTypes: _StringLiteral default: "" required: off meta: "The clock that feeds it, named as in the device's clocks, e.g. 'apb1'" },
+		typeProperty Enable { name: "enable" allowedTypes: _Any default: none required: off meta: "Clock gate set before it is used: { register: bit: }" },
+		typeProperty Reset { name: "reset" allowedTypes: _Any default: none required: off meta: "Reset line: { register: bit: }" },
+		typeProperty AlsoAs { name: "alsoAs" allowedTypes: constrainedList { allowed: [_StringLiteral] } default: [] required: off meta: "Other kinds this instance can work as, e.g. ['i2s'] for a SPI that also does I2S" }
+	]
+	inherits: [_Base]
+	meta: "A peripheral instance of a device"
+}
+
+# Serial and bus interfaces
+type _UartType { typeName: "uart" properties: [] inherits: [_PeripheralType] meta: "Asynchronous serial port (UART, USART, UARTE)" }
+type _SpiType { typeName: "spi" properties: [] inherits: [_PeripheralType] meta: "SPI controller" }
+type _I2cType { typeName: "i2c" properties: [] inherits: [_PeripheralType] meta: "I2C controller" }
+type _I2sType { typeName: "i2s" properties: [] inherits: [_PeripheralType] meta: "I2S audio interface" }
+type _SaiType { typeName: "sai" properties: [] inherits: [_PeripheralType] meta: "Serial audio interface (I2S, TDM, PCM, AC'97)" }
+type _CanType { typeName: "can" properties: [] inherits: [_PeripheralType] meta: "CAN or CAN FD controller" }
+type _UsbType { typeName: "usb" properties: [] inherits: [_PeripheralType] meta: "USB device, host or OTG controller" }
+
+# Timing
+type _TimerType {
+	typeName: "timer"
+	properties: [
+		typeProperty Width { name: "width" allowedTypes: _IntLiteral default: 16 required: off meta: "Counter width in bits" },
+		typeProperty Channels { name: "channels" allowedTypes: _IntLiteral default: 0 required: off meta: "Capture/compare channels" }
+	]
+	inherits: [_PeripheralType]
+	meta: "Timer or counter"
+}
+
+# Analog
+type _AdcType {
+	typeName: "adc"
+	properties: [
+		typeProperty Bits { name: "bits" allowedTypes: _IntLiteral default: 12 required: off meta: "Resolution in bits" },
+		typeProperty Channels { name: "channels" allowedTypes: _IntLiteral default: 0 required: off meta: "Input channels" }
+	]
+	inherits: [_PeripheralType]
+	meta: "Analog-to-digital converter"
+}
+type _DacType {
+	typeName: "dac"
+	properties: [
+		typeProperty Bits { name: "bits" allowedTypes: _IntLiteral default: 12 required: off meta: "Resolution in bits" },
+		typeProperty Channels { name: "channels" allowedTypes: _IntLiteral default: 1 required: off meta: "Output channels" }
+	]
+	inherits: [_PeripheralType]
+	meta: "Digital-to-analog converter"
+}
+
+# Data movement
+type _DmaType {
+	typeName: "dma"
+	properties: [
+		typeProperty Channels { name: "channels" allowedTypes: _IntLiteral default: 0 required: off meta: "Channels or streams" }
+	]
+	inherits: [_PeripheralType]
+	meta: "DMA controller"
+}

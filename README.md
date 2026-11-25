@@ -9,11 +9,12 @@
 | Directory | Description |
 | :--- | :--- |
 | **`library/`** | Standard library modules (`1.0/`), including core types, math, DSP, control, linear algebra, estimation, I/O, sensors, state machines, windowing, and testing utilities. |
-| **`systems/`** | Target system definitions (`Desktop`, `DesktopAudio`, `DesktopFunctions`, `JIT`, `AVR`, `Pico`, `SaturnM7`, `Wiring`, `TestSystem`). |
-| **`frameworks/`** | Runtime and build frameworks (`JIT`, `Cpp`, `RtAudio`, `DesktopTemplate`, `AVR`, `Pico`, `STM32F7`, `Wiring`, `TestFramework`). |
-| **`platforms/`** | Hardware and platform abstractions (`AVR`, `JIT`, `Pico`, `ST`, `Test`, `generic`). |
+| **`systems/`** | Target system definitions (`Desktop`, `DesktopAudio`, `DesktopFunctions`, `JIT`, `AVR`, `Pico`, `STM32F4`, `STM32F7`, `SaturnM7`, `Wiring`, `TestSystem`). |
+| **`frameworks/`** | Runtime and build frameworks (`JIT`, `Cpp`, `RtAudio`, `DesktopTemplate`, `AVR`, `Pico`, `STM32` (all STM32 families), `Wiring`, `TestFramework`). |
+| **`platforms/`** | Hardware and platform abstractions (`AVR`, `JIT`, `Pico`, `STM32F4`, `STM32F7`, `ST`, `Test`, `generic`). Read `platforms/AGENTS.md` before adding a device or board. |
 | **`cores/`** | Processor core definitions shared by several platforms. A core only one platform uses lives in `platforms/<P>/cores/` (e.g., `platforms/AVR/cores/AVR5.stride`), which is searched first. |
 | **`tools/`** | External toolchain and firmware definitions (`Arduino`, `ArmCrosscompiler`, `CMake`, `Cpp`, `Git`, `OpenOCD`, `STM32F7_Firmware`). |
+| **`doc/`** | Design documents: the hardware model (`hardware_model.md`), clocking (`clocking.md`), hardware components and lifecycle (`hardware_components.md`), and the component spec (`stride_package_spec.md`). |
 
 ---
 

@@ -282,12 +282,47 @@ type _DeviceType {
 			required: off
 			meta: "LLVM CPU name (e.g. atmega328p)"
 		},
+		typeProperty Fpu {
+			name: "fpu"
+			allowedTypes: _StringLiteral
+			default: ""
+			required: off
+			meta: "The floating point unit, as the C compiler names it (-mfpu), e.g. 'fpv4-sp-d16'. Empty for a core without one."
+		},
 		typeProperty Clock {
 			name: "clock"
 			allowedTypes: _IntLiteral
 			default: 0
 			required: off
-			meta: "Core clock in Hz"
+			meta: "Core clock in Hz, the one the runtime sets up. When the device has clocks, the build checks they make this clock."
+		},
+		typeProperty Clocks {
+			name: "clocks"
+			allowedTypes: _Any
+			default: none
+			required: off
+			meta: "How the runtime makes the clocks, e.g. { source: 'hsi' pll: on pllM: 16 ... apb1Divider: 4 }. Merged key by key with the layers below, so a board can set its crystal (hse:). See doc/clocking.md."
+		},
+		typeProperty ClockLimits {
+			name: "clockLimits"
+			allowedTypes: _Any
+			default: none
+			required: off
+			meta: "What the chip's clocks allow, as { <clock>: { min: max: values: [...] } }, e.g. { apb1: { max: 42000000 } }. The build checks clocks against them."
+		},
+		typeProperty Peripherals {
+			name: "peripherals"
+			allowedTypes: constrainedList { allowed: [_Any] }
+			default: []
+			required: off
+			meta: "Peripheral instances at their base addresses: usart USART2 @ 0x40004400 { ip: bus: enable: }. See Peripheral.stride."
+		},
+		typeProperty GpioLayout {
+			name: "gpioLayout"
+			allowedTypes: _Any
+			default: none
+			required: off
+			meta: "Registers every GPIO port shares, as offsets from the port's base: a port written gpioPort GPIOA @ 0x40020000 { } takes from here what it leaves out."
 		},
 		typeProperty Memory {
 			name: "memory"
@@ -316,6 +351,13 @@ type _DeviceType {
 			default: []
 			required: off
 			meta: "What each chip pin adds to the device's GPIO: pinFeatures PD2 { port: PortD bit: 2 interrupts: [...] routes: [...] }"
+		},
+		typeProperty Upload {
+			name: "upload"
+			allowedTypes: _Any
+			default: none
+			required: off
+			meta: "What flashing tools need to know about the chip, e.g. { openocd: { target: } probeRs: { chip: } }. A board adds its probe and method."
 		},
 		typeProperty TickTimer {
 			name: "tickTimer"
@@ -457,6 +499,27 @@ type _HardwareBoardType {
 			default: none
 			required: off
 			meta: "Board changes to device memory, e.g. { bootloader: 512 }"
+		},
+		typeProperty Clocks {
+			name: "clocks"
+			allowedTypes: _Any
+			default: none
+			required: off
+			meta: "Board changes to the device's clocks, e.g. its crystal: { hse: 8000000 }"
+		},
+		typeProperty Clock {
+			name: "clock"
+			allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "The core clock in Hz when the board's clocks change it"
+		},
+		typeProperty Console {
+			name: "console"
+			allowedTypes: _Any
+			default: none
+			required: off
+			meta: "The serial port Print uses: { peripheral: USART2 tx: PA2 rx: PA3 select: 7 baud: 115200 }. select is the pins' alternate function. Its pins are reserved: a gpioPin can't use them."
 		}
 	]
 	inherits: [_Base]
@@ -555,6 +618,13 @@ type _FrameworkDescriptionType {
 			default: ""
 			required: off
 			meta: "llvm when platformModules are LLVM IR, so Stride compiles programs for this framework itself. Empty for C++ template frameworks."
+		},
+		typeProperty FirmwareBuilder {
+			name: "firmwareBuilder"
+			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] }
+			default: none
+			required: off
+			meta: "How stride build turns the program into firmware with this framework's runtime, e.g. 'Stm32'. A framework that inherits another uses its builder."
 		}
 	]
 	inherits: [_Base]

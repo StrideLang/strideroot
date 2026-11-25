@@ -70,6 +70,19 @@ hardwareBoard STM32F746GDiscovery {
         pin VCP_TX { port: GPIOA bit: 9 },
         pin VCP_RX { port: GPIOB bit: 7 }
     ]
+    # X2, a 25 MHz crystal. The chip runs from its internal oscillator unless
+    # a project sets clocks: { source: "hse" pllM: 25 }.
+    clocks: {
+        hse: 25000000
+    }
+    # USART1 on PA9/PB7 (alternate function 7), the ST-LINK's USB serial port.
+    console: {
+        peripheral: USART1
+        tx: VCP_TX
+        rx: VCP_RX
+        select: 7
+        baud: 115200
+    }
     usb: ["0483:374B", "0483:374E"]
     upload: {
         method: "openocd"

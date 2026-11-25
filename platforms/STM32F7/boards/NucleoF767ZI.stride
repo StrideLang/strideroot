@@ -45,8 +45,24 @@ hardwareBoard NucleoF767ZI {
         pin LED1 { port: GPIOB bit: 0 },
         pin LED2 { port: GPIOB bit: 7 },
         pin LED3 { port: GPIOB bit: 14 },
-        pin BUTTON { port: GPIOC bit: 13 }
+        pin BUTTON { port: GPIOC bit: 13 },
+        pin VCP_TX { port: GPIOD bit: 8 },
+        pin VCP_RX { port: GPIOD bit: 9 }
     ]
+    # The ST-LINK's 8 MHz MCO output, an external clock signal rather than a
+    # crystal. The chip runs from its internal oscillator unless a project
+    # sets clocks: { source: "hse" hseBypass: on pllM: 8 }.
+    clocks: {
+        hse: 8000000
+    }
+    # USART3 on PD8/PD9 (alternate function 7), the ST-LINK's USB serial port.
+    console: {
+        peripheral: USART3
+        tx: VCP_TX
+        rx: VCP_RX
+        select: 7
+        baud: 115200
+    }
     usb: ["0483:374B", "0483:374E"]
     upload: {
         method: "openocd"

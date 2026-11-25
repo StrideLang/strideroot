@@ -1,0 +1,21 @@
+#
+# STM32F4 Hardware Resources
+#
+
+resource CortexM4HardwareFpuSp {
+    name: "ARM Cortex-M4 Single-Precision Hardware FPU"
+    substitutions: [
+        ["CFLAGS_FPU", "-mfpu=fpv4-sp-d16 -mfloat-abi=softfp"]
+    ]
+    meta: "Single-precision hardware FPU (FPv4-SP-D16) present on STM32F4 devices"
+}
+
+resource STM32F4ArtAccelerator {
+    name: "STM32F4 ART Accelerator"
+    meta: "Adaptive Real-Time Flash memory accelerator for 0-wait-state execution up to 168 MHz"
+}
+
+resource STM32F4DspExtensions {
+    name: "ARMv7E-M DSP Extensions"
+    meta: "Single-cycle MAC and SIMD instructions for digital signal processing"
+}

@@ -3,12 +3,13 @@
 #
 
 import QualityPolicy
+import STM32F7xx
 import STM32F769BI
 import STM32F767ZI
 import STM32F746NG
 
 platform STM32F7 {
-    framework: "STM32F7"
+    framework: "STM32"
     defaultDevice: STM32F769BI
     supportedDevices: [
         STM32F769BI,

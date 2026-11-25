@@ -415,8 +415,8 @@ type _GpioPortType {
 	typeName: "gpioPort"
 	properties: [
 		typeProperty Width { name: "width" allowedTypes: _IntLiteral default: 8 required: off meta: "Register width in bits: 8, 16 or 32" },
-		typeProperty Output { name: "output" allowedTypes: _IntLiteral required: on meta: "Output data register" },
-		typeProperty Input { name: "input" allowedTypes: _IntLiteral required: on meta: "Input data register" },
+		typeProperty Output { name: "output" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "Output data register (from the device's gpioLayout when the port has a base address)" },
+		typeProperty Input { name: "input" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "Input data register (from the device's gpioLayout when the port has a base address)" },
 		typeProperty Direction { name: "direction" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "Direction register, 1 bit per pin, 1 = output (AVR DDR)" },
 		typeProperty OutputSet { name: "outputSet" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "Register whose 1 bits set outputs" },
 		typeProperty OutputClear { name: "outputClear" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "Register whose 1 bits clear outputs (may equal outputSet, with setShift and clearShift)" },
@@ -430,7 +430,7 @@ type _GpioPortType {
 		typeProperty Fields { name: "fields" allowedTypes: constrainedList { allowed: [_GpioFieldType] } default: [] required: off meta: "Configuration fields: mode, pull, drive, slew, function select" }
 	]
 	inherits: [_Base]
-	meta: "A GPIO port of a device"
+	meta: "A GPIO port of a device. gpioPort GPIOA @ 0x40020000 { } gives its base address: registers it leaves out come from the device's gpioLayout, as offsets from it."
 }
 
 type _PinRouteType {

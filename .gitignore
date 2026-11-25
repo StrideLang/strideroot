@@ -1,2 +1,4 @@
 **/.strdcache
 local/**
+# Qt plugin build outputs copied here by a desktop build
+plugins/

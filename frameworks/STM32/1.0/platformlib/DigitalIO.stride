@@ -2,7 +2,7 @@
 # (DigitalIO::DigitalOut, DigitalIn, Led). The compiler fills in each pin's
 # addresses and masks from the board, so these are LLVM IR with constant
 # operands: a pin write becomes a single store to GPIOx_BSRR.
-# STM32F7 GPIO registers are 32 bits wide.
+# STM32 GPIO registers are 32 bits wide.
 
 platformModule _GpioWrite {
     inputs: [Switch, UInt32, UInt32, UInt32, UInt32, Switch]
@@ -26,9 +26,9 @@ platformModule _GpioModify {
 }
 
 # Milliseconds since boot.
-platformModule __STM32F7Millis {
+platformModule __STM32Millis {
     inputs: []
     outputs: [UInt32]
-    processing: "@__stride_stm32f7_millis"
+    processing: "@__stride_stm32_millis"
     inherits: [_Signal]
 }

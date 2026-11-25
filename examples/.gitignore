@@ -4,3 +4,5 @@
 *.layout.json
 *_build/
 .variant_*.stride
+*.bin
+*.target.json

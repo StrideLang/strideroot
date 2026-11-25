@@ -1,0 +1,47 @@
+#
+# STM32 framework: Stride programs compiled by Stride's own LLVM backend for
+# STMicroelectronics STM32 boards (ARM Cortex-M), linked against the STM32 C
+# runtime in ../runtime. Every STM32 platform (STM32F4, STM32F7, ...) uses it.
+#
+# platformModules are LLVM IR or calls into the C runtime in ../runtime,
+# which provides startup, main(), the clocks, the 1 kHz SysTick timer, and the
+# serial console. stride build compiles the runtime with stride_board.h, made
+# from the board's Stride data, so neither names a chip. A family that needs
+# its own modules gets a framework that inherits this one.
+#
+
+import Codegen
+
+_frameworkDescription _STM32_Framework {
+    frameworkName: "STM32"
+    defaultDataType: Real
+    codegen: Codegen::Llvm
+    firmwareBuilder: "Stm32"
+}
+
+alias PlatformDomain {
+    entity: STM32TickDomain
+}
+
+alias PlatformRate {
+    entity: 1000
+}
+
+# Standard platform domains. Programs that use these instead of STM32's own
+# domain names run unchanged on other frameworks that provide them.
+
+# Runs again as soon as it finishes, like Arduino's loop(). Sleep suspends
+# only this domain.
+alias PlatformLoopDomain {
+    entity: STM32LoopDomain
+}
+
+# Runs periodically at PlatformTimerRate. Cooperative: runs from main()
+# between loop iterations.
+alias PlatformTimerDomain {
+    entity: STM32TickDomain
+}
+
+alias PlatformTimerRate {
+    entity: 1000
+}

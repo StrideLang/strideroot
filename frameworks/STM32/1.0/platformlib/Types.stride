@@ -1,4 +1,4 @@
-# Data types for the STM32F7 LLVM framework.
+# Data types for the STM32 LLVM framework.
 # Int, UInt, and Size are 32-bit; Real is Float32.
 
 frameworkDataType Int8 {
@@ -83,7 +83,7 @@ frameworkDataType String {
 	kind: "string"
 }
 
-# Preferred sizes for STM32F7 (32-bit ARM Cortex-M7)
+# Preferred sizes for STM32 (32-bit ARM Cortex-M)
 
 alias Int {
 	entity: Int32

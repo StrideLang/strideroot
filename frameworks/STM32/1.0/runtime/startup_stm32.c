@@ -1,7 +1,8 @@
 /*
- * Minimal Cortex-M7 startup for STM32F7 devices.
- * Initializes .data, zeros .bss, enables the hardware FPU (CP10/CP11),
- * and branches to main().
+ * Minimal Cortex-M startup for STM32 devices.
+ * Initializes .data, zeros .bss, enables the FPU (CP10/CP11) when the build
+ * has one, and branches to main(). Only the core exceptions have vectors:
+ * the runtime enables no peripheral interrupts yet.
  */
 
 #include <stdint.h>
@@ -32,11 +33,13 @@ void Reset_Handler(void) {
     *dst++ = 0;
   }
 
-  /* Enable CP10 and CP11 full access for Cortex-M7 hardware FPU. */
+#if defined(__ARM_FP)
+  /* Full access to CP10 and CP11, the FPU. */
   volatile uint32_t *cpacr = (volatile uint32_t *)0xE000ED88UL;
   *cpacr |= (0xFUL << 20);
   __asm volatile("dsb");
   __asm volatile("isb");
+#endif
 
   (void)main();
   for (;;) {

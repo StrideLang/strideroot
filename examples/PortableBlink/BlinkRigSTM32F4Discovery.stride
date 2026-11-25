@@ -1,0 +1,37 @@
+#
+# BlinkRigSTM32F4Discovery: PortableBlink wired to an STM32F4DISCOVERY / STM32F407G-DISC1.
+#
+#   BUTTON -- on-board blue user button (PA0), active high
+#   LED    -- on-board green user LED (LD4, PD12)
+#   PD7    -- relay module input (PD7), hardware open drain, active low
+#
+
+package BlinkRigSTM32F4Discovery
+
+import Gpio
+import STM32F4Discovery
+
+hardwareBoard BlinkRigSTM32F4Discovery {
+    overlays: STM32F4Discovery
+}
+
+gpioPin Button {
+    pin: STM32F4Discovery::BUTTON
+    mode: Gpio::PinInput
+    pull: Gpio::PullNone
+    activeLow: off
+}
+
+gpioPin Status {
+    pin: STM32F4Discovery::LED
+    mode: Gpio::PinOutput
+    initial: off
+}
+
+gpioPin Relay {
+    pin: STM32F4Discovery::PD7
+    mode: Gpio::PinOutput
+    outputType: Gpio::OutputOpenDrain
+    activeLow: on
+    initial: off
+}

@@ -10,7 +10,9 @@ package CortexM7
 import Codegen
 
 core CortexM7 {
-    triple: "thumbv7em-none-eabihf"
+    # eabi, not eabihf: code uses the FPU but passes floats in core registers
+    # (softfp), the ABI the STM32 runtime and its C library are built for.
+    triple: "thumbv7em-none-eabi"
     pointerBits: 32
     types: {
         int: "Int32"

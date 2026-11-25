@@ -1,0 +1,158 @@
+#
+# STMicroelectronics STM32F4DISCOVERY / STM32F407G-DISC1 (STM32F407VG, MB997).
+#
+# A project uses a pin through a gpioPin in its own hardware file:
+#   gpioPin Status { pin: STM32F4Discovery::LED mode: Gpio::PinOutput }
+#
+
+package STM32F4Discovery
+
+import STM32F407VG
+
+hardwareBoard STM32F4Discovery {
+    platform: STM32F4
+    overlays: STM32F407VG
+    pins: [
+        # P1 / P2 extension header pins (LQFP100)
+        pin PA0  { port: GPIOA bit: 0 analog: 0 },
+        pin PA1  { port: GPIOA bit: 1 analog: 1 },
+        pin PA2  { port: GPIOA bit: 2 analog: 2 },
+        pin PA3  { port: GPIOA bit: 3 analog: 3 },
+        pin PA4  { port: GPIOA bit: 4 analog: 4 },
+        pin PA5  { port: GPIOA bit: 5 analog: 5 },
+        pin PA6  { port: GPIOA bit: 6 analog: 6 },
+        pin PA7  { port: GPIOA bit: 7 analog: 7 },
+        pin PA8  { port: GPIOA bit: 8 },
+        pin PA9  { port: GPIOA bit: 9 },
+        pin PA10 { port: GPIOA bit: 10 },
+        pin PA11 { port: GPIOA bit: 11 },
+        pin PA12 { port: GPIOA bit: 12 },
+        pin PA13 { port: GPIOA bit: 13 },
+        pin PA14 { port: GPIOA bit: 14 },
+        pin PA15 { port: GPIOA bit: 15 },
+
+        pin PB0  { port: GPIOB bit: 0 analog: 8 },
+        pin PB1  { port: GPIOB bit: 1 analog: 9 },
+        pin PB2  { port: GPIOB bit: 2 },
+        pin PB3  { port: GPIOB bit: 3 },
+        pin PB4  { port: GPIOB bit: 4 },
+        pin PB5  { port: GPIOB bit: 5 },
+        pin PB6  { port: GPIOB bit: 6 },
+        pin PB7  { port: GPIOB bit: 7 },
+        pin PB8  { port: GPIOB bit: 8 },
+        pin PB9  { port: GPIOB bit: 9 },
+        pin PB10 { port: GPIOB bit: 10 },
+        pin PB11 { port: GPIOB bit: 11 },
+        pin PB12 { port: GPIOB bit: 12 },
+        pin PB13 { port: GPIOB bit: 13 },
+        pin PB14 { port: GPIOB bit: 14 },
+        pin PB15 { port: GPIOB bit: 15 },
+
+        pin PC0  { port: GPIOC bit: 0 analog: 10 },
+        pin PC1  { port: GPIOC bit: 1 analog: 11 },
+        pin PC2  { port: GPIOC bit: 2 analog: 12 },
+        pin PC3  { port: GPIOC bit: 3 analog: 13 },
+        pin PC4  { port: GPIOC bit: 4 analog: 14 },
+        pin PC5  { port: GPIOC bit: 5 analog: 15 },
+        pin PC6  { port: GPIOC bit: 6 },
+        pin PC7  { port: GPIOC bit: 7 },
+        pin PC8  { port: GPIOC bit: 8 },
+        pin PC9  { port: GPIOC bit: 9 },
+        pin PC10 { port: GPIOC bit: 10 },
+        pin PC11 { port: GPIOC bit: 11 },
+        pin PC12 { port: GPIOC bit: 12 },
+        pin PC13 { port: GPIOC bit: 13 },
+        pin PC14 { port: GPIOC bit: 14 },
+        pin PC15 { port: GPIOC bit: 15 },
+
+        pin PD0  { port: GPIOD bit: 0 },
+        pin PD1  { port: GPIOD bit: 1 },
+        pin PD2  { port: GPIOD bit: 2 },
+        pin PD3  { port: GPIOD bit: 3 },
+        pin PD4  { port: GPIOD bit: 4 },
+        pin PD5  { port: GPIOD bit: 5 },
+        pin PD6  { port: GPIOD bit: 6 },
+        pin PD7  { port: GPIOD bit: 7 },
+        pin PD8  { port: GPIOD bit: 8 },
+        pin PD9  { port: GPIOD bit: 9 },
+        pin PD10 { port: GPIOD bit: 10 },
+        pin PD11 { port: GPIOD bit: 11 },
+        pin PD12 { port: GPIOD bit: 12 },
+        pin PD13 { port: GPIOD bit: 13 },
+        pin PD14 { port: GPIOD bit: 14 },
+        pin PD15 { port: GPIOD bit: 15 },
+
+        pin PE0  { port: GPIOE bit: 0 },
+        pin PE1  { port: GPIOE bit: 1 },
+        pin PE2  { port: GPIOE bit: 2 },
+        pin PE3  { port: GPIOE bit: 3 },
+        pin PE4  { port: GPIOE bit: 4 },
+        pin PE5  { port: GPIOE bit: 5 },
+        pin PE6  { port: GPIOE bit: 6 },
+        pin PE7  { port: GPIOE bit: 7 },
+        pin PE8  { port: GPIOE bit: 8 },
+        pin PE9  { port: GPIOE bit: 9 },
+        pin PE10 { port: GPIOE bit: 10 },
+        pin PE11 { port: GPIOE bit: 11 },
+        pin PE12 { port: GPIOE bit: 12 },
+        pin PE13 { port: GPIOE bit: 13 },
+        pin PE14 { port: GPIOE bit: 14 },
+        pin PE15 { port: GPIOE bit: 15 },
+
+        pin PH0  { port: GPIOH bit: 0 },
+        pin PH1  { port: GPIOH bit: 1 },
+
+        # On-board user LEDs (active high), user button (B1, active high), and USART2 console
+        pin LED        { port: GPIOD bit: 12 },
+        pin LED_GREEN  { port: GPIOD bit: 12 },
+        pin LED_ORANGE { port: GPIOD bit: 13 },
+        pin LED_RED    { port: GPIOD bit: 14 },
+        pin LED_BLUE   { port: GPIOD bit: 15 },
+        pin LD4        { port: GPIOD bit: 12 },
+        pin LD3        { port: GPIOD bit: 13 },
+        pin LD5        { port: GPIOD bit: 14 },
+        pin LD6        { port: GPIOD bit: 15 },
+        pin BUTTON     { port: GPIOA bit: 0 },
+        pin VCP_TX     { port: GPIOA bit: 2 },
+        pin VCP_RX     { port: GPIOA bit: 3 }
+    ]
+    # X2, an 8 MHz crystal. The chip runs from its internal oscillator unless
+    # a project sets clocks: { source: "hse" pllM: 8 }.
+    clocks: {
+        hse: 8000000
+    }
+    # USART2 on PA2/PA3 (alternate function 7). Only the STM32F407G-DISC1
+    # (MB997D) routes it to the ST-LINK's USB serial port; on older MB997B/C
+    # boards connect a USB-serial adapter to PA2 (TX), PA3 (RX) and GND.
+    console: {
+        peripheral: USART2
+        tx: PA2
+        rx: PA3
+        select: 7
+        baud: 115200
+    }
+    usb: ["0483:3748", "0483:374B", "0483:374E"]
+    upload: {
+        method: "openocd"
+        probe: "openocd"
+        openocd: {
+            interface: "interface/stlink.cfg"
+            target: "target/stm32f4x.cfg"
+            speed: 2000
+            transport: "hla_swd"
+        }
+    }
+    image: [
+        step Bin { kind: "bin" },
+        step Hex { kind: "hex" }
+    ]
+    toolchain: {
+        cc: "ArmCrosscompiler"
+        ar: "ArmCrosscompiler"
+        ld: "ArmCrosscompiler"
+        objcopy: "ArmCrosscompiler"
+        size: "ArmCrosscompiler"
+        upload: "OpenOCD"
+    }
+    meta: "STMicroelectronics STM32F4DISCOVERY (MB997): STM32F407VG Cortex-M4 at 168 MHz, 1 MB flash, 128 KB + 64 KB SRAM, ST-Link"
+}

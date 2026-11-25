@@ -35,6 +35,8 @@ hardwareBoard SaturnM7 {
         pin PK3 { port: GPIOK bit: 3 },
         pin LED { port: GPIOK bit: 3 }
     ]
+    # No console: the board's serial wiring isn't described yet, so Print
+    # goes nowhere. Add console: { peripheral: tx: rx: select: } when it is.
     upload: {
         method: "openocd"
         probe: "openocd"

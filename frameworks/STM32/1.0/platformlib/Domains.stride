@@ -1,13 +1,13 @@
 resource _RootContext {
 	dependsOn: []
 	exclusive: none
-	meta: 'The microcontroller running cooperatively on the Cortex-M7 core'
+	meta: 'The microcontroller running cooperatively on its Cortex-M core'
 }
 
 resource _STM32Processor {
 	dependsOn: [_RootContext]
 	exclusive: off
-	meta: 'ARM Cortex-M7 CPU shared cooperatively by domains in main()'
+	meta: 'ARM Cortex-M CPU shared cooperatively by domains in main()'
 }
 
 resource _STM32FlashMemory {
@@ -53,7 +53,7 @@ domainResource _DomainFunction {
 
 # Runs once, before the first tick.
 _domainDefinition RootDomain {
-	framework: _STM32F7_Framework
+	framework: _STM32_Framework
 	requiresResources: [_RootContext, _STM32Processor, _STM32FlashMemory, _STM32Sram]
 	providesResources: [_DomainFunction]
 	rate: -1
@@ -63,15 +63,15 @@ _domainDefinition RootDomain {
 }
 
 # The 1 kHz tick loop. Child of RootDomain; the runtime calls
-# STM32F7TickDomain_process() once per 1 ms SysTick before STM32F7LoopDomain_process().
-_domainDefinition STM32F7TickDomain {
-	framework: _STM32F7_Framework
+# STM32TickDomain_process() once per 1 ms SysTick before STM32LoopDomain_process().
+_domainDefinition STM32TickDomain {
+	framework: _STM32_Framework
 	parentDomain: RootDomain
 	requiresResources: [_RootContext, _STM32Processor, _STM32FlashMemory, _STM32Sram, _STM32Timer]
 	providesResources: [_DomainFunction]
 	rate: 1000
 	execution: ExecutionCooperative
-	sleepModule: __STM32F7TickSleep
+	sleepModule: __STM32TickSleep
 	sleepRate: 1000
 	substitutions: [ ]
 	domainIncludes: []
@@ -79,41 +79,41 @@ _domainDefinition STM32F7TickDomain {
 }
 
 # Continuous main loop. Child of RootDomain; the runtime calls
-# STM32F7LoopDomain_process() on every iteration of the main() loop.
-_domainDefinition STM32F7LoopDomain {
-	framework: _STM32F7_Framework
+# STM32LoopDomain_process() on every iteration of the main() loop.
+_domainDefinition STM32LoopDomain {
+	framework: _STM32_Framework
 	parentDomain: RootDomain
 	requiresResources: [_RootContext, _STM32Processor, _STM32FlashMemory, _STM32Sram]
 	providesResources: [_DomainFunction]
 	rate: 0
 	execution: ExecutionCooperative
-	sleepModule: __STM32F7LoopSleep
+	sleepModule: __STM32LoopSleep
 	sleepRate: 1000
 	substitutions: [ ]
 	domainIncludes: []
 	domainFunctionCode: ''
 }
 
-# Suspends STM32F7TickDomain for the given number of 1 ms ticks.
-platformModule __STM32F7TickSleep {
+# Suspends STM32TickDomain for the given number of 1 ms ticks.
+platformModule __STM32TickSleep {
 	inputs: [UInt32]
 	outputs: []
-	processing: "@__stride_stm32f7_tick_sleep"
+	processing: "@__stride_stm32_tick_sleep"
 	inherits: [_Signal]
 }
 
-# Suspends STM32F7LoopDomain for the given number of milliseconds.
-platformModule __STM32F7LoopSleep {
+# Suspends STM32LoopDomain for the given number of milliseconds.
+platformModule __STM32LoopSleep {
 	inputs: [UInt32]
 	outputs: []
-	processing: "@__stride_stm32f7_loop_sleep"
+	processing: "@__stride_stm32_loop_sleep"
 	inherits: [_Signal]
 }
 
 # Blocks for the given number of milliseconds.
-platformModule __STM32F7SleepMs {
+platformModule __STM32SleepMs {
 	inputs: [UInt32]
 	outputs: []
-	processing: "@__stride_stm32f7_sleep_ms"
+	processing: "@__stride_stm32_sleep_ms"
 	inherits: [_Signal]
 }

@@ -1,0 +1,22 @@
+#
+# STMicroelectronics STM32F407VG (LQFP100): an STM32F4xx with 1 MB of flash
+# and 128 KB of main SRAM (SRAM1 + SRAM2 at 0x20000000; the 64 KB of CCM at
+# 0x10000000 is not used yet).
+#
+
+import STM32F4xx
+
+device STM32F407VG {
+    platform: STM32F4
+    overlays: STM32F4xx
+    memory: {
+        flash: 1048576
+        ram: 131072
+    }
+    upload: {
+        probeRs: {
+            chip: "STM32F407VGTx"
+        }
+    }
+    meta: "STM32F407VG ARM Cortex-M4 @ 168 MHz, 1 MB flash, 128 KB main SRAM (+64 KB CCM), single-precision FPU"
+}

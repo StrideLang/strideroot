@@ -1,0 +1,37 @@
+# The board's serial console (console: in its hardware data). Print uses it.
+
+platformModule __STM32SerialWriteByte {
+    inputs: [UInt8]
+    outputs: []
+    processing: "@__stride_stm32_serial_write_byte"
+    inherits: [_Signal]
+}
+
+platformModule __STM32SerialPrintInt {
+    inputs: [Int]
+    outputs: []
+    processing: "@__stride_stm32_serial_print_int"
+    inherits: [_Signal]
+}
+
+platformModule __STM32SerialPrintReal {
+    inputs: [Real]
+    outputs: []
+    processing: "@__stride_stm32_serial_print_real"
+    inherits: [_Signal]
+}
+
+platformModule __STM32SerialNewLine {
+    inputs: []
+    outputs: []
+    processing: "@__stride_stm32_serial_newline"
+    inherits: [_Signal]
+}
+
+# The next received byte, or -1 when none has arrived.
+platformModule __STM32SerialReadByte {
+    inputs: []
+    outputs: [Int]
+    processing: "@__stride_stm32_serial_read_byte"
+    inherits: [_Signal]
+}

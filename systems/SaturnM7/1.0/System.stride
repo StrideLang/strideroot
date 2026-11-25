@@ -1,6 +1,6 @@
 
 platform _STM32F7Platform {
-	framework: "STM32F7"
+	framework: "STM32"
 	frameworkVersion: "1.0"
 	hardware: "SaturnM7"
 	hardwareVersion: "1.0"

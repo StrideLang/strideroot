@@ -1,7 +1,7 @@
-# Stride string platform modules for STM32F7
+# Stride string platform modules for STM32
 #
 # Same modules and runtime ABI as the JIT framework's Strings.stride,
-# with STM32F7 types (Int = Int32, Real = Float32). Built from stridejit's
+# with STM32 types (Int = Int32, Real = Float32). Built from stridejit's
 # strideruntime_string.c with -DSTRIDE_RT_REAL_IS_FLOAT=1.
 
 platformModule Substring {

@@ -1,13 +1,14 @@
 /*
- * Parameterized linker script for STMicroelectronics STM32F7 devices.
+ * Linker script for STM32 devices: flash at 0x08000000, SRAM at 0x20000000,
+ * sizes from the device (memory.flash, memory.ram).
  */
 
 ENTRY(Reset_Handler)
 
 MEMORY
 {
-  RAM   (xrw) : ORIGIN = 0x20000000, LENGTH = @STRIDE_STM32F7_RAM_KB@K
-  FLASH (rx)  : ORIGIN = 0x08000000, LENGTH = @STRIDE_STM32F7_FLASH_KB@K
+  RAM   (xrw) : ORIGIN = 0x20000000, LENGTH = @STRIDE_RAM_KB@K
+  FLASH (rx)  : ORIGIN = 0x08000000, LENGTH = @STRIDE_FLASH_KB@K
 }
 
 _estack = ORIGIN(RAM) + LENGTH(RAM);
