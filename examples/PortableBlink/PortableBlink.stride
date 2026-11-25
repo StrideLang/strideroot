@@ -10,27 +10,31 @@
 #   stride build PortableBlink.stride -D Board::Mega      # Arduino Mega 2560
 #   stride build PortableBlink.stride -D Board::Pico      # Raspberry Pi Pico
 #   stride build PortableBlink.stride -D Board::Pico2     # Raspberry Pi Pico 2
+#   stride build PortableBlink.stride -D Board::F746Disco # STM32F746G-DISCO
 #   stride flash PortableBlink.stride --port=COM3         # Flash AVR via serial
 #   stride flash PortableBlink.stride -D Board::Pico2     # Flash Pico 2 via picotool
 #   stride flash PortableBlink.stride -D Board::Pico2 --probe  # Flash via SWD
+#   stride flash PortableBlink.stride -D Board::F746Disco      # Flash STM32F746G-DISCO via ST-Link
 #
 
 feature Board {
-    variants: [Uno, Mega, Pico, Pico2]
-    default: Uno
+    variants: [Uno, Mega, Pico, Pico2, F746Disco]
+    default: F746Disco
 }
 
-@with(Board::Uno)   use AVR version 1.0 on BlinkRig
-@with(Board::Mega)  use AVR version 1.0 on BlinkRigMega
-@with(Board::Pico)  use Pico version 1.0 on BlinkRigPico
-@with(Board::Pico2) use Pico version 1.0 on BlinkRigPico2
+@with(Board::Uno)       use AVR version 1.0 on BlinkRig
+@with(Board::Mega)      use AVR version 1.0 on BlinkRigMega
+@with(Board::Pico)      use Pico version 1.0 on BlinkRigPico
+@with(Board::Pico2)     use Pico version 1.0 on BlinkRigPico2
+@with(Board::F746Disco) use STM32F7 version 1.0 on BlinkRigSTM32F746GDiscovery
 
 import DigitalIO
 import Strings
-@with(Board::Uno)   import BlinkRig
-@with(Board::Mega)  import BlinkRigMega as BlinkRig
-@with(Board::Pico)  import BlinkRigPico as BlinkRig
-@with(Board::Pico2) import BlinkRigPico2 as BlinkRig
+@with(Board::Uno)       import BlinkRig
+@with(Board::Mega)      import BlinkRigMega as BlinkRig
+@with(Board::Pico)      import BlinkRigPico as BlinkRig
+@with(Board::Pico2)     import BlinkRigPico2 as BlinkRig
+@with(Board::F746Disco) import BlinkRigSTM32F746GDiscovery as BlinkRig
 
 # The main loop blinks Status once a second and prints the tick count.
 # Sleep suspends only the loop: the timer keeps running while it sleeps.

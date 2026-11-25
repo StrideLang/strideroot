@@ -7,9 +7,12 @@
 # which provides startup, main(), the 1 kHz SysTick timer, and serial I/O.
 #
 
+import Codegen
+
 _frameworkDescription _STM32F7_Framework {
     frameworkName: "STM32F7"
     defaultDataType: Real
+    codegen: Codegen::Llvm
 }
 
 alias PlatformDomain {

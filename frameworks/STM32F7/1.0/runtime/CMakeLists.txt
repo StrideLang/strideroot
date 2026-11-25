@@ -42,7 +42,7 @@ set(_arch_flags
   "-mcpu=${STRIDE_STM32F7_CPU}"
   "-mthumb"
   "-mfpu=${STRIDE_STM32F7_FPU}"
-  "-mfloat-abi=hard"
+  "-mfloat-abi=softfp"
 )
 
 add_executable(stride_firmware
@@ -73,6 +73,7 @@ target_link_options(stride_firmware PRIVATE
   -specs=nano.specs
   "-T${STRIDE_STM32F7_LINKER_SCRIPT}"
   -Wl,--gc-sections
+  -Wl,-z,noexecstack
 )
 target_link_libraries(stride_firmware PRIVATE m)
 

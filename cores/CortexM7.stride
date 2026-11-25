@@ -7,6 +7,8 @@
 
 package CortexM7
 
+import Codegen
+
 core CortexM7 {
     triple: "thumbv7em-none-eabihf"
     pointerBits: 32
@@ -17,5 +19,6 @@ core CortexM7 {
     }
     hardwareFloat: on
     cacheLine: 32
+    codegen: Codegen::Llvm
     meta: "ARM Cortex-M7 (ARMv7E-M), 32-bit pointers, hardware FPU, 32-byte cache line"
 }

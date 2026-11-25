@@ -1,0 +1,12 @@
+platform _STM32F7Platform {
+	framework: "STM32F7"
+	frameworkVersion: "1.0"
+	hardware: "STM32F7"
+	hardwareVersion: "1.0"
+	required: on
+}
+
+system STM32F7 {
+    platforms: [_STM32F7Platform]
+    connections: []
+}

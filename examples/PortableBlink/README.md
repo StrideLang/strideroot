@@ -13,6 +13,7 @@ variants and hardware rig files.
 | `BlinkRigMega.stride` | Hardware rig for Arduino Mega 2560 (`ArduinoMega2560`). |
 | `BlinkRigPico.stride` | Hardware rig for Raspberry Pi Pico (`RaspberryPiPico`). |
 | `BlinkRigPico2.stride` | Hardware rig for Raspberry Pi Pico 2 (`RaspberryPiPico2`). |
+| `BlinkRigSTM32F746GDiscovery.stride` | Hardware rig for STM32F746G-DISCO (`STM32F746GDiscovery`). |
 | `schematic-uno.svg`, `schematic-mega.svg` | The circuit for the AVR boards. |
 | `breadboard-uno.svg`, `breadboard-mega.svg` | The parts on a breadboard, wired to the AVR boards. |
 
@@ -58,11 +59,13 @@ stride build PortableBlink.stride                     # Arduino Uno (.hex / .elf
 stride build PortableBlink.stride -D Board::Mega      # Arduino Mega 2560 (.hex / .elf)
 stride build PortableBlink.stride -D Board::Pico      # Raspberry Pi Pico (.uf2 / .elf)
 stride build PortableBlink.stride -D Board::Pico2     # Raspberry Pi Pico 2 (.uf2 / .elf)
+stride build PortableBlink.stride -D Board::F746Disco # STM32F746G-DISCO (.bin / .hex / .elf)
 
 stride flash PortableBlink.stride --port=COM3                 # Flash Uno via serial
 stride flash PortableBlink.stride -D Board::Mega --port=COM3  # Flash Mega via serial
 stride flash PortableBlink.stride -D Board::Pico              # Flash Pico via picotool
 stride flash PortableBlink.stride -D Board::Pico2 --probe     # Flash Pico 2 via SWD probe
+stride flash PortableBlink.stride -D Board::F746Disco         # Flash STM32F746G-DISCO via ST-Link (OpenOCD)
 ```
 
 `stride build` finds the `BlinkRig*` file next to the program first, then the

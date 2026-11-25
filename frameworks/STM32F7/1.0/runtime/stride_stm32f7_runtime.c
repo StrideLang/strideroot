@@ -186,6 +186,42 @@ int32_t __stride_stm32f7_serial_read_byte(void) {
   return (int32_t)(UART_RDR & 0xFFu);
 }
 
+/* ---- Newlib stdio / POSIX syscall stubs ------------------------------- */
+
+#include <sys/stat.h>
+
+int _write(int file, char *ptr, int len) {
+  if (file != 1 && file != 2) {
+    return -1;
+  }
+  for (int i = 0; i < len; ++i) {
+    if (ptr[i] == '\n') {
+      __stride_stm32f7_serial_write_byte('\r');
+    }
+    __stride_stm32f7_serial_write_byte((uint8_t)ptr[i]);
+  }
+  return len;
+}
+
+int _read(int file, char *ptr, int len) {
+  if (file != 0 || len <= 0) {
+    return 0;
+  }
+  int32_t ch = __stride_stm32f7_serial_read_byte();
+  if (ch < 0) {
+    return 0;
+  }
+  ptr[0] = (char)ch;
+  return 1;
+}
+
+int _close(int file) { (void)file; return -1; }
+int _fstat(int file, struct stat *st) { (void)file; st->st_mode = S_IFCHR; return 0; }
+int _isatty(int file) { (void)file; return 1; }
+int _lseek(int file, int ptr, int dir) { (void)file; (void)ptr; (void)dir; return 0; }
+int _getpid(void) { return 1; }
+int _kill(int pid, int sig) { (void)pid; (void)sig; return -1; }
+
 /* ---- Helpers the comparison modules call ------------------------------- */
 
 float __stride_Greater_d_dd(float a, float b) { return a > b ? 1.0f : 0.0f; }
