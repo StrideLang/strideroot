@@ -68,6 +68,10 @@ int32_t AvrLoopDomain_init(void *state) __attribute__((weak));
 int32_t AvrLoopDomain_process(void *state) __attribute__((weak));
 extern uint8_t __stride_AvrLoopDomain_state[] __attribute__((weak));
 
+#ifdef STRIDE_ISR_DECLARATIONS
+STRIDE_ISR_DECLARATIONS
+#endif
+
 /* USART0's vectors: chips with one USART (ATmega328P) name them USART_*,
  * chips with several (ATmega2560) USART0_*. */
 #if defined(USART0_RX_vect)
@@ -289,19 +293,23 @@ float __stride_Greater_d_dd(float a, float b) { return a > b ? 1.0f : 0.0f; }
 int main(void) {
   serial_start();
   tick_start();
-  sei();
 
   if (RootDomain_init) {
     RootDomain_init(__stride_RootDomain_state);
-  }
-  if (RootDomain_process) {
-    RootDomain_process(__stride_RootDomain_state);
   }
   if (AvrTickDomain_init) {
     AvrTickDomain_init(__stride_AvrTickDomain_state);
   }
   if (AvrLoopDomain_init) {
     AvrLoopDomain_init(__stride_AvrLoopDomain_state);
+  }
+#ifdef STRIDE_ISR_INIT
+  STRIDE_ISR_INIT
+#endif
+  sei();
+
+  if (RootDomain_process) {
+    RootDomain_process(__stride_RootDomain_state);
   }
 
   for (;;) {

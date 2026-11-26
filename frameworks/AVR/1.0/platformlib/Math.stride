@@ -4,6 +4,7 @@
 platformModule __Abs {
     inputs: [Real]
     outputs: [Real]
+    resources: [_AvrMathLib]
     linkTo: ["m"]
     processing: "@fabs"
     inherits: [_Signal]
@@ -12,6 +13,7 @@ platformModule __Abs {
 platformModule __Floor {
     inputs: [Real]
     outputs: [Real]
+    resources: [_AvrMathLib]
     linkTo: ["m"]
     processing: "@floor"
     inherits: [_Signal]
@@ -21,6 +23,7 @@ platformModule __Floor {
 platformModule __Exp {
     inputs: [Real]
     outputs: [Real]
+    resources: [_AvrMathLib]
     linkTo: ["m"]
     processing: "@exp"
     inherits: [_Signal]
@@ -30,6 +33,7 @@ platformModule __Exp {
 platformModule __Pow {
     inputs: [Real, Real]
     outputs: [Real]
+    resources: [_AvrMathLib]
     linkTo: ["m"]
     processing: "@pow"
     inherits: [_Signal]
@@ -38,6 +42,7 @@ platformModule __Pow {
 platformModule __Sin {
     inputs: [Real]
     outputs: [Real]
+    resources: [_AvrMathLib]
     linkTo: ["m"]
     processing: "@sin"
     inherits: [_Signal]
@@ -46,6 +51,7 @@ platformModule __Sin {
 platformModule __Cos {
     inputs: [Real]
     outputs: [Real]
+    resources: [_AvrMathLib]
     linkTo: ["m"]
     processing: "@cos"
     inherits: [_Signal]
@@ -54,6 +60,7 @@ platformModule __Cos {
 platformModule __Tan {
     inputs: [Real]
     outputs: [Real]
+    resources: [_AvrMathLib]
     linkTo: ["m"]
     processing: "@tan"
     inherits: [_Signal]

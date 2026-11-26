@@ -4,6 +4,7 @@
 # families they overlay (AVR5, AVR6) in cores/.
 #
 
+import QualityPolicy
 import ATmega328P
 import ATmega2560
 
@@ -13,6 +14,18 @@ platform AVR {
     supportedDevices: [
         ATmega328P,
         ATmega2560
+    ]
+    platformPolicies: [
+        policyBinding [] {
+            policy: QualityPolicy::Fast
+            function: [ Sin,       Cos       ]
+            target:   [ Sin@Poly5, Cos@Poly5 ]
+        },
+        policyBinding [] {
+            policy: QualityPolicy::Accurate
+            function: [ Sin, Cos, Tan ]
+            target:   [ Sin, Cos, Tan ]
+        }
     ]
     meta: "8-bit AVR microcontrollers (Arduino Uno, Mega 2560 and compatible boards)"
 }

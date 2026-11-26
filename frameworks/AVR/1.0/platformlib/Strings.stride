@@ -132,6 +132,7 @@ platformModule PrintLn {
     meta: "Prints the string followed by a newline to standard output."
     inputs: [String]
     outputs: []
+    resources: [_AvrUsart0]
     processing: "@__stride_jit_string_println %%intokens:0%%"
     inherits: [_Signal]
 }
@@ -140,6 +141,7 @@ platformModule Print {
     meta: "Prints the string to standard output without a trailing newline."
     inputs: [String]
     outputs: []
+    resources: [_AvrUsart0]
     processing: "@__stride_jit_string_print %%intokens:0%%"
     inherits: [_Signal]
 }

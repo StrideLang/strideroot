@@ -46,6 +46,20 @@ resource _AvrGpio {
 	meta: 'Shared GPIO ports and pins'
 }
 
+resource _AvrMathLib {
+	dependsOn: [_RootContext]
+	exclusive: off
+	meta: 'AVR libm floating-point math routines'
+}
+
+resource _AvrTimer1 {
+	dependsOn: [_RootContext]
+	exclusive: on
+	isrVector: "TIMER1_COMPA_vect"
+	peripheral: "Timer1"
+	meta: '16-bit Timer1 CTC interrupt'
+}
+
 domainResource _DomainFunction {
 	exclusive: on # Takes over _RootContext resource
 	meta: 'Function the runtime calls from main()'
@@ -54,9 +68,11 @@ domainResource _DomainFunction {
 # Runs once, before the first tick.
 _domainDefinition RootDomain {
 	framework: _AvrFramework
-	requiresResources: [_RootContext, _AvrProcessor, _AvrFlashMemory, _AvrSram]
+	requiresResources: [_RootContext, _AvrProcessor, _AvrFlashMemory, _AvrSram, _AvrTimer0, _AvrUsart0, _AvrGpio, _AvrMathLib]
 	providesResources: [_DomainFunction]
 	rate: -1 # -1 is 'one-shot/final' domain
+	sleepModule: __AvrSleepMs
+	sleepRate: 1000
     substitutions: [ ]
     domainIncludes: []
 	domainFunctionCode: ''
@@ -68,7 +84,7 @@ _domainDefinition RootDomain {
 _domainDefinition AvrTickDomain {
 	framework: _AvrFramework
 	parentDomain: RootDomain
-	requiresResources: [_RootContext, _AvrProcessor, _AvrFlashMemory, _AvrSram, _AvrTimer0]
+	requiresResources: [_RootContext, _AvrProcessor, _AvrFlashMemory, _AvrSram, _AvrTimer0, _AvrUsart0, _AvrGpio, _AvrMathLib]
 	providesResources: [_DomainFunction]
 	rate: 1000
 	# Runs from main(), between loop iterations: a long loop iteration
@@ -87,7 +103,7 @@ _domainDefinition AvrTickDomain {
 _domainDefinition AvrLoopDomain {
 	framework: _AvrFramework
 	parentDomain: RootDomain
-	requiresResources: [_RootContext, _AvrProcessor, _AvrFlashMemory, _AvrSram]
+	requiresResources: [_RootContext, _AvrProcessor, _AvrFlashMemory, _AvrSram, _AvrTimer0, _AvrUsart0, _AvrGpio, _AvrMathLib]
 	providesResources: [_DomainFunction]
 	rate: 0
 	execution: ExecutionCooperative
@@ -99,10 +115,27 @@ _domainDefinition AvrLoopDomain {
 	domainFunctionCode: ''
 }
 
+# Hardware Timer1 CTC interrupt domain. Preempts cooperative domains;
+# excludes _AvrTimer0 (no Sleep), _AvrUsart0 (no Serial), and _AvrMathLib
+# (uses QualityPolicy::Fast polynomial approximations).
+_domainDefinition AvrTimer1IsrDomain {
+	framework: _AvrFramework
+	parentDomain: RootDomain
+	requiresResources: [_RootContext, _AvrProcessor, _AvrFlashMemory, _AvrSram, _AvrGpio, _AvrTimer1]
+	rate: 8000
+	execution: ExecutionInterrupt
+	qualityPolicy: QualityPolicy::Fast
+	sleepModule: none
+    substitutions: [ ]
+    domainIncludes: []
+	domainFunctionCode: ''
+}
+
 # Suspends AvrTickDomain for the given number of Timer0 ticks (1 ms each).
 platformModule __AvrTickSleep {
 	inputs: [UInt32]
 	outputs: []
+	resources: [_AvrTimer0]
 	processing: "@__stride_avr_tick_sleep"
 	inherits: [_Signal]
 }
@@ -112,6 +145,7 @@ platformModule __AvrTickSleep {
 platformModule __AvrLoopSleep {
 	inputs: [UInt32]
 	outputs: []
+	resources: [_AvrTimer0]
 	processing: "@__stride_avr_loop_sleep"
 	inherits: [_Signal]
 }
@@ -120,6 +154,7 @@ platformModule __AvrLoopSleep {
 platformModule __AvrSleepMs {
 	inputs: [UInt32]
 	outputs: []
+	resources: [_AvrTimer0]
 	processing: "@__stride_avr_sleep_ms"
 	inherits: [_Signal]
 }

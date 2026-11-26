@@ -5,6 +5,7 @@
 platformModule __AvrSerialWriteByte {
     inputs: [UInt8]
     outputs: []
+    resources: [_AvrUsart0]
     processing: "@__stride_avr_serial_write_byte"
     inherits: [_Signal]
 }
@@ -12,6 +13,7 @@ platformModule __AvrSerialWriteByte {
 platformModule __AvrSerialPrintInt {
     inputs: [Int]
     outputs: []
+    resources: [_AvrUsart0]
     processing: "@__stride_avr_serial_print_int"
     inherits: [_Signal]
 }
@@ -19,6 +21,7 @@ platformModule __AvrSerialPrintInt {
 platformModule __AvrSerialPrintReal {
     inputs: [Real]
     outputs: []
+    resources: [_AvrUsart0]
     processing: "@__stride_avr_serial_print_real"
     inherits: [_Signal]
 }
@@ -28,6 +31,7 @@ platformModule __AvrSerialPrintReal {
 platformModule __AvrSerialNewLine {
     inputs: []
     outputs: []
+    resources: [_AvrUsart0]
     processing: "@__stride_avr_serial_newline"
     inherits: [_Signal]
 }
@@ -36,6 +40,7 @@ platformModule __AvrSerialNewLine {
 platformModule __AvrSerialReadByte {
     inputs: []
     outputs: [Int]
+    resources: [_AvrUsart0]
     processing: "@__stride_avr_serial_read_byte"
     inherits: [_Signal]
 }

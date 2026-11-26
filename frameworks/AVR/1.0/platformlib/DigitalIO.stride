@@ -7,6 +7,7 @@
 platformModule _GpioWrite {
     inputs: [Switch, UInt16, UInt16, UInt8, UInt8, Switch]
     outputs: []
+    resources: [_AvrGpio]
     processing: "llvm::gpio write i8 %%intokens:0%%, %%intokens:1%%, %%intokens:2%%, %%intokens:3%%, %%intokens:4%%, %%intokens:5%%"
     inherits: [_Signal]
 }
@@ -14,6 +15,7 @@ platformModule _GpioWrite {
 platformModule _GpioRead {
     inputs: [UInt16, UInt8]
     outputs: [Switch]
+    resources: [_AvrGpio]
     processing: "%%outtokens:0%% = llvm::gpio read i8 %%intokens:0%%, %%intokens:1%%"
     inherits: [_Signal]
 }
@@ -21,6 +23,7 @@ platformModule _GpioRead {
 platformModule _GpioModify {
     inputs: [UInt16, UInt8, UInt8, Switch]
     outputs: []
+    resources: [_AvrGpio]
     processing: "llvm::gpio modify i8 %%intokens:0%%, %%intokens:1%%, %%intokens:2%%, %%intokens:3%%"
     inherits: [_Signal]
 }
@@ -33,6 +36,7 @@ platformModule _GpioModify {
 platformModule __AvrPinMode {
     inputs: [Int, Int]
     outputs: []
+    resources: [_AvrGpio]
     processing: "@__stride_avr_pin_mode"
     inherits: [_Signal]
 }
@@ -41,6 +45,7 @@ platformModule __AvrPinMode {
 platformModule __AvrPinWrite {
     inputs: [Int, Switch]
     outputs: []
+    resources: [_AvrGpio]
     processing: "@__stride_avr_pin_write"
     inherits: [_Signal]
 }
@@ -49,6 +54,7 @@ platformModule __AvrPinWrite {
 platformModule __AvrPinRead {
     inputs: [Int]
     outputs: [Switch]
+    resources: [_AvrGpio]
     processing: "@__stride_avr_pin_read"
     inherits: [_Signal]
 }
@@ -58,6 +64,7 @@ platformModule __AvrPinRead {
 platformModule __AvrMillis {
     inputs: []
     outputs: [UInt32]
+    resources: [_AvrTimer0]
     processing: "@__stride_avr_millis"
     inherits: [_Signal]
 }

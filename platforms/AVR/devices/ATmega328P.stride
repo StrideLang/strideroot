@@ -81,9 +81,35 @@ device ATmega328P {
         pinFeatures PD0 { port: PortD bit: 0 routes: [pinRoute { function: Uart0Rx }] reservedBy: "Usart0" },
         pinFeatures PD1 { port: PortD bit: 1 routes: [pinRoute { function: Uart0Tx }] reservedBy: "Usart0" },
         pinFeatures PD2 { port: PortD bit: 2
-                          interrupts: [Gpio::InterruptRising, Gpio::InterruptFalling, Gpio::InterruptLevelLow] },
+                          interrupts: [Gpio::InterruptRising, Gpio::InterruptFalling, Gpio::InterruptLevelLow]
+                          interruptSource: gpioInterrupt Int0 {
+                              vector: "INT0_vect"
+                              enableRegister: 61
+                              enableBit: 0
+                              senseField: gpioField Isc0 {
+                                  option: Gpio::_PinInterrupts
+                                  register: 105
+                                  bitsPerPin: 2
+                                  shift: 0
+                                  options: [Gpio::InterruptLevelLow, Gpio::InterruptBothEdges, Gpio::InterruptFalling, Gpio::InterruptRising]
+                                  codes: [0, 1, 2, 3]
+                              }
+                          } },
         pinFeatures PD3 { port: PortD bit: 3 routes: [pinRoute { function: Pwm2B }]
-                          interrupts: [Gpio::InterruptRising, Gpio::InterruptFalling, Gpio::InterruptLevelLow] }
+                          interrupts: [Gpio::InterruptRising, Gpio::InterruptFalling, Gpio::InterruptLevelLow]
+                          interruptSource: gpioInterrupt Int1 {
+                              vector: "INT1_vect"
+                              enableRegister: 61
+                              enableBit: 1
+                              senseField: gpioField Isc1 {
+                                  option: Gpio::_PinInterrupts
+                                  register: 105
+                                  bitsPerPin: 2
+                                  shift: 2
+                                  options: [Gpio::InterruptLevelLow, Gpio::InterruptBothEdges, Gpio::InterruptFalling, Gpio::InterruptRising]
+                                  codes: [0, 1, 2, 3]
+                              }
+                          } }
     ]
 
     tickTimer: "Timer0"
