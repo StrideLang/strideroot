@@ -71,7 +71,6 @@ hardwareBoard NucleoF767ZI {
             interface: "interface/stlink.cfg"
             target: "target/stm32f7x.cfg"
             speed: 4000
-            transport: "hla_swd"
         }
     }
     image: [

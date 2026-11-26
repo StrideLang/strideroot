@@ -139,7 +139,6 @@ hardwareBoard STM32F4Discovery {
             interface: "interface/stlink.cfg"
             target: "target/stm32f4x.cfg"
             speed: 2000
-            transport: "hla_swd"
         }
     }
     image: [
