@@ -352,6 +352,13 @@ type _DeviceType {
 			required: off
 			meta: "What each chip pin adds to the device's GPIO: pinFeatures PD2 { port: PortD bit: 2 interrupts: [...] routes: [...] }"
 		},
+		typeProperty InterruptSources {
+			name: "interruptSources"
+			allowedTypes: constrainedList { allowed: [_Any] }
+			default: []
+			required: off
+			meta: "Hardware pin interrupt sources: gpioInterrupt Int0 { vector: enableRegister: enableBit: senseField: }"
+		},
 		typeProperty Flashers {
 			name: "flashers"
 			allowedTypes: constrainedList { allowed: [_Any] }
@@ -417,10 +424,10 @@ type _CoreType {
 		},
 		typeProperty Codegen {
 			name: "codegen"
-			allowedTypes: _StringLiteral
-			default: "llvm"
+			allowedTypes: Codegen::_CodegenBackend
+			default: Codegen::Llvm
 			required: off
-			meta: "llvm: Stride's built-in LLVM backend. external: Stride emits code for the core's cc tool."
+			meta: "Codegen::Llvm for Stride's built-in LLVM backend; Codegen::Cpp for C++ source generation targeting an external toolchain."
 		},
 		typeProperty CacheLine {
 			name: "cacheLine"
@@ -621,10 +628,10 @@ type _FrameworkDescriptionType {
 		},
 		typeProperty Codegen {
 			name: "codegen"
-			allowedTypes: _StringLiteral
-			default: ""
+			allowedTypes: constrainedEntity { allowed: [Codegen::_CodegenBackend, _NoneLiteral] }
+			default: none
 			required: off
-			meta: "llvm when platformModules are LLVM IR, so Stride compiles programs for this framework itself. Empty for C++ template frameworks."
+			meta: "Codegen::Llvm when platformModules are LLVM IR, so Stride compiles programs for this framework itself; Codegen::Cpp or none for C++ template frameworks."
 		},
 		typeProperty FirmwareBuilder {
 			name: "firmwareBuilder"

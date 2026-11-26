@@ -7,10 +7,12 @@
 # ../runtime, which provides main(), the Timer0 tick and the serial port.
 #
 
+import Codegen
+
 _frameworkDescription _AvrFramework {
     frameworkName: "AVR"
     defaultDataType: Real
-    codegen: "llvm"
+    codegen: Codegen::Llvm
 }
 
 alias PlatformDomain {

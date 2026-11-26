@@ -7,6 +7,8 @@
 
 package AVR5
 
+import Codegen
+
 core AVR5 {
     triple: "avr"
     pointerBits: 16
@@ -17,7 +19,7 @@ core AVR5 {
     }
     hardwareFloat: off
     cacheLine: 0
-    codegen: "llvm"
+    codegen: Codegen::Llvm
     frameworks: ["AVR"]
     meta: "8-bit AVR, 16-bit pointers, no FPU (avr5 architecture)"
 }

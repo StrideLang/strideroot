@@ -8,6 +8,8 @@
 
 package AVR6
 
+import Codegen
+
 core AVR6 {
     triple: "avr"
     pointerBits: 16
@@ -18,7 +20,7 @@ core AVR6 {
     }
     hardwareFloat: off
     cacheLine: 0
-    codegen: "llvm"
+    codegen: Codegen::Llvm
     frameworks: ["AVR"]
     meta: "8-bit AVR, 16-bit data pointers, 3-byte program counter, no FPU (avr6 architecture)"
 }

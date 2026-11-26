@@ -1,8 +1,10 @@
+import Codegen
+
 _frameworkDescription _JitFramework {
     frameworkName: "JIT"
     defaultDataType: Real
     # platformModules are LLVM IR, so other LLVM frameworks can inherit them
-    codegen: "llvm"
+    codegen: Codegen::Llvm
 }
 
 alias PlatformDomain {

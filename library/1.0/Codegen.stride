@@ -1,0 +1,28 @@
+#
+# Stride Codegen Package
+#
+# Identifies the code generation backend used by a core or framework:
+#
+#   import Codegen
+#
+#   core AVR5 {
+#       codegen: Codegen::Llvm
+#       ...
+#   }
+#
+
+package Codegen
+
+constant Llvm {
+	value: 0
+	meta: "Stride's built-in LLVM backend (JIT or AOT object emission)."
+}
+
+constant Cpp {
+	value: 1
+	meta: "C++ source generation for an external or proprietary toolchain."
+}
+
+typeClass _CodegenBackend {
+	types: [Llvm, Cpp]
+}
