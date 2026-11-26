@@ -11,6 +11,7 @@ import Gpio
 import Peripheral
 import CortexM4
 import STM32F4Resources
+import Flasher
 
 device STM32F4xx {
     platform: STM32F4
@@ -124,10 +125,8 @@ device STM32F4xx {
         STM32F4ArtAccelerator,
         STM32F4DspExtensions
     ]
-    upload: {
-        openocd: {
-            target: "target/stm32f4x.cfg"
-        }
-    }
+    flashers: [
+        openocd OpenOCD { target: "target/stm32f4x.cfg" }
+    ]
     meta: "STM32F4 family: Cortex-M4F, up to 168 MHz on F405/F407"
 }

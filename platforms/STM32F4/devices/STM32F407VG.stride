@@ -13,10 +13,8 @@ device STM32F407VG {
         flash: 1048576
         ram: 131072
     }
-    upload: {
-        probeRs: {
-            chip: "STM32F407VGTx"
-        }
-    }
+    flashers: [
+        probeRs ProbeRs { chip: "STM32F407VGTx" }
+    ]
     meta: "STM32F407VG ARM Cortex-M4 @ 168 MHz, 1 MB flash, 128 KB main SRAM (+64 KB CCM), single-precision FPU"
 }

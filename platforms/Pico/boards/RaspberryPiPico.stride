@@ -43,20 +43,18 @@ hardwareBoard RaspberryPiPico {
         pin LED { port: SIO bit: 25 }
     ]
     usb: ["2E8A:0003", "2E8A:000A"]
-    upload: {
-        method: "picotool"
-        probe: "openocd"
-        picotool: {
+    defaultFlasher: Picotool
+    flashers: [
+        picotool Picotool {
             board: "pico"
-            preparePrompt: "1. Unplug the USB cable (or hold RUN/reset).\n  2. Hold down the white BOOTSEL button.\n  3. Plug the USB cable back in, then release BOOTSEL."
-        }
-        openocd: {
+            prepare: "1. Unplug the USB cable (or hold RUN/reset).\n  2. Hold down the white BOOTSEL button.\n  3. Plug the USB cable back in, then release BOOTSEL."
+        },
+        openocd OpenOCD {
             interface: "interface/cmsis-dap.cfg"
-            target: "target/rp2040.cfg"
             speed: 5000
             transport: "swd"
         }
-    }
+    ]
     image: [
         step Uf2 { kind: "uf2" }
     ]

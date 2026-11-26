@@ -1,0 +1,118 @@
+#
+# Stride Flasher Package
+#
+# The tools that write firmware to a board. A device and its board each list
+# what they know about a tool, under the tool's name, and the two merge key
+# by key:
+#
+#   import Flasher
+#
+#   device STM32F4xx {
+#       flashers: [ openocd OpenOCD { target: "target/stm32f4x.cfg" } ]
+#   }
+#   device STM32F407VG {
+#       overlays: STM32F4xx
+#       flashers: [ probeRs ProbeRs { chip: "STM32F407VGTx" } ]
+#   }
+#   hardwareBoard STM32F4Discovery {
+#       overlays: STM32F407VG
+#       flashers: [ openocd OpenOCD { interface: "interface/stlink.cfg" speed: 2000 } ]
+#   }
+#
+# The device knows the chip (OpenOCD's target script, probe-rs' chip name);
+# the board knows how it is wired (the probe, its speed, a USB bootloader).
+# Name each entry after its tool, as tools/<Tool>.stride does (OpenOCD,
+# ProbeRs, Picotool, Avrdude, ArduinoCli), so the layers' entries meet.
+#
+# `stride flash` uses the board's `defaultFlasher`, or the first entry when
+# there is none. `--probe` uses the first entry that connects through a
+# debug probe, and `--upload-method=<kind>` picks an entry by its kind.
+#
+# The entity type is the tool. Each kind adds only its own options to the
+# ones every flasher has. Running a tool is implemented in stridec; a new
+# kind needs a type here and a runner there.
+#
+
+package Flasher
+
+type _FlasherType {
+	typeName: "flasher"
+	properties: [
+		typeProperty Prepare { name: "prepare" allowedTypes: _StringLiteral default: "" required: off meta: "What to tell the user when the board isn't ready, e.g. how to enter its bootloader" },
+		typeProperty Verify { name: "verify" allowedTypes: _SwitchLiteral default: on required: off meta: "Read the image back after writing it" },
+		typeProperty Reset { name: "reset" allowedTypes: _SwitchLiteral default: on required: off meta: "Reset the board and run the program after flashing" },
+		typeProperty MinVersion { name: "minVersion" allowedTypes: _StringLiteral default: "" required: off meta: "Oldest tool version that works, shown when offering a download" },
+		typeProperty Download { name: "download" allowedTypes: _Any default: none required: off meta: "Archive URLs to fetch the tool when it isn't installed: { windows: macos: linux: }" }
+	]
+	inherits: [_Base]
+	meta: "A tool that writes firmware to a board"
+}
+
+# Through a debug probe (SWD or JTAG).
+type _ProbeFlasherType {
+	typeName: "probeFlasher"
+	properties: [
+		typeProperty Speed { name: "speed" allowedTypes: _IntLiteral default: 0 required: off meta: "Probe clock in kHz; 0 uses the tool's default" }
+	]
+	inherits: [_FlasherType]
+	meta: "A flasher that reaches the chip through a debug probe"
+}
+
+# Through a serial port, to a bootloader on the chip.
+type _SerialFlasherType {
+	typeName: "serialFlasher"
+	properties: [
+		typeProperty Baud { name: "baud" allowedTypes: _IntLiteral default: 115200 required: off meta: "Bootloader baud rate" }
+	]
+	inherits: [_FlasherType]
+	meta: "A flasher that talks to a bootloader over a serial port"
+}
+
+type _OpenOcdType {
+	typeName: "openocd"
+	properties: [
+		typeProperty Interface { name: "interface" allowedTypes: _StringLiteral default: "interface/cmsis-dap.cfg" required: off meta: "Probe script, e.g. 'interface/stlink.cfg'" },
+		typeProperty Target { name: "target" allowedTypes: _StringLiteral default: "" required: off meta: "Chip script, e.g. 'target/stm32f4x.cfg'" },
+		typeProperty BoardScript { name: "boardScript" allowedTypes: _StringLiteral default: "" required: off meta: "A board script that sets both interface and target; used instead of them" },
+		typeProperty Transport { name: "transport" allowedTypes: _StringLiteral default: "" required: off meta: "Transport to select, e.g. 'swd'; empty lets the interface script choose" }
+	]
+	inherits: [_ProbeFlasherType]
+	meta: "OpenOCD"
+}
+
+type _ProbeRsType {
+	typeName: "probeRs"
+	properties: [
+		typeProperty Chip { name: "chip" allowedTypes: _StringLiteral default: "" required: off meta: "probe-rs chip name, e.g. 'STM32F407VGTx'" }
+	]
+	inherits: [_ProbeFlasherType]
+	meta: "probe-rs"
+}
+
+type _AvrdudeType {
+	typeName: "avrdude"
+	properties: [
+		typeProperty Programmer { name: "programmer" allowedTypes: _StringLiteral default: "arduino" required: off meta: "avrdude programmer id, e.g. 'arduino', 'wiring'" }
+	]
+	inherits: [_SerialFlasherType]
+	meta: "AVRDUDE"
+}
+
+type _ArduinoCliType {
+	typeName: "arduinoCli"
+	properties: [
+		typeProperty Fqbn { name: "fqbn" allowedTypes: _StringLiteral default: "" required: off meta: "Fully qualified board name, e.g. 'arduino:avr:uno'" }
+	]
+	inherits: [_SerialFlasherType]
+	meta: "arduino-cli upload"
+}
+
+# Through the chip's USB bootloader (RP2040/RP2350 BOOTSEL).
+type _PicotoolType {
+	typeName: "picotool"
+	properties: [
+		typeProperty Board { name: "board" allowedTypes: _StringLiteral default: "" required: off meta: "pico-sdk board name (PICO_BOARD), e.g. 'pico2'" }
+	]
+	inherits: [_FlasherType]
+	meta: "picotool, over the USB bootloader"
+}

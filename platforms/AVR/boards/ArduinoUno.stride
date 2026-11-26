@@ -14,6 +14,7 @@
 package ArduinoUno
 
 import ATmega328P
+import Flasher
 
 hardwareBoard ArduinoUno {
     platform: AVR
@@ -42,11 +43,7 @@ hardwareBoard ArduinoUno {
         pin LED { port: PortB bit: 5 }
     ]
     usb: ["2341:0043", "2341:0001", "2341:0243", "2A03:0043", "1A86:7523"]
-    upload: {
-        method: "avrdude"
-        programmer: "arduino"
-        baud: 115200
-    }
+    flashers: [ avrdude Avrdude { programmer: "arduino" baud: 115200 } ]
     image: [
         step Hex { kind: "hex" }
     ]

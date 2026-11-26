@@ -10,6 +10,7 @@
 package ArduinoMega2560
 
 import ATmega2560
+import Flasher
 
 hardwareBoard ArduinoMega2560 {
     platform: AVR
@@ -88,11 +89,7 @@ hardwareBoard ArduinoMega2560 {
         pin LED { port: PortB bit: 7 }
     ]
     usb: ["2341:0010", "2341:0042", "2A03:0042", "1A86:7523"]
-    upload: {
-        method: "avrdude"
-        programmer: "wiring"
-        baud: 115200
-    }
+    flashers: [ avrdude Avrdude { programmer: "wiring" baud: 115200 } ]
     image: [
         step Hex { kind: "hex" }
     ]

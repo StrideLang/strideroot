@@ -352,12 +352,12 @@ type _DeviceType {
 			required: off
 			meta: "What each chip pin adds to the device's GPIO: pinFeatures PD2 { port: PortD bit: 2 interrupts: [...] routes: [...] }"
 		},
-		typeProperty Upload {
-			name: "upload"
-			allowedTypes: _Any
-			default: none
+		typeProperty Flashers {
+			name: "flashers"
+			allowedTypes: constrainedList { allowed: [_Any] }
+			default: []
 			required: off
-			meta: "What flashing tools need to know about the chip, e.g. { openocd: { target: } probeRs: { chip: } }. A board adds its probe and method."
+			meta: "What each flashing tool needs to know about the chip, e.g. [openocd OpenOCD { target: } probeRs ProbeRs { chip: }] (package Flasher). Boards add their probe settings to the same entries."
 		},
 		typeProperty TickTimer {
 			name: "tickTimer"
@@ -472,12 +472,19 @@ type _HardwareBoardType {
 			required: off
 			meta: "USB VID:PID pairs the board shows up as, used to find its port"
 		},
-		typeProperty Upload {
-			name: "upload"
+		typeProperty Flashers {
+			name: "flashers"
+			allowedTypes: constrainedList { allowed: [_Any] }
+			default: []
+			required: off
+			meta: "How the board is flashed with each tool, merged by name with the device's entries (package Flasher)"
+		},
+		typeProperty DefaultFlasher {
+			name: "defaultFlasher"
 			allowedTypes: _Any
 			default: none
 			required: off
-			meta: "How to flash the board: { method: ... } plus the method's settings"
+			meta: "The flashers entry `stride flash` uses, e.g. Picotool; without it, the first entry"
 		},
 		typeProperty Image {
 			name: "image"

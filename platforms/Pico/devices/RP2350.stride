@@ -6,6 +6,7 @@ import Gpio
 import CortexM33
 import QualityPolicy
 import PicoResources
+import Flasher
 
 device RP2350 {
     platform: Pico
@@ -83,13 +84,9 @@ device RP2350 {
             target:   [ Sin@Direct, Cos@Direct ]
         }
     ]
-    upload: {
-        openocd: {
-            target: "target/rp2350.cfg"
-        }
-        probeRs: {
-            chip: "RP2350"
-        }
-    }
+    flashers: [
+        openocd OpenOCD { target: "target/rp2350.cfg" },
+        probeRs ProbeRs { chip: "RP2350" }
+    ]
     meta: "Dual ARM Cortex-M33 with hardware single-precision FPU and DSP instructions"
 }

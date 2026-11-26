@@ -20,7 +20,9 @@ How to add a device or board: `platforms/AGENTS.md`. Clocks:
 
 `core -> family -> chip -> board -> project rig`, joined with `overlays`. Each
 layer states what it adds. Records merge key by key, named lists merge by
-name, and other values are replaced. The family layer is an ordinary `device`
+name (an entry of the same name and type merges key by key, so a device's
+`openocd OpenOCD { target: }` and its board's `openocd OpenOCD { interface: }`
+become one), and other values are replaced. The family layer is an ordinary `device`
 that chips overlay. The resolver already allows a device to overlay a device.
 
 The chain is linear. Two facts don't fit it:

@@ -15,10 +15,8 @@ device STM32F767ZI {
         ram: 524288
     }
     resources: [CortexM7HardwareFpuDp]
-    upload: {
-        probeRs: {
-            chip: "STM32F767ZITx"
-        }
-    }
+    flashers: [
+        probeRs ProbeRs { chip: "STM32F767ZITx" }
+    ]
     meta: "STM32F767ZI ARM Cortex-M7 @ 216 MHz, 2 MB flash, 512 KB SRAM, double-precision FPU"
 }

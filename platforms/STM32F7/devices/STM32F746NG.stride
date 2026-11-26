@@ -13,10 +13,8 @@ device STM32F746NG {
         ram: 327680
     }
     resources: [CortexM7HardwareFpuSp]
-    upload: {
-        probeRs: {
-            chip: "STM32F746NGHx"
-        }
-    }
+    flashers: [
+        probeRs ProbeRs { chip: "STM32F746NGHx" }
+    ]
     meta: "STM32F746NG ARM Cortex-M7 @ 216 MHz, 1 MB flash, 320 KB SRAM, single-precision FPU"
 }

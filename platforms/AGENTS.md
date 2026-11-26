@@ -12,20 +12,22 @@ The compiler, `stride build` and the runtimes read the data and act on it.
 They may know a *register design* (an `ip`, such as `stm32.usart.v1`), but
 never a chip, family or board name. If you need `if (chip == ...)` anywhere,
 the data is missing a property: add the property to the schema
-(`library/1.0/Framework.stride`, `Gpio.stride`, `Peripheral.stride`) instead.
+(`library/1.0/Framework.stride`, `Gpio.stride`, `Peripheral.stride`,
+`Flasher.stride`) instead.
 
 ## Layers
 
 Each layer `overlays` the one below. Properties merge upward: a record merges
-key by key, a list of named entries merges by name, and anything else is
+key by key, a list of named entries merges by name (an entry of the same
+name and type merges key by key; another type replaces it), and anything else is
 replaced. So each layer states only what is new or different.
 
 | Layer | Example | Holds |
 |---|---|---|
 | core | `cores/CortexM4.stride` | triple, pointer width, types, FPU present, codegen |
-| family | `platforms/STM32F4/devices/STM32F4xx.stride` | cpu, fpu, clocks and clockLimits, gpioLayout, ports, peripherals, upload.openocd, resources |
-| chip | `platforms/STM32F4/devices/STM32F407VG.stride` | memory, what differs from the family (fpu, clock, clockLimits), upload.probeRs.chip |
-| board | `platforms/STM32F4/boards/STM32F4Discovery.stride` | pins and their names, console, crystal (clocks.hse), upload method and probe, usb ids, image, toolchain |
+| family | `platforms/STM32F4/devices/STM32F4xx.stride` | cpu, fpu, clocks and clockLimits, gpioLayout, ports, peripherals, flashers (OpenOCD's target), resources |
+| chip | `platforms/STM32F4/devices/STM32F407VG.stride` | memory, what differs from the family (fpu, clock, clockLimits), flashers (probe-rs' chip) |
+| board | `platforms/STM32F4/boards/STM32F4Discovery.stride` | pins and their names, console, crystal (clocks.hse), flashers (probe, speed), defaultFlasher, usb ids, image, toolchain |
 | project rig | `examples/PortableBlink/BlinkRigSTM32F4Discovery.stride` | gpioPins: how the project uses the board's pins; clock changes |
 
 A family layer is a `device` that other devices overlay. List it in the
@@ -66,8 +68,8 @@ can buy).
 
 ## Writing a chip
 
-Overlay the family, and add only `memory`, the chip's `upload.probeRs.chip`
-name, its resources (for example the FPU precision) and anything that
+Overlay the family, and add only `memory`, the chip's probe-rs name
+(`flashers: [probeRs ProbeRs { chip: }]`), its resources (for example the FPU precision) and anything that
 differs from the family. Name the package in the header comment.
 
 ## Writing a board
@@ -80,6 +82,13 @@ differs from the family. Name the package in the header comment.
   on them is an error.
 - Give the crystal as `clocks: { hse: <Hz> }`, even when the default clocks
   don't use it.
+- Say how it is flashed in `flashers`, using the same entry names as the
+  device so they merge: `openocd OpenOCD { interface: "interface/stlink.cfg"
+  speed: 2000 }`. Leave out `transport` unless the probe needs one; OpenOCD's
+  interface script picks it. When the device lists another tool first, name
+  the one `stride flash` uses: `defaultFlasher: Picotool`. The kinds and
+  their options are in `library/1.0/Flasher.stride`; a new kind needs a type
+  there and a runner in stridec (`target_runner.cpp`).
 - Say in the header comment which board revisions the file covers and what
   differs between them (for example, which revisions have a USB serial port).
 

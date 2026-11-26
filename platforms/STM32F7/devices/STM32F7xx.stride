@@ -10,6 +10,7 @@ import Gpio
 import Peripheral
 import CortexM7
 import STM32F7Resources
+import Flasher
 
 device STM32F7xx {
     platform: STM32F7
@@ -128,10 +129,8 @@ device STM32F7xx {
         STM32F7ArtAccelerator,
         STM32F7DspExtensions
     ]
-    upload: {
-        openocd: {
-            target: "target/stm32f7x.cfg"
-        }
-    }
+    flashers: [
+        openocd OpenOCD { target: "target/stm32f7x.cfg" }
+    ]
     meta: "STM32F7 family: Cortex-M7F, up to 216 MHz"
 }

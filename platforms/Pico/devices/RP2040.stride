@@ -6,6 +6,7 @@ import Gpio
 import CortexM0Plus
 import QualityPolicy
 import PicoResources
+import Flasher
 
 device RP2040 {
     platform: Pico
@@ -73,13 +74,9 @@ device RP2040 {
         _PioRegY
     ]
     # Inherits all default platformPolicies from platform Pico
-    upload: {
-        openocd: {
-            target: "target/rp2040.cfg"
-        }
-        probeRs: {
-            chip: "RP2040"
-        }
-    }
+    flashers: [
+        openocd OpenOCD { target: "target/rp2040.cfg" },
+        probeRs ProbeRs { chip: "RP2040" }
+    ]
     meta: "Dual ARM Cortex-M0+ microcontroller without hardware FPU"
 }

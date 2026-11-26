@@ -37,16 +37,13 @@ hardwareBoard SaturnM7 {
     ]
     # No console: the board's serial wiring isn't described yet, so Print
     # goes nowhere. Add console: { peripheral: tx: rx: select: } when it is.
-    upload: {
-        method: "openocd"
-        probe: "openocd"
-        openocd: {
+    flashers: [
+        openocd OpenOCD {
             interface: "interface/ftdi/saturnM7-FT232H.cfg"
-            target: "target/stm32f7x.cfg"
             speed: 4000
             transport: "swd"
         }
-    }
+    ]
     image: [
         step Bin { kind: "bin" },
         step Hex { kind: "hex" }
