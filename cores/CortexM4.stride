@@ -10,9 +10,10 @@ package CortexM4
 import Codegen
 
 core CortexM4 {
-    # eabi, not eabihf: code uses the FPU but passes floats in core registers
-    # (softfp), the ABI the STM32 runtime and its C library are built for.
-    triple: "thumbv7em-none-eabi"
+    # Hard-float ABI: floats are passed in FPU registers. Every object linked
+    # with the program (runtime, C library multilib, component archives) must
+    # be built with -mfloat-abi=hard; the linker rejects a mix.
+    triple: "thumbv7em-none-eabihf"
     pointerBits: 32
     types: {
         int: "Int32"

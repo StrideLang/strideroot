@@ -10,7 +10,9 @@ package CortexM33
 import Codegen
 
 core CortexM33 {
-    triple: "thumbv8m.main-none-eabihf"
+    # eabi (softfp: FPU instructions, floats in core registers), to match the
+    # Pico SDK, which builds RP2350 code softfp unless PICO_HARD_FLOAT_ABI is set.
+    triple: "thumbv8m.main-none-eabi"
     pointerBits: 32
     types: {
         int: "Int32"

@@ -5,7 +5,7 @@
 resource CortexM7HardwareFpuSp {
     name: "ARM Cortex-M7 Single-Precision Hardware FPU"
     substitutions: [
-        ["CFLAGS_FPU", "-mfpu=fpv5-sp-d16 -mfloat-abi=softfp"]
+        ["CFLAGS_FPU", "-mfpu=fpv5-sp-d16 -mfloat-abi=hard"]
     ]
     meta: "Single-precision hardware FPU present on STM32F74x/F75x devices"
 }
@@ -13,7 +13,7 @@ resource CortexM7HardwareFpuSp {
 resource CortexM7HardwareFpuDp {
     name: "ARM Cortex-M7 Double-Precision Hardware FPU"
     substitutions: [
-        ["CFLAGS_FPU", "-mfpu=fpv5-d16 -mfloat-abi=softfp"]
+        ["CFLAGS_FPU", "-mfpu=fpv5-d16 -mfloat-abi=hard"]
     ]
     meta: "Single- and double-precision hardware FPU present on STM32F76x/F77x devices"
 }

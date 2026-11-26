@@ -194,20 +194,25 @@ follows:
 
 ## Floating point ABI
 
-The Cortex-M4/M7 cores use the `thumbv7em-none-eabi` triple with the softfp
-ABI: code uses the FPU, but floats cross function calls in core registers.
-This matches the C runtime and the newlib multilib it links (checked in the
-object attributes and the disassembly).
+STM32 cores with an FPU (Cortex-M4F, M7) use the hard-float ABI. Their
+triple is `thumbv7em-none-eabihf`, so floats are passed in FPU registers, and
+the runtime is built `-mfloat-abi=hard` against newlib's hard multilib.
 
-Hard-float (`eabihf`) would save one or two `vmov`s per float argument at
-calls into C, such as libm. Stride inlines most arithmetic, so the gain is
-small. It would make every linked object, including a component's prebuilt
-archives (`hardware_components.md`), need a hard-float build.
-
-Offering both would double that matrix, so the ABI is fixed per framework.
-The emitter selects hard-float for `eabihf` triples, but an `eabihf` object
-built through `stridec -c` came out softfp. So switching later needs that
-path fixed first.
+- The rule: every object linked into the firmware must use the same ABI.
+  That covers the runtime, the C library and a component's prebuilt
+  archives (`hardware_components.md`), and GNU ld rejects a mix. So the ABI
+  is fixed per framework, never a user option, and it is part of the triple
+  that `nativeTargets` keys archives by.
+- Hard-float saves moving each float between core and FPU registers at
+  calls, such as calls into libm. Variadic calls (`printf`) still use core
+  registers, as the AAPCS requires.
+- The Cortex-M33 (Pico 2) stays `eabi` (softfp) to match the Pico SDK, which
+  builds RP2350 code softfp unless `PICO_HARD_FLOAT_ABI` is set. Switching it
+  is a Pico framework decision.
+- Before November 2026, every `...-eabihf` triple silently produced softfp
+  code: `llvm::Triple` read the third part of `thumbv7em-none-eabihf` as the
+  OS, so the environment was unknown. stridejit now normalizes triples, and
+  `CrossCompileTest` checks the object's `Tag_ABI_VFP_args`.
 
 ## Later
 

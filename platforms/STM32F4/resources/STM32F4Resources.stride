@@ -5,7 +5,7 @@
 resource CortexM4HardwareFpuSp {
     name: "ARM Cortex-M4 Single-Precision Hardware FPU"
     substitutions: [
-        ["CFLAGS_FPU", "-mfpu=fpv4-sp-d16 -mfloat-abi=softfp"]
+        ["CFLAGS_FPU", "-mfpu=fpv4-sp-d16 -mfloat-abi=hard"]
     ]
     meta: "Single-precision hardware FPU (FPv4-SP-D16) present on STM32F4 devices"
 }

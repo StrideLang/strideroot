@@ -46,11 +46,11 @@ else()
   set(_linker_script "${STRIDE_LINKER_SCRIPT}")
 endif()
 
-# Floating point: Stride's code and this runtime both use the softfp ABI
-# (FPU instructions, float arguments in core registers), so the objects link
-# with any arm-none-eabi C library built for that ABI.
+# Floating point: with an FPU, Stride's code (triple ...-eabihf) and this
+# runtime use the hard-float ABI, and GCC links the matching C library
+# multilib (thumb/v7e-m+fp/hard, thumb/v7e-m+dp/hard).
 if(STRIDE_FPU)
-  set(_fp_flags "-mfpu=${STRIDE_FPU}" "-mfloat-abi=softfp")
+  set(_fp_flags "-mfpu=${STRIDE_FPU}" "-mfloat-abi=hard")
 else()
   set(_fp_flags "-mfloat-abi=soft")
 endif()
