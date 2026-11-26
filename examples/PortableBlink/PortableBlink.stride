@@ -19,9 +19,10 @@
 #   stride flash PortableBlink.stride -D Board::F746Disco      # Flash STM32F746G-DISCO via ST-Link
 #
 
+
 feature Board {
     variants: [Uno, Mega, Pico, Pico2, F4Disco, F746Disco]
-    default: F746Disco
+    default: F4Disco
 }
 
 @with(Board::Uno)       use AVR version 1.0 on BlinkRig
