@@ -77,6 +77,13 @@ type _DomainMember {
 			allowedTypes: constrainedEntity { allowed: [_StringLiteral, _DomainDefinition, _NoneLiteral] }
 			default: none
 			required: off
+		},
+		typeProperty Resources {
+			name: "resources"
+			allowedTypes: constrainedList { allowed: [_ResourceType, _DomainResourceType, _StringLiteral] }
+			default: []
+			required: off
+			meta: "List of resources required by this member"
 		}
 	]
 	inherits: [_Base]

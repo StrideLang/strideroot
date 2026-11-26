@@ -36,10 +36,10 @@ type _DomainDefinition {
 		},
 		typeProperty Trigger {
 			name: "trigger"
-			allowedTypes: constrainedEntity { allowed: [_Switch, _Trigger, _MemberAccess, _NoneLiteral] }
+			allowedTypes: constrainedEntity { allowed: [_Switch, _Trigger, _MemberAccess, _Entity, _NoneLiteral] }
 			default: none
 			required: off
-			meta: "Switch, trigger, or buffer readiness (e.g. Buf.ready) that ticks a reactive subdomain."
+			meta: "Switch, trigger, gpioPin interrupt, or buffer readiness (e.g. Buf.ready) that ticks a reactive subdomain."
 		},
 		typeProperty QualityPolicyProperty {
 			name: "qualityPolicy"
@@ -65,14 +65,14 @@ type _DomainDefinition {
 		},
 		typeProperty RequiresResources {
 			name: "requiresResources"
-			allowedTypes: constrainedList { allowed: [_ResourceType] }
+			allowedTypes: constrainedList { allowed: [_ResourceType, _DomainResourceType, _StringLiteral] }
 			default: []
 			required: off
 			meta: "A list of resources required by the domain"
 		},
 		typeProperty ProvidesResources {
 			name: "providesResources"
-			allowedTypes: constrainedList { allowed: [_DomainResourceType] }
+			allowedTypes: constrainedList { allowed: [_ResourceType, _DomainResourceType, _StringLiteral] }
 			default: []
 			required: off
 			meta: "A list of resources provided by the domain"

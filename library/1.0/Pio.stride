@@ -1,0 +1,148 @@
+#
+# RP2040 / RP2350 Programmable I/O (PIO) State Machine Resources and Intrinsics
+#
+
+resource _Pio0 {
+	dependsOn: []
+	exclusive: off
+	maxInstances: 4
+	peripheral: "Pio0"
+	meta: "RP2040/RP2350 PIO0 block (shared 32-instruction memory, 4 state machines)"
+}
+
+resource _Pio0_Sm0 {
+	dependsOn: [_Pio0]
+	exclusive: on
+	meta: "PIO0 State Machine 0 (TX/RX FIFOs, OSR/ISR, X/Y scratch registers, clock divider)"
+}
+
+resource _Pio0_Sm1 {
+	dependsOn: [_Pio0]
+	exclusive: on
+	meta: "PIO0 State Machine 1"
+}
+
+resource _Pio0_Sm2 {
+	dependsOn: [_Pio0]
+	exclusive: on
+	meta: "PIO0 State Machine 2"
+}
+
+resource _Pio0_Sm3 {
+	dependsOn: [_Pio0]
+	exclusive: on
+	meta: "PIO0 State Machine 3"
+}
+
+resource _PioRegX {
+	dependsOn: [_Pio0]
+	exclusive: off
+	meta: "PIO 32-bit scratch register X"
+}
+
+resource _PioRegY {
+	dependsOn: [_Pio0]
+	exclusive: off
+	meta: "PIO 32-bit scratch register Y"
+}
+
+platformModule PioPull {
+	inputs: []
+	outputs: [UInt32]
+	ports: [
+		_platformModulePort BlockPort { name: "block" default: on },
+		_platformModulePort IfEmptyPort { name: "ifEmpty" default: off },
+		_platformModulePort DelayPort { name: "delay" default: 0 }
+	]
+	resources: [_Pio0]
+	processing: "llvm::pio pull"
+	inherits: [_Signal]
+}
+
+platformModule PioPush {
+	inputs: [UInt32]
+	outputs: []
+	ports: [
+		_platformModulePort BlockPort { name: "block" default: on },
+		_platformModulePort IfFullPort { name: "ifFull" default: off },
+		_platformModulePort DelayPort { name: "delay" default: 0 }
+	]
+	resources: [_Pio0]
+	processing: "llvm::pio push"
+	inherits: [_Signal]
+}
+
+platformModule PioShiftOut {
+	inputs: [UInt32]
+	outputs: []
+	ports: [
+		_platformModulePort BitsPort { name: "bits" default: 1 },
+		_platformModulePort DelayPort { name: "delay" default: 0 },
+		_platformModulePort SideSetPort { name: "sideSet" default: none }
+	]
+	resources: [_Pio0]
+	processing: "llvm::pio out"
+	inherits: [_Signal]
+}
+
+platformModule PioShiftIn {
+	inputs: []
+	outputs: [UInt32]
+	ports: [
+		_platformModulePort BitsPort { name: "bits" default: 1 },
+		_platformModulePort DelayPort { name: "delay" default: 0 },
+		_platformModulePort SideSetPort { name: "sideSet" default: none }
+	]
+	resources: [_Pio0]
+	processing: "llvm::pio in"
+	inherits: [_Signal]
+}
+
+platformModule PioSetPins {
+	inputs: [UInt32]
+	outputs: []
+	ports: [
+		_platformModulePort DelayPort { name: "delay" default: 0 },
+		_platformModulePort SideSetPort { name: "sideSet" default: none }
+	]
+	resources: [_Pio0]
+	processing: "llvm::pio set"
+	inherits: [_Signal]
+}
+
+platformModule PioDelay {
+	inputs: [Int]
+	outputs: []
+	ports: [
+		_platformModulePort CyclesPort { name: "cycles" default: 1 },
+		_platformModulePort SideSetPort { name: "sideSet" default: none }
+	]
+	resources: [_Pio0]
+	processing: "llvm::pio delay"
+	inherits: [_Signal]
+}
+
+platformModule PioWaitPin {
+	inputs: [Switch]
+	outputs: []
+	ports: [
+		_platformModulePort PinPort { name: "pin" default: 0 },
+		_platformModulePort DelayPort { name: "delay" default: 0 }
+	]
+	resources: [_Pio0]
+	processing: "llvm::pio wait"
+	inherits: [_Signal]
+}
+
+platformModule PioIrq {
+	inputs: [Int]
+	outputs: []
+	ports: [
+		_platformModulePort WaitPort { name: "wait" default: off },
+		_platformModulePort ClearPort { name: "clear" default: off },
+		_platformModulePort DelayPort { name: "delay" default: 0 }
+	]
+	resources: [_Pio0]
+	processing: "llvm::pio irq"
+	inherits: [_Signal]
+}

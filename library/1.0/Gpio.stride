@@ -444,6 +444,19 @@ type _PinRouteType {
 	meta: "A function a pin can be routed to"
 }
 
+type _GpioInterruptSourceType {
+	typeName: "gpioInterrupt"
+	properties: [
+		typeProperty Vector { name: "vector" allowedTypes: _StringLiteral required: on meta: "Hardware ISR vector name, e.g. 'INT0_vect' or 'PCINT0_vect'" },
+		typeProperty EnableRegister { name: "enableRegister" allowedTypes: _IntLiteral required: on meta: "Interrupt mask register address (e.g. EIMSK or PCICR)" },
+		typeProperty EnableBit { name: "enableBit" allowedTypes: _IntLiteral required: on meta: "Bit in enableRegister that enables this interrupt" },
+		typeProperty PinMaskRegister { name: "pinMaskRegister" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "Per-pin mask register for grouped pin-change interrupts (e.g. PCMSK0)" },
+		typeProperty SenseField { name: "senseField" allowedTypes: constrainedEntity { allowed: [_GpioFieldType, _Any, _NoneLiteral] } default: none required: off meta: "gpioField mapping Gpio::_PinInterrupts to sense-control bits (e.g. EICRA ISC01:00)" }
+	]
+	inherits: [_Base]
+	meta: "Describes how a pin's interrupt is enabled in hardware and which ISR vector it triggers."
+}
+
 type _PinFeaturesType {
 	typeName: "pinFeatures"
 	properties: [
@@ -452,6 +465,7 @@ type _PinFeaturesType {
 		typeProperty Modes { name: "modes" allowedTypes: constrainedList { allowed: [_PinModes] } default: [] required: off meta: "Modes this pin adds to the device's" },
 		typeProperty Analog { name: "analog" allowedTypes: constrainedEntity { allowed: [_IntLiteral, _NoneLiteral] } default: none required: off meta: "ADC or DAC channel; adds PinAnalog" },
 		typeProperty Interrupts { name: "interrupts" allowedTypes: constrainedList { allowed: [_PinInterrupts] } default: [] required: off meta: "Interrupt kinds this pin adds (AVR INT0 on PD2)" },
+		typeProperty InterruptSource { name: "interruptSource" allowedTypes: constrainedEntity { allowed: [_GpioInterruptSourceType, _Any, _NoneLiteral] } default: none required: off meta: "Hardware interrupt vector and enable/sense registers for this pin" },
 		typeProperty Routes { name: "routes" allowedTypes: constrainedList { allowed: [_PinRouteType] } default: [] required: off meta: "Functions this pin can carry" },
 		typeProperty ReservedBy { name: "reservedBy" allowedTypes: constrainedEntity { allowed: [_StringLiteral, _NoneLiteral] } default: none required: off meta: "Peripheral the runtime uses this pin for, such as Usart0" }
 	]
